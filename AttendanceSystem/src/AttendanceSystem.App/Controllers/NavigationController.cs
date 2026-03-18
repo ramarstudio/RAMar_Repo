@@ -10,7 +10,7 @@ namespace AttendanceSystem.App.Controllers
     {
         private readonly SessionManager _sessionManager;
         private readonly NavigationHelper _navigationHelper;
-        private readonly IServiceProvider _serviceProvider; // Nos ayudará a crear las vistas con sus dependencias
+        private readonly IServiceProvider _serviceProvider; 
 
         public NavigationController(
             SessionManager sessionManager, 

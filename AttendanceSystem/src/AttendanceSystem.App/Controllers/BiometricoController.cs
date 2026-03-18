@@ -39,7 +39,7 @@ namespace AttendanceSystem.App.Controllers
             }
         }
 
-        // 2. Método para apagar la cámara (importante para no dejarla prendida en segundo plano)
+        // 2. Método para apagar la cámara 
         public void ApagarCamara(EventHandler<BitmapImage> onFrameArrivedCallback)
         {
             _cameraHelper.OnFrameArrived -= onFrameArrivedCallback;
@@ -64,7 +64,6 @@ namespace AttendanceSystem.App.Controllers
                     return (false, "No se pudo capturar la imagen de la cámara.");
                 }
 
-                // Llamamos al servicio de IA que hizo tu compañero
                 bool esValido = await _biometricoService.VerificarIdentidadAsync(fotoBase64, codigoEmpleado);
 
                 if (esValido)

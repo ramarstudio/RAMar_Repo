@@ -51,7 +51,6 @@ namespace AttendanceSystem.App.Controllers
             }
             catch (Exception ex)
             {
-                // Captura excepciones (ej. usuario inactivo, error de conexión a BD)
                 return (false, ex.Message);
             }
         }

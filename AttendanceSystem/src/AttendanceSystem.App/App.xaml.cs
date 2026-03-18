@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 
-// Tus referencias a las otras capas:
 using AttendanceSystem.Core.Interfaces;
 using AttendanceSystem.Services;
 using AttendanceSystem.Security;
@@ -11,8 +10,7 @@ using AttendanceSystem.App.Controllers;
 using AttendanceSystem.App.Helpers;
 using AttendanceSystem.App.Views;
 
-// NOTA: Descomenta esto cuando tengas la capa de Infraestructura lista en tu entorno local
-// using AttendanceSystem.Infrastructure.Repositories; 
+
 
 namespace AttendanceSystem.App
 {
@@ -44,9 +42,7 @@ namespace AttendanceSystem.App
             services.AddSingleton<SessionManager>(); // Singleton: Solo hay una sesión en toda la app
             services.AddSingleton<HttpClient>(); // HttpClient debe ser Singleton por buenas prácticas
             
-            // services.AddSingleton<PasswordHasher>();
-            // services.AddSingleton<IEncryptionService, EncryptionService>();
-
+          
             // ==========================================
             // B. CAPA DE INFRAESTRUCTURA (REPOSITORIOS)
             // ==========================================
@@ -83,7 +79,6 @@ namespace AttendanceSystem.App
             services.AddTransient<MainWindow>();
             services.AddTransient<LoginView>();
             
-            // Para que NavigationController pueda crear vistas libremente, le inyectamos el ServiceProvider entero
             services.AddSingleton<IServiceProvider>(sp => sp); 
         }
     }
