@@ -20,7 +20,7 @@ public class Horario
     public DateTime GetSalida() => salida;
     public DateTime GetVigenteDesde() => vigente_desde;
     public DateTime GetVigenteHasta() => vigente_hasta;
-    public Empleado GetEmpleado() => empleado;
+    public int GetEmpleadoId() => empleadoId;
 
     // --- SETTERS ---
     public void SetDia(DiaSemana dia) { this.dia = dia; }
@@ -28,7 +28,7 @@ public class Horario
     public void SetSalida(DateTime salida) { this.salida = salida; }
     public void SetVigenteDesde(DateTime fecha) { this.vigente_desde = fecha; }
     public void SetVigenteHasta(DateTime fecha) { this.vigente_hasta = fecha; }
-    public void SetEmpleado(Empleado empleado) { this.empleado = empleado; }
+    public void SetEmpleadoId(int empleadoId) { this.empleadoId = empleadoId; }
 
     // --- MÉTODOS DE NEGOCIO ---
 
