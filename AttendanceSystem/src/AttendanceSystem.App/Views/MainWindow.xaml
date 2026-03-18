@@ -1,0 +1,12 @@
+<Window x:Class="AttendanceSystem.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Attendance System - RAMar" 
+        Height="600" Width="900"
+        WindowStartupLocation="CenterScreen"
+        Background="#F4F6F9">
+    
+    <Grid>
+        <ContentControl x:Name="MainContainer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+    </Grid>
+</Window>
