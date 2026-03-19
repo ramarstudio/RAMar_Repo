@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Windows;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +22,7 @@ namespace AttendanceSystem.App
     public partial class App : Application
     {
         private IServiceProvider _serviceProvider;
+        private IConfiguration _configuration;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -27,6 +30,12 @@ namespace AttendanceSystem.App
 
             // Compatibilidad Npgsql: permite escribir DateTime(Kind=UTC) en columnas timestamp without time zone
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+            // 0. Cargar appsettings.json para toda la aplicación
+            _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
 
             // 1. Crear el "Contenedor" donde guardaremos todas nuestras piezas
             var services = new ServiceCollection();
@@ -64,9 +73,10 @@ namespace AttendanceSystem.App
             // ==========================================
             // B. CAPA DE INFRAESTRUCTURA (REPOSITORIOS / DB)
             // ==========================================
-            // Registrar el DbContext con PostgreSQL. Reemplaza la cadena de conexión con tu configuración.
-            var connectionString = Environment.GetEnvironmentVariable("AS_DB_CONNECTION") 
-                ?? "Host=localhost;Port=5432;Database=AttendanceSystem;Username=postgres;Password=postgres";
+            // Lee la cadena de conexión desde appsettings.json
+            // Si hay una variable de entorno AS_DB_CONNECTION, tiene prioridad (útil en servidores)
+            var connectionString = Environment.GetEnvironmentVariable("AS_DB_CONNECTION")
+                ?? _configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(connectionString));
 
@@ -82,11 +92,15 @@ namespace AttendanceSystem.App
             // C. CAPA DE SERVICIOS (LÓGICA DE NEGOCIO)
             // ==========================================
             services.AddTransient<IAuthService, AuthService>();
-            // Registrar el hasher de contraseñas y sus opciones. Se recomienda leer el "pepper" desde
-            // configuración segura (env var o secret store). Aquí usamos un valor por defecto para dev.
-            var defaultPepper = Environment.GetEnvironmentVariable("AS_HASH_PEPPER") ?? "ZGV2X3BlcHBlcl9zYW1wbGU="; // base64 de 'dev_pepper_sample'
-            services.AddSingleton(new HashingOptions(defaultPepper));
+            // Lee el pepper de hash desde appsettings.json (sección Security.HashPepper)
+            var pepper = Environment.GetEnvironmentVariable("AS_HASH_PEPPER")
+                ?? _configuration["Security:HashPepper"]
+                ?? "ZGV2X3BlcHBlcl9zYW1wbGU=";
+            services.AddSingleton(new HashingOptions(pepper));
             services.AddTransient<IPasswordHasher, PasswordHasher>();
+            // Lee la URL del microservicio Python desde appsettings.json (sección FacialService.BaseUrl)
+            var facialBaseUrl = _configuration["FacialService:BaseUrl"] ?? "http://localhost:5000";
+            services.AddSingleton(new HttpClient { BaseAddress = new Uri(facialBaseUrl) });
             services.AddTransient<IBiometricoService, BiometricoService>();
             services.AddTransient<AuditService>();
             services.AddTransient<ReporteService>();
