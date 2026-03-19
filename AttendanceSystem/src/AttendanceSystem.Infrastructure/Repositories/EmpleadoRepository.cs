@@ -13,27 +13,35 @@ public class EmpleadoRepository : IEmpleadoRepository
         _context = context;
     }
 
+    // FindAsync usa la PK directamente — sin expression tree, sin riesgo de traducción
     public async Task<Empleado> GetByIdAsync(int id)
     {
         return await _context.Empleados
-                             .Include(e => e.GetHorarios())
-                             .Include(e => e.GetConsentimiento())
-                             .Include(e => e.GetEmbeddingFacial())
-                             .FirstOrDefaultAsync(e => e.GetId() == id);
+            .Include("horarios")
+            .Include("embeddingFacial")
+            .Include("consentimiento")
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => EF.Property<int>(e, "id") == id);
     }
 
+    // EF.Property accede al campo mapeado por nombre — traducible a SQL
     public async Task<Empleado> GetByCodigoAsync(string codigo)
     {
         return await _context.Empleados
-                             .Include(e => e.GetHorarios()) // Depende de cuánto gráfico se requiera por default
-                             .FirstOrDefaultAsync(e => e.GetCodigo() == codigo && e.GetActivo());
+            .Include("horarios")
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e =>
+                EF.Property<string>(e, "codigo") == codigo &&
+                EF.Property<bool>(e, "activo") == true);
     }
 
+    // Filtrado SQL directo sobre el campo mapeado — O(n) en BD, no en memoria
     public async Task<IEnumerable<Empleado>> GetAllActivosAsync()
     {
         return await _context.Empleados
-                             .Where(e => e.GetActivo())
-                             .ToListAsync();
+            .Where(e => EF.Property<bool>(e, "activo") == true)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task AddAsync(Empleado empleado)

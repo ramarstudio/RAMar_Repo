@@ -8,129 +8,148 @@ using AttendanceSystem.Core.Interfaces;
 
 namespace AttendanceSystem.Services
 {
-    // Asumimos que la Persona A creará esta interfaz en AttendanceSystem.Security
-    public interface IEncryptionService
-    {
-        byte[] Encrypt(byte[] data);
-        byte[] Decrypt(byte[] encryptedData);
-    }
-
     public class BiometricoService : IBiometricoService
     {
         private readonly HttpClient _httpClient;
         private readonly IConsentimientoRepository _consentimientoRepository;
         private readonly IEmpleadoRepository _empleadoRepository;
         private readonly IEncryptionService _encryptionService;
-        
-        // URL de tu microservicio Python local
+
         private readonly string _pythonApiUrl = "http://127.0.0.1:5001/api";
 
         public BiometricoService(
-            HttpClient httpClient, 
+            HttpClient httpClient,
             IConsentimientoRepository consentimientoRepository,
             IEmpleadoRepository empleadoRepository,
             IEncryptionService encryptionService)
         {
-            _httpClient = httpClient;
-            _consentimientoRepository = consentimientoRepository;
-            _empleadoRepository = empleadoRepository;
-            _encryptionService = encryptionService;
+            _httpClient                 = httpClient;
+            _consentimientoRepository   = consentimientoRepository;
+            _empleadoRepository         = empleadoRepository;
+            _encryptionService          = encryptionService;
         }
 
         public async Task<bool> VerificarIdentidadAsync(string base64Image, string codigoEmpleado)
         {
-            // 1. Buscar al empleado y su vector facial cifrado
             var empleado = await _empleadoRepository.GetByCodigoAsync(codigoEmpleado);
-            if (empleado == null || !empleado.TieneEmbedding())
+            if (empleado == null || !empleado.TieneEmbedding()) return false;
+
+            var embeddingFacial = empleado.GetEmbeddingFacial();
+
+            // Descifrar el vector — try/catch previene crash si la clave AES no coincide
+            // o si los datos en BD están corruptos.
+            float[] vectorConocido;
+            try
             {
-                return false; // No existe o no tiene rostro registrado
+                var encryptedStr = Encoding.UTF8.GetString(embeddingFacial.GetVectorCifrado());
+                var vectorJson   = _encryptionService.Decrypt(encryptedStr);
+                vectorConocido   = JsonSerializer.Deserialize<float[]>(vectorJson);
+                if (vectorConocido == null) return false;
+            }
+            catch
+            {
+                // Clave incorrecta o datos corruptos: no se puede verificar identidad
+                return false;
             }
 
-            // 2. Descifrar el vector facial guardado en la BD
-            var embeddingFacial = empleado.GetEmbeddingFacial(); 
-            // CORRECCIÓN: Usar el getter para obtener el vector
-            var vectorCifrado = embeddingFacial.GetVectorCifrado(); 
-            var vectorDescifradoBytes = _encryptionService.Decrypt(vectorCifrado);
-            
-            // Convertimos los bytes descifrados de vuelta a un arreglo de floats para Python
-            var vectorConocido = JsonSerializer.Deserialize<float[]>(Encoding.UTF8.GetString(vectorDescifradoBytes));
-
-            // 3. Enviar la imagen actual y el vector conocido a Python para que los compare
-            var requestPayload = new 
-            { 
-                image_base64 = base64Image,
-                known_embedding = vectorConocido 
+            var requestPayload = new
+            {
+                image_base64    = base64Image,
+                known_embedding = vectorConocido
             };
 
-            var response = await _httpClient.PostAsJsonAsync($"{_pythonApiUrl}/verify", requestPayload);
-            
+            HttpResponseMessage response;
+            try
+            {
+                response = await _httpClient.PostAsJsonAsync($"{_pythonApiUrl}/verify", requestPayload);
+            }
+            catch
+            {
+                // Microservicio Python no disponible
+                return false;
+            }
+
             if (!response.IsSuccessStatusCode) return false;
 
-            var matchResult = await response.Content.ReadFromJsonAsync<PythonMatchResponse>();
+            PythonMatchResponse matchResult;
+            try
+            {
+                matchResult = await response.Content.ReadFromJsonAsync<PythonMatchResponse>();
+            }
+            catch
+            {
+                return false;
+            }
 
-            // 4. Validar si Python dice que es la misma persona y si supera el umbral de confianza del empleado
-            // CORRECCIÓN: Usar el getter para el umbral
-            decimal umbralRequerido = embeddingFacial.GetUmbral(); 
-            
-            return matchResult != null && 
-                   matchResult.Match && 
-                   matchResult.Confidence >= umbralRequerido;
+            if (matchResult == null) return false;
+
+            decimal umbralRequerido = embeddingFacial.GetUmbral();
+            return matchResult.Match && matchResult.Confidence >= umbralRequerido;
         }
 
         public async Task<bool> RegistrarNuevoRostroAsync(string base64Image, string codigoEmpleado)
         {
-            // 1. Validar existencia del empleado
             var empleado = await _empleadoRepository.GetByCodigoAsync(codigoEmpleado);
-            if (empleado == null) throw new ArgumentException("Empleado no encontrado.");
+            if (empleado == null)
+                throw new ArgumentException("Empleado no encontrado.");
 
-            // 2. REGLA DE NEGOCIO CRÍTICA (RN02): Verificar Consentimiento Legal
+            // RN02: consentimiento legal obligatorio
             var consentimiento = await _consentimientoRepository.GetByEmpleadoIdAsync(empleado.GetId());
             if (consentimiento == null || !consentimiento.EstaAutorizado())
+                throw new InvalidOperationException(
+                    "No se puede registrar biometría sin un consentimiento legal firmado y autorizado.");
+
+            var requestPayload = new { image_base64 = base64Image };
+
+            HttpResponseMessage response;
+            try
             {
-                throw new InvalidOperationException("No se puede registrar biometría sin un consentimiento legal firmado y autorizado.");
+                response = await _httpClient.PostAsJsonAsync($"{_pythonApiUrl}/encode", requestPayload);
+            }
+            catch
+            {
+                return false;
             }
 
-            // 3. Pedirle a Python que analice la foto y extraiga el vector matemático (Embedding)
-            var requestPayload = new { image_base64 = base64Image };
-            var response = await _httpClient.PostAsJsonAsync($"{_pythonApiUrl}/encode", requestPayload);
-            
-            if (!response.IsSuccessStatusCode) return false; // Puede fallar si no hay rostro en la foto
+            if (!response.IsSuccessStatusCode) return false;
 
-            var encodeResult = await response.Content.ReadFromJsonAsync<PythonEncodeResponse>();
-            if (encodeResult == null || encodeResult.Embedding == null) return false;
+            PythonEncodeResponse encodeResult;
+            try
+            {
+                encodeResult = await response.Content.ReadFromJsonAsync<PythonEncodeResponse>();
+            }
+            catch
+            {
+                return false;
+            }
 
-            // 4. Convertir el arreglo de floats a bytes y cifrarlo (Seguridad)
-            var vectorBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(encodeResult.Embedding));
-            var vectorCifrado = _encryptionService.Encrypt(vectorBytes);
+            if (encodeResult?.Embedding == null) return false;
 
-            // 5. Crear la nueva entidad EmbeddingFacial y asignarla al empleado
+            var vectorJson    = JsonSerializer.Serialize(encodeResult.Embedding);
+            var vectorCifrado = Encoding.UTF8.GetBytes(_encryptionService.Encrypt(vectorJson));
+
             var nuevoEmbedding = new EmbeddingFacial();
-            
-            // CORRECCIÓN: Como tienes clases estilo Java, usamos los setters en lugar de la inicialización {}
             nuevoEmbedding.SetEmpleadoId(empleado.GetId());
             nuevoEmbedding.SetVectorCifrado(vectorCifrado);
             nuevoEmbedding.SetAlgoritmo("AES-256-GCM");
-            nuevoEmbedding.SetUmbral(0.60m); // 60% de coincidencia mínima por defecto
+            nuevoEmbedding.SetUmbral(0.60m);
             nuevoEmbedding.SetVersionModelo("v1.0");
             nuevoEmbedding.SetCreadoEn(DateTime.UtcNow);
 
             empleado.SetEmbeddingFacial(nuevoEmbedding);
-            
-            // 6. Guardar en BD
             await _empleadoRepository.UpdateAsync(empleado);
 
             return true;
         }
 
-        // --- Clases Auxiliares (DTOs) para leer las respuestas de Python ---
-        private class PythonEncodeResponse
+        private sealed class PythonEncodeResponse
         {
             public float[] Embedding { get; set; }
         }
 
-        private class PythonMatchResponse
+        private sealed class PythonMatchResponse
         {
-            public bool Match { get; set; }
+            public bool    Match      { get; set; }
             public decimal Confidence { get; set; }
         }
     }

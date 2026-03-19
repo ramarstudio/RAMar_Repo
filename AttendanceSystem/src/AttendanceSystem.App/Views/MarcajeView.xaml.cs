@@ -11,53 +11,61 @@ namespace AttendanceSystem.App.Views
 {
     public partial class MarcajeView : UserControl
     {
-        private readonly MarcajeController _marcajeController;
+        private readonly MarcajeController    _marcajeController;
         private readonly BiometricoController _biometricoController;
+
+        // Brushes estáticos y congelados: creados una sola vez, reutilizados en cada evento.
+        // Freeze() permite usarlos desde cualquier hilo sin InvalidOperationException.
+        private static readonly SolidColorBrush BrushVerde      = FreezeBrush(39,  174, 96);
+        private static readonly SolidColorBrush BrushRojo       = FreezeBrush(231, 76,  60);
+        private static readonly SolidColorBrush BrushFondoVerde = FreezeBrush(213, 245, 227);
+        private static readonly SolidColorBrush BrushFondoRojo  = FreezeBrush(253, 213, 210);
+
+        private static SolidColorBrush FreezeBrush(byte r, byte g, byte b)
+        {
+            var brush = new SolidColorBrush(Color.FromRgb(r, g, b));
+            brush.Freeze();
+            return brush;
+        }
 
         public MarcajeView(MarcajeController marcajeController, BiometricoController biometricoController)
         {
             InitializeComponent();
-            _marcajeController = marcajeController;
+            _marcajeController    = marcajeController;
             _biometricoController = biometricoController;
         }
 
-        // ── Cuando la vista carga: encender cámara y actualizar fecha/hora ──
+        // ── Carga: encender cámara ─────────────────────────────────────────────
         private void MarcajeView_Loaded(object sender, RoutedEventArgs e)
         {
-            // Actualizar el reloj en pantalla
             txtFechaHora.Text = DateTime.Now.ToString("dddd, dd 'de' MMMM - HH:mm",
                 new System.Globalization.CultureInfo("es-ES"));
-
-            // Iniciar la cámara, pasando el método que actualizará el Image de XAML
             try
             {
                 _biometricoController.IniciarCamara(OnFrameArrived);
-                txtEstadoCamara.Text = "Cámara activa. Posiciónese frente a la cámara.";
-                txtEstadoCamara.Foreground = new SolidColorBrush(Color.FromRgb(39, 174, 96));
+                txtEstadoCamara.Text       = "Cámara activa. Posiciónese frente a la cámara.";
+                txtEstadoCamara.Foreground = BrushVerde;
             }
             catch (Exception ex)
             {
-                txtEstadoCamara.Text = $"Sin cámara: {ex.Message}";
-                txtEstadoCamara.Foreground = new SolidColorBrush(Color.FromRgb(231, 76, 60));
+                txtEstadoCamara.Text       = $"Sin cámara: {ex.Message}";
+                txtEstadoCamara.Foreground = BrushRojo;
             }
         }
 
-        // ── Cuando la vista se cierra: apagar cámara ──
+        // ── Descarga: apagar cámara ────────────────────────────────────────────
         private void MarcajeView_Unloaded(object sender, RoutedEventArgs e)
         {
             _biometricoController.ApagarCamara(OnFrameArrived);
         }
 
-        // ── Callback del video: actualiza el Image de XAML con cada frame ──
-        private void OnFrameArrived(object sender, BitmapImage frame)
+        // ── Callback del video ─────────────────────────────────────────────────
+        private void OnFrameArrived(object sender, BitmapSource frame)
         {
-            // Dispatcher garantiza que actualizamos la UI desde el hilo correcto
             Dispatcher.Invoke(() => imgCamara.Source = frame);
         }
 
-        // ─── EVENTOS DE BOTONES ─────────────────────────────────────────────
-        // Cada botón solo llama al controlador y muestra el resultado.
-
+        // ── Botones ────────────────────────────────────────────────────────────
         private async void BtnEntrada_Click(object sender, RoutedEventArgs e)
             => await ProcesarMarcaje(TipoMarcaje.Entrada);
 
@@ -65,23 +73,18 @@ namespace AttendanceSystem.App.Views
             => await ProcesarMarcaje(TipoMarcaje.Salida);
 
         private async void BtnBreak_Click(object sender, RoutedEventArgs e)
-            => await ProcesarMarcaje(TipoMarcaje.Break);
+            => await ProcesarMarcaje(TipoMarcaje.BreakInicio);
 
-        // ─── LÓGICA COMPARTIDA DE PROCESAMIENTO ────────────────────────────
+        // ── Lógica compartida ──────────────────────────────────────────────────
         private async System.Threading.Tasks.Task ProcesarMarcaje(TipoMarcaje tipo)
         {
-            // Deshabilitar todos los botones mientras se procesa
             SetBotonesHabilitados(false);
             OcultarResultado();
             txtEstadoCamara.Text = "Procesando marcaje...";
 
-            // Delegar al controlador
             MarcajeResponse resultado = await _marcajeController.RegistrarMarcajeAsync(tipo);
-
-            // Mostrar el resultado visualmente
             MostrarResultado(resultado);
 
-            // Re-habilitar botones
             SetBotonesHabilitados(true);
             txtEstadoCamara.Text = "Listo. Puede realizar otro marcaje.";
         }
@@ -92,17 +95,15 @@ namespace AttendanceSystem.App.Views
 
             if (resultado.Exito)
             {
-                // Fondo verde para éxito
-                panelResultado.Background = new SolidColorBrush(Color.FromRgb(213, 245, 227));
-                txtResultadoIcono.Text = "✔";
-                txtResultadoIcono.Foreground = new SolidColorBrush(Color.FromRgb(39, 174, 96));
-                txtResultadoMensaje.Text = resultado.Mensaje;
-                txtResultadoMensaje.Foreground = new SolidColorBrush(Color.FromRgb(39, 174, 96));
+                panelResultado.Background      = BrushFondoVerde;
+                txtResultadoIcono.Text         = "✔";
+                txtResultadoIcono.Foreground   = BrushVerde;
+                txtResultadoMensaje.Text       = resultado.Mensaje;
+                txtResultadoMensaje.Foreground = BrushVerde;
 
-                // Si hubo tardanza, mostrar el detalle en rojo
                 if (resultado.EsTardanza)
                 {
-                    txtResultadoTardanza.Text = $"⚠ {resultado.MinutosTardanza} minuto(s) de tardanza";
+                    txtResultadoTardanza.Text       = $"⚠ {resultado.MinutosTardanza} minuto(s) de tardanza";
                     txtResultadoTardanza.Visibility = Visibility.Visible;
                 }
                 else
@@ -112,20 +113,17 @@ namespace AttendanceSystem.App.Views
             }
             else
             {
-                // Fondo rojo para error
-                panelResultado.Background = new SolidColorBrush(Color.FromRgb(253, 213, 210));
-                txtResultadoIcono.Text = "✘";
-                txtResultadoIcono.Foreground = new SolidColorBrush(Color.FromRgb(231, 76, 60));
-                txtResultadoMensaje.Text = resultado.Mensaje;
-                txtResultadoMensaje.Foreground = new SolidColorBrush(Color.FromRgb(231, 76, 60));
+                panelResultado.Background      = BrushFondoRojo;
+                txtResultadoIcono.Text         = "✘";
+                txtResultadoIcono.Foreground   = BrushRojo;
+                txtResultadoMensaje.Text       = resultado.Mensaje;
+                txtResultadoMensaje.Foreground = BrushRojo;
                 txtResultadoTardanza.Visibility = Visibility.Collapsed;
             }
         }
 
         private void OcultarResultado()
-        {
-            panelResultado.Visibility = Visibility.Collapsed;
-        }
+            => panelResultado.Visibility = Visibility.Collapsed;
 
         private void SetBotonesHabilitados(bool habilitado)
         {

@@ -11,6 +11,10 @@ namespace AttendanceSystem.Services
 {
     public class ExportService
     {
+        // Ruta única calculada una sola vez: evita llamadas repetidas a Path.Combine + AppDomain
+        private static readonly string CarpetaExportaciones =
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exportaciones");
+
         public ExportService()
         {
             QuestPDF.Settings.License = LicenseType.Community;
@@ -18,101 +22,90 @@ namespace AttendanceSystem.Services
 
         public async Task<string> ExportarACsvAsync(ReporteDto reporte)
         {
-            //1.Crear la carpeta "Exportaciones" dentro de la carpeta donde corre la app
-            string carpetaDestino = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exportaciones");
-            Directory.CreateDirectory(carpetaDestino);
+            Directory.CreateDirectory(CarpetaExportaciones);
 
-            //2.Generar un nombre único para el archivo
-            string nombreArchivo = $"Reporte_{reporte.CodigoEmpleado}_{reporte.PeriodoInicio:MMyyyy}.csv";
-            string rutaCompleta = Path.Combine(carpetaDestino, nombreArchivo);
+            string rutaCompleta = Path.Combine(CarpetaExportaciones,
+                $"Reporte_{reporte.CodigoEmpleado}_{reporte.PeriodoInicio:MMyyyy}.csv");
 
-            //3.Construir el contenido del CSV
             var sb = new StringBuilder();
-            
-            //Fila de encabezados
             sb.AppendLine("Código Empleado,Periodo Inicio,Periodo Fin,Total Asistencias,Total Tardanzas,Minutos de Tardanza,Total Faltas");
-            
-            //Fila de datos
-            sb.AppendLine($"{reporte.CodigoEmpleado},{reporte.PeriodoInicio:dd/MM/yyyy},{reporte.PeriodoFin:dd/MM/yyyy},{reporte.TotalAsistencias},{reporte.TotalTardanzas},{reporte.SumatoriaMinutosTardanza},{reporte.TotalFaltas}");
+            sb.AppendLine($"{reporte.CodigoEmpleado}," +
+                          $"{reporte.PeriodoInicio:dd/MM/yyyy}," +
+                          $"{reporte.PeriodoFin:dd/MM/yyyy}," +
+                          $"{reporte.TotalAsistencias}," +
+                          $"{reporte.TotalTardanzas}," +
+                          $"{reporte.SumatoriaMinutosTardanza}," +
+                          $"{reporte.TotalFaltas}");
 
-            //4.Escribir el archivo en el disco
             await File.WriteAllTextAsync(rutaCompleta, sb.ToString(), Encoding.UTF8);
-
             return rutaCompleta;
         }
 
-        public string ExportarAPdf(ReporteDto reporte)
+        // PDF ahora es async: se ejecuta en el thread pool para no bloquear el dispatcher WPF.
+        public Task<string> ExportarAPdfAsync(ReporteDto reporte)
         {
-            string carpetaDestino = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exportaciones");
-            Directory.CreateDirectory(carpetaDestino);
+            Directory.CreateDirectory(CarpetaExportaciones);
 
-            string nombreArchivo = $"Reporte_{reporte.CodigoEmpleado}_{reporte.PeriodoInicio:MMyyyy}.pdf";
-            string rutaCompleta = Path.Combine(carpetaDestino, nombreArchivo);
+            string rutaCompleta = Path.Combine(CarpetaExportaciones,
+                $"Reporte_{reporte.CodigoEmpleado}_{reporte.PeriodoInicio:MMyyyy}.pdf");
 
-            //5.Diseñar el PDF usando QuestPDF
-            Document.Create(container =>
+            // Task.Run mueve la generación del PDF al ThreadPool,
+            // liberando el dispatcher WPF durante la operación bloqueante.
+            return Task.Run(() =>
             {
-                container.Page(page =>
+                Document.Create(container =>
                 {
-                    page.Size(PageSizes.A4);
-                    page.Margin(2, Unit.Centimetre);
-                    page.PageColor(Colors.White);
-                    page.DefaultTextStyle(x => x.FontSize(12));
-
-                    //Encabezado del PDF
-                    page.Header().Text("Reporte de Asistencia Mensual")
-                        .SemiBold().FontSize(20).FontColor(Colors.Blue.Darken2);
-
-                    //Contenido principal
-                    page.Content().PaddingVertical(1, Unit.Centimetre).Column(x =>
+                    container.Page(page =>
                     {
-                        x.Spacing(20);
-                        
-                        x.Item().Text($"Empleado: {reporte.CodigoEmpleado}").FontSize(14).SemiBold();
-                        x.Item().Text($"Periodo: {reporte.PeriodoInicio:dd/MM/yyyy} al {reporte.PeriodoFin:dd/MM/yyyy}");
+                        page.Size(PageSizes.A4);
+                        page.Margin(2, Unit.Centimetre);
+                        page.PageColor(Colors.White);
+                        page.DefaultTextStyle(x => x.FontSize(12));
 
-                        x.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+                        page.Header()
+                            .Text("Reporte de Asistencia Mensual")
+                            .SemiBold().FontSize(20).FontColor(Colors.Blue.Darken2);
 
-                        //Tabla de métricas
-                        x.Item().Table(table =>
+                        page.Content().PaddingVertical(1, Unit.Centimetre).Column(col =>
                         {
-                            table.ColumnsDefinition(columns =>
+                            col.Spacing(20);
+                            col.Item().Text($"Empleado: {reporte.CodigoEmpleado}").FontSize(14).SemiBold();
+                            col.Item().Text($"Periodo: {reporte.PeriodoInicio:dd/MM/yyyy} al {reporte.PeriodoFin:dd/MM/yyyy}");
+                            col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+
+                            col.Item().Table(table =>
                             {
-                                columns.RelativeColumn();
-                                columns.RelativeColumn();
+                                table.ColumnsDefinition(cols =>
+                                {
+                                    cols.RelativeColumn();
+                                    cols.RelativeColumn();
+                                });
+                                table.Header(header =>
+                                {
+                                    header.Cell().Text("Métrica").SemiBold();
+                                    header.Cell().Text("Valor").SemiBold();
+                                });
+                                table.Cell().Text("Días Asistidos");
+                                table.Cell().Text(reporte.TotalAsistencias.ToString());
+                                table.Cell().Text("Total Tardanzas");
+                                table.Cell().Text(reporte.TotalTardanzas.ToString());
+                                table.Cell().Text("Minutos Acumulados de Tardanza");
+                                table.Cell().Text($"{reporte.SumatoriaMinutosTardanza} min");
+                                table.Cell().Text("Días de Falta");
+                                table.Cell().Text(reporte.TotalFaltas.ToString());
                             });
+                        });
 
-                            table.Header(header =>
-                            {
-                                header.Cell().Text("Métrica").SemiBold();
-                                header.Cell().Text("Valor").SemiBold();
-                            });
-
-                            table.Cell().Text("Días Asistidos");
-                            table.Cell().Text(reporte.TotalAsistencias.ToString());
-
-                            table.Cell().Text("Total Tardanzas");
-                            table.Cell().Text(reporte.TotalTardanzas.ToString());
-
-                            table.Cell().Text("Minutos Acumulados de Tardanza");
-                            table.Cell().Text($"{reporte.SumatoriaMinutosTardanza} min");
-
-                            table.Cell().Text("Días de Falta");
-                            table.Cell().Text(reporte.TotalFaltas.ToString());
+                        page.Footer().AlignCenter().Text(x =>
+                        {
+                            x.Span("Generado por AttendanceSystem el ");
+                            x.Span($"{DateTime.Now:dd/MM/yyyy HH:mm}");
                         });
                     });
+                }).GeneratePdf(rutaCompleta);
 
-                    //Pie de página
-                    page.Footer().AlignCenter().Text(x =>
-                    {
-                        x.Span("Generado por AttendanceSystem el ");
-                        x.Span($"{DateTime.Now:dd/MM/yyyy HH:mm}");
-                    });
-                });
-            })
-            .GeneratePdf(rutaCompleta);
-
-            return rutaCompleta;
+                return rutaCompleta;
+            });
         }
     }
 }
