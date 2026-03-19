@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using AttendanceSystem.Infrastructure.Configuration;
 
 public class AppDbContext : DbContext
 {
@@ -20,6 +19,9 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Acceder a campos privados en lugar de propiedades públicas
+        modelBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
         modelBuilder.ApplyConfiguration(new RolConfiguration());
         modelBuilder.ApplyConfiguration(new UsuarioConfiguration());

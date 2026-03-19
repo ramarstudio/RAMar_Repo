@@ -125,11 +125,11 @@ namespace AttendanceSystem.Services
             // ── PASO 5: Crear y guardar el marcaje ───────────────────────────
             var marcaje = new Marcaje();
             marcaje.SetEmpleadoId(empleado.GetId());
-            marcaje.SetTipo(request.Tipo.ToString());
+            marcaje.SetTipo(request.Tipo);
             marcaje.SetFechaHora(ahora);
             marcaje.SetTardanza(esTardanza);
             marcaje.SetMinutosTardanza(minutosTardanza);
-            marcaje.SetAsistido(false);     // fue el propio empleado con biometría
+            marcaje.SetAsistido(false); // fue el propio empleado con biometría
 
             await _marcajeRepository.AddAsync(marcaje);
 
@@ -137,13 +137,13 @@ namespace AttendanceSystem.Services
             await _auditService.RegistrarAsync(
                 accion: "MARCAJE_FACIAL",
                 entidad: "Marcaje",
-                registroId: marcaje.GetId(),
+                registroId: marcaje.GetId(), 
                 usuarioId: empleado.GetId(),
                 anterior: null,
-                nuevo: marcaje.ObtenerResumen(),
+                // Usamos un string directo por si no tienes el método ObtenerResumen()
+                nuevo: $"Marcaje: {request.Tipo} - {ahora} - Empleado: {empleado.GetId()}", 
                 motivo: "Marcaje automático por reconocimiento facial"
             );
-
             // ── PASO 7: Retornar respuesta al controlador ────────────────────
             string mensajeResultado = esTardanza
                 ? $"Marcaje registrado con {minutosTardanza} minuto(s) de tardanza."
@@ -192,27 +192,25 @@ namespace AttendanceSystem.Services
             int minutosTardanza = esTardanza ? empleado.CalcularMinutosTardanza(fechaHora) : 0;
 
             // ── PASO 3: Crear el marcaje marcándolo como asistido ─────────────
-            // creadoPorId = adminId deja constancia de quién lo registró.
             var marcaje = new Marcaje();
             marcaje.SetEmpleadoId(empleadoId);
-            marcaje.SetTipo(TipoMarcaje.Entrada.ToString());
+            marcaje.SetTipo(TipoMarcaje.Entrada);
             marcaje.SetFechaHora(fechaHora);
             marcaje.SetTardanza(esTardanza);
             marcaje.SetMinutosTardanza(minutosTardanza);
-            marcaje.SetAsistido(true);              // ← indica que fue manual
-            marcaje.SetCreadoPorId(adminId);        // ← quién lo registró
+            marcaje.SetAsistido(true);           // ← indica que fue manual
+            marcaje.SetCreadoPorId(adminId);     // ← quién lo registró
 
             await _marcajeRepository.AddAsync(marcaje);
 
             // ── PASO 4: Auditoría obligatoria para marcajes manuales ─────────
-            // Es importante dejar trazabilidad de que un admin intervino.
             await _auditService.RegistrarAsync(
                 accion: "MARCAJE_ASISTIDO",
                 entidad: "Marcaje",
                 registroId: marcaje.GetId(),
                 usuarioId: adminId,
                 anterior: null,
-                nuevo: marcaje.ObtenerResumen(),
+                nuevo: $"Marcaje manual: Entrada - {fechaHora} - Empleado: {empleadoId}",
                 motivo: $"Marcaje registrado manualmente por admin ID={adminId}"
             );
 

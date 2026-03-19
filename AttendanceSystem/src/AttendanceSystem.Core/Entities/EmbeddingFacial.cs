@@ -30,6 +30,8 @@ public class EmbeddingFacial
     public void SetVersionModelo(string version) { this.versionModelo = version; }
     public void SetEmpleadoId(int empleadoId) { this.empleadoId = empleadoId; }
 
+    public void SetCreadoEn(DateTime fecha) { this.creadoEn = fecha; }
+
     // --- MÉTODOS DE NEGOCIO ---
     public bool ConfianzaSuficiente(decimal nivelConfianza) => nivelConfianza >= umbral;
 

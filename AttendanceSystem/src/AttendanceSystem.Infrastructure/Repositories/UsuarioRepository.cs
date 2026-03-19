@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AttendanceSystem.Core.Interfaces;
@@ -14,23 +15,19 @@ public class UsuarioRepository : IUsuarioRepository
 
     public async Task<Usuario> GetByIdAsync(int id)
     {
-        return await _context.Usuarios
-                             .Include(u => u.GetRol()) // Traer la relación por defecto
-                             .FirstOrDefaultAsync(u => u.GetId() == id);
+        var lista = await _context.Usuarios.Include("rol").ToListAsync();
+        return lista.FirstOrDefault(u => u.GetId() == id);
     }
 
     public async Task<Usuario> GetByUsernameAsync(string username)
     {
-        return await _context.Usuarios
-                             .Include(u => u.GetRol())
-                             .FirstOrDefaultAsync(u => u.GetUsername() == username && u.GetActivo());
+        var lista = await _context.Usuarios.Include("rol").ToListAsync();
+        return lista.FirstOrDefault(u => u.GetUsername() == username && u.GetActivo());
     }
 
     public async Task<IEnumerable<Usuario>> GetAllAsync()
     {
-        return await _context.Usuarios
-                             .Include(u => u.GetRol())
-                             .ToListAsync();
+        return await _context.Usuarios.Include("rol").ToListAsync();
     }
 
     public async Task AddAsync(Usuario usuario)
@@ -47,10 +44,11 @@ public class UsuarioRepository : IUsuarioRepository
 
     public async Task DeleteAsync(int id)
     {
-        var usuario = await _context.Usuarios.FindAsync(id);
+        var lista = await _context.Usuarios.ToListAsync();
+        var usuario = lista.FirstOrDefault(u => u.GetId() == id);
         if (usuario != null)
         {
-            usuario.Desactivar(); // Borrado lógico (soft delete)
+            usuario.Desactivar();
             _context.Usuarios.Update(usuario);
             await _context.SaveChangesAsync();
         }

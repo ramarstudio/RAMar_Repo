@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.Threading;
 using AttendanceSystem.Core.DTOs;
+
 using AttendanceSystem.Core.Interfaces;
 
 namespace AttendanceSystem.Security
@@ -115,6 +116,53 @@ namespace AttendanceSystem.Security
             _cleanupTimer?.Dispose();
             _cleanupLock?.Dispose();
             _disposed = true;
+            
         }
+        // --- AGREGADO PARA COMPATIBILIDAD CON WPF ---
+        
+        private string _currentSessionToken;
+
+       public void IniciarSesion(Usuario usuario)
+        {
+            // 1. Obtenemos el objeto Rol del usuario
+            var rol = usuario.GetRol();
+            
+            // 2. Extraemos el nombre del rol usando tu Enum RolUsuario convertido a string
+            // Si el rol es nulo por alguna razón, le ponemos "Empleado" por defecto
+            string nombreRol = rol?.GetNombre().ToString() ?? "Empleado";
+
+            // 3. Creamos la sesión con tu método original
+            _currentSessionToken = CreateSession(
+                usuario.GetId(),
+                usuario.GetUsername(),
+                nombreRol
+            );
+        }
+
+        public void CerrarSesion()
+        {
+            if (!string.IsNullOrEmpty(_currentSessionToken))
+            {
+                InvalidateSession(_currentSessionToken);
+                _currentSessionToken = null;
+            }
+        }
+
+        public bool EstaLogueado()
+        {
+            if (string.IsNullOrEmpty(_currentSessionToken)) return false;
+            
+            var session = GetSession(_currentSessionToken);
+            return session != null && session.IsActive;
+        }
+
+        public bool EsAdministrador()
+        {
+            var session = GetSession(_currentSessionToken);
+            return session != null && session.Role == "ADMINISTRADOR";
+        }
+        
+        // Propiedad extra por si los controladores necesitan los datos del usuario actual
+        public SessionInfo GetCurrentSession() => GetSession(_currentSessionToken);
     }
 }

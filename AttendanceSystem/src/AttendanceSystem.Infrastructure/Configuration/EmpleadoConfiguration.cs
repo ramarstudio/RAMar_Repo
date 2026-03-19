@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 public class EmpleadoConfiguration : IEntityTypeConfiguration<Empleado>
 {
@@ -7,47 +8,45 @@ public class EmpleadoConfiguration : IEntityTypeConfiguration<Empleado>
     {
         builder.ToTable("empleados");
 
-        builder.HasKey(e => e.GetId());
+        builder.HasKey("id");
 
-        builder.Property(e => e.GetCodigo())
+        builder.Property<string>("codigo")
                .IsRequired()
                .HasMaxLength(20)
                .HasColumnName("codigo");
 
-        builder.Property(e => e.GetHorarioEntrada())
+        builder.Property<DateTime>("horario_entrada")
                .IsRequired()
                .HasColumnType("timestamp without time zone")
                .HasColumnName("horario_entrada");
 
-        builder.Property(e => e.GetHorarioSalida())
+        builder.Property<DateTime>("horario_salida")
                .IsRequired()
                .HasColumnType("timestamp without time zone")
                .HasColumnName("horario_salida");
 
-        builder.Property(e => e.GetTolerancia())
+        builder.Property<int>("tolerancia")
                .IsRequired()
                .HasDefaultValue(0)
                .HasColumnName("tolerancia_minutos");
 
-        builder.Property(e => e.GetActivo())
+        builder.Property<bool>("activo")
                .IsRequired()
                .HasDefaultValue(true)
                .HasColumnName("activo");
 
-        // Relación 1:1 con Usuario (Usuario -> Empleado)
         builder.HasOne<Usuario>()
                .WithMany()
-               .HasForeignKey(e => e.GetUsuarioId())
+               .HasForeignKey("usuarioId")
                .IsRequired(true)
                .OnDelete(DeleteBehavior.Cascade)
                .HasConstraintName("fk_empleados_usuario");
 
-        // Índices
-        builder.HasIndex(e => e.GetCodigo())
+        builder.HasIndex("codigo")
                .IsUnique()
                .HasDatabaseName("idx_empleados_codigo");
-               
-        builder.HasIndex(e => e.GetUsuarioId())
+
+        builder.HasIndex("usuarioId")
                .IsUnique()
                .HasDatabaseName("idx_empleados_usuario_id");
     }

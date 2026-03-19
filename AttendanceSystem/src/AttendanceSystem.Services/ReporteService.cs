@@ -57,10 +57,11 @@ namespace AttendanceSystem.Services
                 var fechaDateOnly = DateOnly.FromDateTime(fechaIteracion);
 
                 // Verificamos si para esa fecha exacta el empleado tenía un horario vigente
+                // Verificamos si para esa fecha exacta el empleado tenía un horario vigente
                 bool debioTrabajar = horarios.Any(h => 
-                    h.DiaSemana == diaSemanaEnum && 
-                    h.VigenteDesde <= fechaDateOnly && 
-                    (h.VigenteHasta == null || h.VigenteHasta >= fechaDateOnly));
+                    h.GetDia() == diaSemanaEnum && 
+                    DateOnly.FromDateTime(h.GetVigenteDesde()) <= fechaDateOnly && 
+                    (h.GetVigenteHasta() == DateTime.MinValue || DateOnly.FromDateTime(h.GetVigenteHasta()) >= fechaDateOnly));
 
                 if (debioTrabajar)
                 {
@@ -91,13 +92,13 @@ namespace AttendanceSystem.Services
         {
             return dayOfWeek switch
             {
-                DayOfWeek.Monday => DiaSemana.LUN,
-                DayOfWeek.Tuesday => DiaSemana.MAR,
-                DayOfWeek.Wednesday => DiaSemana.MIE,
-                DayOfWeek.Thursday => DiaSemana.JUE,
-                DayOfWeek.Friday => DiaSemana.VIE,
-                DayOfWeek.Saturday => DiaSemana.SAB,
-                DayOfWeek.Sunday => DiaSemana.DOM,
+                DayOfWeek.Monday => DiaSemana.Lunes,
+                DayOfWeek.Tuesday => DiaSemana.Martes,
+                DayOfWeek.Wednesday => DiaSemana.Miercoles,
+                DayOfWeek.Thursday => DiaSemana.Jueves,
+                DayOfWeek.Friday => DiaSemana.Viernes,
+                DayOfWeek.Saturday => DiaSemana.Sabado,
+                DayOfWeek.Sunday => DiaSemana.Domingo,
                 _ => throw new ArgumentOutOfRangeException(nameof(dayOfWeek), $"Día no esperado: {dayOfWeek}")
             };
         }

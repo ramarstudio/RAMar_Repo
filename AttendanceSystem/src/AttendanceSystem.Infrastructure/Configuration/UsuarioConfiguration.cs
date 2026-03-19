@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
 {
@@ -7,41 +8,40 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
     {
         builder.ToTable("usuarios");
 
-        builder.HasKey(u => u.GetId());
+        builder.HasKey("id");
 
-        builder.Property(u => u.GetUsername())
+        builder.Property<string>("username")
                .IsRequired()
                .HasMaxLength(50)
                .HasColumnName("username");
 
-        builder.Property(u => u.GetPassword())
+        builder.Property<string>("password")
                .IsRequired()
-               .HasMaxLength(128) // Hashed password
+               .HasMaxLength(256)
                .HasColumnName("password");
 
-        builder.Property(u => u.GetNombre())
+        builder.Property<string>("name")
                .IsRequired()
                .HasMaxLength(150)
                .HasColumnName("nombre");
 
-        builder.Property(u => u.GetActivo())
+        builder.Property<bool>("activo")
                .IsRequired()
                .HasDefaultValue(true)
                .HasColumnName("activo");
 
-        builder.Property(u => u.GetFechaCreacion())
+        builder.Property<DateTime>("fecha_creacion")
                .IsRequired()
                .HasColumnType("timestamp without time zone")
                .HasColumnName("fecha_creacion");
 
-        // Relación con Rol (N:1)
-        builder.HasOne(u => u.GetRol())
+        builder.HasOne<Rol>("rol")
                .WithMany()
-               .HasForeignKey("RolId") // Usando backing key ya que no hay RolId expuesto explícitamente pero sí "Rol rol"
+               .HasForeignKey("RolId")
                .OnDelete(DeleteBehavior.Restrict)
                .HasConstraintName("fk_usuarios_rol");
 
-        builder.HasIndex(u => u.GetUsername())
+        builder.HasIndex("username")
                .IsUnique()
                .HasDatabaseName("idx_usuarios_username");
     }

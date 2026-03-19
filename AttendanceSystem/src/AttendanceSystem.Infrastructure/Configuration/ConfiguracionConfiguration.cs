@@ -7,27 +7,27 @@ public class ConfiguracionConfiguration : IEntityTypeConfiguration<Configuracion
     {
         builder.ToTable("configuraciones");
 
-        builder.HasKey(c => c.GetId());
+        builder.HasKey("id");
 
-        builder.Property(c => c.GetClave())
+        builder.Property<string>("clave")
                .IsRequired()
                .HasMaxLength(100)
                .HasColumnName("clave");
 
-        builder.Property(c => c.GetValor())
+        builder.Property<string>("valor")
                .IsRequired()
                .HasColumnName("valor");
 
-        builder.Property(c => c.GetTipoDato())
+        builder.Property<string>("tipoDato")
                .IsRequired()
-               .HasMaxLength(20) // ej: "int", "boolean", "string"
+               .HasMaxLength(20)
                .HasColumnName("tipo_dato");
 
-        builder.Property(c => c.GetDescripcion())
+        builder.Property<string>("descripcion")
                .HasMaxLength(250)
                .HasColumnName("descripcion");
 
-        builder.HasIndex(c => c.GetClave())
+        builder.HasIndex("clave")
                .IsUnique()
                .HasDatabaseName("idx_configuraciones_clave");
     }

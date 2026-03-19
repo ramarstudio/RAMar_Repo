@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 {
@@ -7,58 +8,56 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
     {
         builder.ToTable("audit_logs");
 
-        builder.HasKey(a => a.GetId());
+        builder.HasKey("id");
 
-        builder.Property(a => a.GetAccion())
+        builder.Property<string>("accion")
                .IsRequired()
                .HasMaxLength(50)
                .HasColumnName("accion");
 
-        builder.Property(a => a.GetEntidad())
+        builder.Property<string>("entidad")
                .IsRequired()
                .HasMaxLength(100)
                .HasColumnName("entidad");
 
-        builder.Property(a => a.GetRegistroId())
+        builder.Property<int>("registroId")
                .IsRequired()
                .HasColumnName("registro_id");
 
-        builder.Property(a => a.GetDatosAnteriores())
-               .HasColumnType("jsonb") // Ideal para PostgreSQL si guardamos JSON
+        builder.Property<string>("datosAnteriores")
+               .HasColumnType("jsonb")
                .HasColumnName("datos_anteriores");
 
-        builder.Property(a => a.GetDatosNuevos())
+        builder.Property<string>("datosNuevos")
                .HasColumnType("jsonb")
                .HasColumnName("datos_nuevos");
 
-        builder.Property(a => a.GetMotivo())
+        builder.Property<string>("motivo")
                .HasMaxLength(500)
                .HasColumnName("motivo");
 
-        builder.Property(a => a.GetFecha())
+        builder.Property<DateTime>("fecha")
                .IsRequired()
                .HasColumnType("timestamp without time zone")
                .HasColumnName("fecha");
 
-        builder.Property(a => a.GetUsuarioId())
+        builder.Property<int>("usuarioId")
                .IsRequired()
                .HasColumnName("usuario_id");
 
-        // Relación con Usuario
         builder.HasOne<Usuario>()
                .WithMany()
-               .HasForeignKey(a => a.GetUsuarioId())
+               .HasForeignKey("usuarioId")
                .OnDelete(DeleteBehavior.Restrict)
                .HasConstraintName("fk_auditlogs_usuario");
 
-        // Índices para búsquedas comunes
-        builder.HasIndex(a => a.GetEntidad())
+        builder.HasIndex("entidad")
                .HasDatabaseName("idx_auditlogs_entidad");
-               
-        builder.HasIndex(a => a.GetUsuarioId())
+
+        builder.HasIndex("usuarioId")
                .HasDatabaseName("idx_auditlogs_usuario_id");
-               
-        builder.HasIndex(a => a.GetFecha())
+
+        builder.HasIndex("fecha")
                .HasDatabaseName("idx_auditlogs_fecha");
     }
 }

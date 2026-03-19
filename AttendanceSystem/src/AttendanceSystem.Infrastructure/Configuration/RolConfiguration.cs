@@ -1,3 +1,4 @@
+using AttendanceSystem.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -7,21 +8,19 @@ public class RolConfiguration : IEntityTypeConfiguration<Rol>
     {
         builder.ToTable("roles");
 
-        // PK
-        builder.HasKey(r => r.GetId());
+        builder.HasKey("id");
 
-        builder.Property(r => r.GetNombre())
+        builder.Property<RolUsuario>("rolUsuarioVal")
                .IsRequired()
-               .HasConversion<string>() // Lo guardamos como string en BD, ej. 'Admin' o 'Empleado'
+               .HasConversion<string>()
                .HasMaxLength(30)
                .HasColumnName("nombre");
 
-        builder.Property(r => r.GetDescripcion())
+        builder.Property<string>("descripcion")
                .HasMaxLength(250)
                .HasColumnName("descripcion");
 
-        // Índices
-        builder.HasIndex(r => r.GetNombre())
+        builder.HasIndex("rolUsuarioVal")
                .IsUnique()
                .HasDatabaseName("idx_roles_nombre");
     }

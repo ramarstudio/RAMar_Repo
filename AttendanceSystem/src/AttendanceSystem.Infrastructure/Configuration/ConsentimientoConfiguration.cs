@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 public class ConsentimientoConfiguration : IEntityTypeConfiguration<Consentimiento>
 {
@@ -7,39 +8,38 @@ public class ConsentimientoConfiguration : IEntityTypeConfiguration<Consentimien
     {
         builder.ToTable("consentimientos");
 
-        builder.HasKey(c => c.GetId());
+        builder.HasKey("id");
 
-        builder.Property(c => c.GetMetodo())
+        builder.Property<string>("metodo")
                .HasMaxLength(50)
                .HasColumnName("metodo");
 
-        builder.Property(c => c.GetAceptado())
+        builder.Property<bool>("aceptado")
                .IsRequired()
                .HasDefaultValue(false)
                .HasColumnName("aceptado");
 
-        builder.Property(c => c.GetFechaConsentimiento())
+        builder.Property<DateTime>("fecha_consentimiento")
                .IsRequired()
                .HasColumnType("timestamp without time zone")
                .HasColumnName("fecha_consentimiento");
 
-        builder.Property(c => c.GetHashDocumento())
+        builder.Property<string>("hash_documento")
                .HasMaxLength(256)
                .HasColumnName("hash_documento");
 
-        builder.Property(c => c.GetIpOrigen())
+        builder.Property<string>("ip_origen")
                .HasMaxLength(45)
                .HasColumnName("ip_origen");
 
-        // Relación 1:1 o M:1 con Empleado
         builder.HasOne<Empleado>()
                .WithMany()
-               .HasForeignKey(c => c.GetEmpleadoId())
+               .HasForeignKey("empleadoId")
                .OnDelete(DeleteBehavior.Cascade)
                .HasConstraintName("fk_consentimientos_empleado");
 
-        builder.HasIndex(c => c.GetEmpleadoId())
-               .IsUnique() // Asumiendo Consentimiento activo único por empleado
+        builder.HasIndex("empleadoId")
+               .IsUnique()
                .HasDatabaseName("idx_consentimientos_empleado");
     }
 }

@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using AttendanceSystem.Core.Entities;
 using AttendanceSystem.Core.Interfaces;
 
 namespace AttendanceSystem.Services

@@ -26,6 +26,7 @@ public class Usuario
     public void SetPassword(string password) { this.password = password; }
     public void SetNombre(string name) { this.name = name; }
     public void SetActivo(bool activo) { this.activo = activo; }
+    public void SetFechaCreacion(DateTime fecha) { this.fecha_creacion = fecha; }
     public void SetRol(Rol rol) { this.rol = rol; }
 
     // --- MÉTODOS DE NEGOCIO ---
