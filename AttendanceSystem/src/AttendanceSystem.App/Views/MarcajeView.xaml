@@ -1,100 +1,129 @@
 <UserControl x:Class="AttendanceSystem.App.Views.MarcajeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="900"
-             Loaded="MarcajeView_Loaded"
-             Unloaded="MarcajeView_Unloaded">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="1100"
+             Loaded="MarcajeView_Loaded" Unloaded="MarcajeView_Unloaded">
 
-    <Grid Background="#F4F6F9">
+    <Grid Background="#F5F5F5">
         <Grid.ColumnDefinitions>
-            <!-- Columna izquierda: cámara en vivo -->
             <ColumnDefinition Width="*"/>
-            <!-- Columna derecha: panel de acción y resultado -->
-            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="360"/>
         </Grid.ColumnDefinitions>
 
-        <!-- ═══════════════════════════════════════════ -->
-        <!-- COLUMNA IZQUIERDA — CÁMARA EN VIVO         -->
-        <!-- ═══════════════════════════════════════════ -->
-        <Border Grid.Column="0" Margin="20" CornerRadius="12" Background="#1A1A2E" ClipToBounds="True">
-            <!-- Preview de video en vivo. La fuente se actualiza desde el code-behind -->
-            <Image x:Name="imgCamara" Stretch="UniformToFill"/>
-        </Border>
+        <!-- CÁMARA EN VIVO -->
+        <materialDesign:Card Grid.Column="0" Margin="16" UniformCornerRadius="12"
+                             materialDesign:ElevationAssist.Elevation="Dp4">
+            <Grid Background="#111827" ClipToBounds="True">
+                <Image x:Name="imgCamara" Stretch="UniformToFill"/>
 
-        <!-- ═══════════════════════════════════════════ -->
-        <!-- COLUMNA DERECHA — PANEL DE MARCAJE         -->
-        <!-- ═══════════════════════════════════════════ -->
-        <StackPanel Grid.Column="1" Margin="0,20,20,20" VerticalAlignment="Top">
+                <!-- Overlay superior con info -->
+                <Border VerticalAlignment="Top" Background="#60000000" Padding="16,10">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="8" Height="8" Fill="#4CAF50" VerticalAlignment="Center"
+                                 Margin="0,0,8,0"/>
+                        <TextBlock x:Name="txtEstadoCamara" Text="Cámara activa"
+                                   Foreground="White" FontSize="13"/>
+                    </StackPanel>
+                </Border>
 
-            <!-- Título -->
-            <TextBlock Text="Registro de Asistencia" FontSize="22" FontWeight="Bold"
-                       Foreground="#2C3E50" Margin="0,0,0,5"/>
-            <TextBlock x:Name="txtFechaHora" Text="Lunes, 18 de marzo - 21:00" 
-                       FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,20"/>
+                <!-- Overlay inferior con fecha -->
+                <Border VerticalAlignment="Bottom" Background="#80000000" Padding="16,10">
+                    <TextBlock x:Name="txtFechaHora" Foreground="White" FontSize="14"
+                               HorizontalAlignment="Center"/>
+                </Border>
+            </Grid>
+        </materialDesign:Card>
 
-            <!-- ─── BOTONES DE TIPO DE MARCAJE ─── -->
-            <TextBlock Text="Selecciona el tipo de marcaje:" FontWeight="SemiBold"
-                       Foreground="#34495E" Margin="0,0,0,10"/>
+        <!-- PANEL DE ACCIÓN -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Margin="0,16,16,16">
+            <StackPanel>
+                <!-- Header -->
+                <materialDesign:Card Margin="0,0,0,12" UniformCornerRadius="12"
+                                     materialDesign:ElevationAssist.Elevation="Dp2" Padding="20">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <materialDesign:PackIcon Kind="FaceRecognition" Width="24" Height="24"
+                                                     Foreground="#1A237E" VerticalAlignment="Center"
+                                                     Margin="0,0,8,0"/>
+                            <TextBlock Text="Registro de Asistencia" FontSize="18" FontWeight="Bold"
+                                       Foreground="#1A237E" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="Selecciona el tipo de marcaje y presiona el botón"
+                                   FontSize="12" Foreground="#757575"/>
+                    </StackPanel>
+                </materialDesign:Card>
 
-            <!-- ENTRADA -->
-            <Button x:Name="btnEntrada" Content="▶  ENTRADA" Height="50" FontSize="15"
-                    FontWeight="Bold" Foreground="White" Background="#27AE60"
-                    BorderThickness="0" Cursor="Hand" Margin="0,0,0,10"
-                    Click="BtnEntrada_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="8"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                <!-- Botones de marcaje -->
+                <materialDesign:Card Margin="0,0,0,12" UniformCornerRadius="12"
+                                     materialDesign:ElevationAssist.Elevation="Dp2" Padding="20">
+                    <StackPanel>
+                        <!-- ENTRADA -->
+                        <Button x:Name="btnEntrada"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="10"
+                                Background="#2E7D32" Foreground="White"
+                                BorderThickness="0" Height="56" FontSize="15" FontWeight="Bold"
+                                Cursor="Hand" Margin="0,0,0,10"
+                                Click="BtnEntrada_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Login" Width="22" Height="22"
+                                                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="ENTRADA" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
 
-            <!-- SALIDA -->
-            <Button x:Name="btnSalida" Content="◼  SALIDA" Height="50" FontSize="15"
-                    FontWeight="Bold" Foreground="White" Background="#E74C3C"
-                    BorderThickness="0" Cursor="Hand" Margin="0,0,0,10"
-                    Click="BtnSalida_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="8"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                        <!-- SALIDA -->
+                        <Button x:Name="btnSalida"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="10"
+                                Background="#C62828" Foreground="White"
+                                BorderThickness="0" Height="56" FontSize="15" FontWeight="Bold"
+                                Cursor="Hand" Margin="0,0,0,10"
+                                Click="BtnSalida_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Logout" Width="22" Height="22"
+                                                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="SALIDA" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
 
-            <!-- BREAK -->
-            <Button x:Name="btnBreak" Content="⏸  BREAK" Height="50" FontSize="15"
-                    FontWeight="Bold" Foreground="White" Background="#F39C12"
-                    BorderThickness="0" Cursor="Hand" Margin="0,0,0,25"
-                    Click="BtnBreak_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="8"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                        <!-- BREAK -->
+                        <Button x:Name="btnBreak"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="10"
+                                Background="#E65100" Foreground="White"
+                                BorderThickness="0" Height="56" FontSize="15" FontWeight="Bold"
+                                Cursor="Hand"
+                                Click="BtnBreak_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="PauseCircle" Width="22" Height="22"
+                                                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="BREAK" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </materialDesign:Card>
 
-            <!-- ─── PANEL DE RESULTADO ─── -->
-            <!-- Está oculto hasta que se registre un marcaje -->
-            <Border x:Name="panelResultado" CornerRadius="10" Padding="15"
-                    Visibility="Collapsed" Margin="0,0,0,15">
-                <StackPanel>
-                    <TextBlock x:Name="txtResultadoIcono" FontSize="28" 
-                               HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                    <TextBlock x:Name="txtResultadoMensaje" FontSize="14" FontWeight="SemiBold"
-                               TextWrapping="Wrap" HorizontalAlignment="Center"
-                               TextAlignment="Center"/>
-                    <TextBlock x:Name="txtResultadoTardanza" FontSize="12" Foreground="#E74C3C"
-                               HorizontalAlignment="Center" Margin="0,5,0,0"
-                               Visibility="Collapsed"/>
-                </StackPanel>
-            </Border>
-
-            <!-- Estado de cámara / errores -->
-            <TextBlock x:Name="txtEstadoCamara" Text="Cámara iniciando..." FontSize="12"
-                       Foreground="#95A5A6" TextWrapping="Wrap" HorizontalAlignment="Center"/>
-
-        </StackPanel>
+                <!-- Panel resultado -->
+                <materialDesign:Card x:Name="panelResultado"
+                                     Margin="0,0,0,12" UniformCornerRadius="12"
+                                     materialDesign:ElevationAssist.Elevation="Dp2" Padding="20"
+                                     Visibility="Collapsed">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock x:Name="txtResultadoIcono" FontSize="36"
+                                   HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <TextBlock x:Name="txtResultadoMensaje" FontSize="14" FontWeight="SemiBold"
+                                   TextWrapping="Wrap" HorizontalAlignment="Center"
+                                   TextAlignment="Center"/>
+                        <TextBlock x:Name="txtResultadoTardanza" FontSize="12" Foreground="#D32F2F"
+                                   HorizontalAlignment="Center" Margin="0,6,0,0"
+                                   Visibility="Collapsed"/>
+                    </StackPanel>
+                </materialDesign:Card>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

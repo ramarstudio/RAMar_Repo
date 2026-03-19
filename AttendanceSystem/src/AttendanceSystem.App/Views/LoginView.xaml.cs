@@ -14,6 +14,11 @@ namespace AttendanceSystem.App.Views
             _authController = authController;
         }
 
+        private void TxtUsername_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter) txtPassword.Focus();
+        }
+
         private async void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
             // Ocultamos errores previos y deshabilitamos el botón para evitar doble envío
@@ -36,7 +41,7 @@ namespace AttendanceSystem.App.Views
 
             // Restauramos el botón
             btnLogin.IsEnabled = true;
-            btnLogin.Content = "Ingresar al Sistema";
+            btnLogin.Content = "INGRESAR AL SISTEMA";
         }
     }
 }
