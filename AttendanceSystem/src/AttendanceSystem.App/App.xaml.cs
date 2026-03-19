@@ -103,10 +103,14 @@ namespace AttendanceSystem.App
             services.AddSingleton<NavigationController>(); // Singleton para que todos usen el mismo ruteador
             services.AddTransient<AuthController>();
             services.AddTransient<BiometricoController>();
+            services.AddTransient<MarcajeController>();
+            services.AddTransient<HistorialController>();
 
             // Vistas (Pantallas)
             services.AddTransient<MainWindow>();
             services.AddTransient<LoginView>();
+            services.AddTransient<MarcajeView>();
+            services.AddTransient<HistorialView>();
             
             services.AddSingleton<IServiceProvider>(sp => sp);
         }

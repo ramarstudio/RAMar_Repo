@@ -4,8 +4,97 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <TextBlock Text="Pantalla Dashboard" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+             d:DesignHeight="600" d:DesignWidth="900"
+             Loaded="MarcajeView_Loaded"
+             Unloaded="MarcajeView_Unloaded">
+
+    <Grid Background="#F4F6F9">
+        <Grid.ColumnDefinitions>
+            <!-- Columna izquierda: cámara en vivo -->
+            <ColumnDefinition Width="*"/>
+            <!-- Columna derecha: panel de acción y resultado -->
+            <ColumnDefinition Width="350"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- COLUMNA IZQUIERDA — CÁMARA EN VIVO         -->
+        <!-- ═══════════════════════════════════════════ -->
+        <Border Grid.Column="0" Margin="20" CornerRadius="12" Background="#1A1A2E" ClipToBounds="True">
+            <!-- Preview de video en vivo. La fuente se actualiza desde el code-behind -->
+            <Image x:Name="imgCamara" Stretch="UniformToFill"/>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- COLUMNA DERECHA — PANEL DE MARCAJE         -->
+        <!-- ═══════════════════════════════════════════ -->
+        <StackPanel Grid.Column="1" Margin="0,20,20,20" VerticalAlignment="Top">
+
+            <!-- Título -->
+            <TextBlock Text="Registro de Asistencia" FontSize="22" FontWeight="Bold"
+                       Foreground="#2C3E50" Margin="0,0,0,5"/>
+            <TextBlock x:Name="txtFechaHora" Text="Lunes, 18 de marzo - 21:00" 
+                       FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,20"/>
+
+            <!-- ─── BOTONES DE TIPO DE MARCAJE ─── -->
+            <TextBlock Text="Selecciona el tipo de marcaje:" FontWeight="SemiBold"
+                       Foreground="#34495E" Margin="0,0,0,10"/>
+
+            <!-- ENTRADA -->
+            <Button x:Name="btnEntrada" Content="▶  ENTRADA" Height="50" FontSize="15"
+                    FontWeight="Bold" Foreground="White" Background="#27AE60"
+                    BorderThickness="0" Cursor="Hand" Margin="0,0,0,10"
+                    Click="BtnEntrada_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="8"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <!-- SALIDA -->
+            <Button x:Name="btnSalida" Content="◼  SALIDA" Height="50" FontSize="15"
+                    FontWeight="Bold" Foreground="White" Background="#E74C3C"
+                    BorderThickness="0" Cursor="Hand" Margin="0,0,0,10"
+                    Click="BtnSalida_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="8"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <!-- BREAK -->
+            <Button x:Name="btnBreak" Content="⏸  BREAK" Height="50" FontSize="15"
+                    FontWeight="Bold" Foreground="White" Background="#F39C12"
+                    BorderThickness="0" Cursor="Hand" Margin="0,0,0,25"
+                    Click="BtnBreak_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="8"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <!-- ─── PANEL DE RESULTADO ─── -->
+            <!-- Está oculto hasta que se registre un marcaje -->
+            <Border x:Name="panelResultado" CornerRadius="10" Padding="15"
+                    Visibility="Collapsed" Margin="0,0,0,15">
+                <StackPanel>
+                    <TextBlock x:Name="txtResultadoIcono" FontSize="28" 
+                               HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock x:Name="txtResultadoMensaje" FontSize="14" FontWeight="SemiBold"
+                               TextWrapping="Wrap" HorizontalAlignment="Center"
+                               TextAlignment="Center"/>
+                    <TextBlock x:Name="txtResultadoTardanza" FontSize="12" Foreground="#E74C3C"
+                               HorizontalAlignment="Center" Margin="0,5,0,0"
+                               Visibility="Collapsed"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Estado de cámara / errores -->
+            <TextBlock x:Name="txtEstadoCamara" Text="Cámara iniciando..." FontSize="12"
+                       Foreground="#95A5A6" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+
+        </StackPanel>
     </Grid>
 </UserControl>

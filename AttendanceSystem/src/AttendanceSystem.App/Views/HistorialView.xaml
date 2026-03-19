@@ -3,9 +3,116 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <TextBlock Text="Pantalla Dashboard" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="900"
+             Loaded="HistorialView_Loaded">
+
+    <Grid Background="#F4F6F9" Margin="20">
+        <Grid.RowDefinitions>
+            <!-- Fila 0: Título + filtros -->
+            <RowDefinition Height="Auto"/>
+            <!-- Fila 1: Tabla de marcajes -->
+            <RowDefinition Height="*"/>
+            <!-- Fila 2: Barra de resumen -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- FILA 0 — CABECERA Y FILTRO DE MES          -->
+        <!-- ═══════════════════════════════════════════ -->
+        <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="20,15"
+                Margin="0,0,0,15">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.08"/>
+            </Border.Effect>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Título -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="Historial de Marcajes" FontSize="20" FontWeight="Bold"
+                               Foreground="#2C3E50"/>
+                    <TextBlock x:Name="txtSubtitulo" Text="Mostrando registros del mes actual"
+                               FontSize="13" Foreground="#7F8C8D"/>
+                </StackPanel>
+
+                <!-- Filtro de mes -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Mes:" VerticalAlignment="Center"
+                               FontWeight="SemiBold" Foreground="#34495E" Margin="0,0,10,0"/>
+                    <DatePicker x:Name="dpMes" Width="160" Height="35"
+                                SelectedDateChanged="DpMes_SelectedDateChanged"
+                                VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- FILA 1 — TABLA DE MARCAJES                 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15"
+                Margin="0,0,0,15">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.08"/>
+            </Border.Effect>
+
+            <Grid>
+                <!-- Mensaje cuando no hay datos -->
+                <TextBlock x:Name="txtSinDatos" Text="No se encontraron marcajes para el período seleccionado."
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="#BDC3C7" FontSize="15" Visibility="Collapsed"/>
+
+                <!-- Tabla principal -->
+                <DataGrid x:Name="dgHistorial"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          GridLinesVisibility="Horizontal"
+                          HeadersVisibility="Column"
+                          SelectionMode="Single"
+                          RowBackground="White"
+                          AlternatingRowBackground="#F9F9F9"
+                          BorderThickness="0"
+                          CanUserResizeRows="False"
+                          ColumnHeaderHeight="40">
+
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#EAF0FB"/>
+                            <Setter Property="Foreground" Value="#2C3E50"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Padding" Value="12,0"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Fecha"    Binding="{Binding Fecha}"    Width="110"/>
+                        <DataGridTextColumn Header="Hora"     Binding="{Binding Hora}"     Width="80"/>
+                        <DataGridTextColumn Header="Tipo"     Binding="{Binding Tipo}"     Width="100"/>
+                        <DataGridTextColumn Header="Tardanza" Binding="{Binding Tardanza}" Width="90"/>
+                        <DataGridTextColumn Header="Minutos"  Binding="{Binding Minutos}"  Width="90"/>
+                        <DataGridTextColumn Header="Método"   Binding="{Binding Metodo}"   Width="100"/>
+                    </DataGrid.Columns>
+
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- FILA 2 — BARRA DE RESUMEN                  -->
+        <!-- ═══════════════════════════════════════════ -->
+        <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="15,10">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.07"/>
+            </Border.Effect>
+            <TextBlock x:Name="txtResumen"
+                       Text="Cargando..." FontSize="13"
+                       Foreground="#7F8C8D" HorizontalAlignment="Center"/>
+        </Border>
+
     </Grid>
 </UserControl>

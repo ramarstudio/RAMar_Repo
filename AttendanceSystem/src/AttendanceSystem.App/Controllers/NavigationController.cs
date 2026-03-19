@@ -45,8 +45,8 @@ namespace AttendanceSystem.App.Controllers
             }
             else
             {
-                //var marcajeView = (MarcajeView)_serviceProvider.GetService(typeof(MarcajeView));
-                //_navigationHelper.CambiarVista(marcajeView);
+                var marcajeView = (MarcajeView)_serviceProvider.GetService(typeof(MarcajeView));
+                _navigationHelper.CambiarVista(marcajeView);
             }
         }
     }

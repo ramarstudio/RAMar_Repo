@@ -80,5 +80,11 @@ namespace AttendanceSystem.App.Controllers
                 return (false, $"Error en la verificación biométrica: {ex.Message}");
             }
         }
+
+        // 4. Expone el frame actual como Base64 para que MarcajeController lo use al registrar
+        public string CapturarFrameActual()
+        {
+            return _cameraHelper.CapturarFrameEnBase64();
+        }
     }
 }
