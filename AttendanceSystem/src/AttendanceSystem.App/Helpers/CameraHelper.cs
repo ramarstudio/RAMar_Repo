@@ -1,114 +1,142 @@
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using AForge.Video;
-using AForge.Video.DirectShow;
+using OpenCvSharp;
 
 namespace AttendanceSystem.App.Helpers
 {
-    public class CameraHelper
+    public class CameraHelper : IDisposable
     {
-        private FilterInfoCollection _videoDevices;
-        private VideoCaptureDevice _videoSource;
-        private Bitmap _lastFrame;
+        // volatile garantiza que el flag sea visible entre hilos sin necesidad de lock
+        private volatile bool _running;
+        private volatile bool _disposed;
 
-        // Evento que la Vista (MarcajeView) escuchará para mostrar el video en vivo
-        public event EventHandler<BitmapImage> OnFrameArrived;
+        private VideoCapture _capture;
+        private Thread _captureThread;
+        private Mat _lastFrame = new Mat();
+        private readonly object _frameLock = new object();
 
-        public CameraHelper()
-        {
-            // Busca todas las cámaras web conectadas a la PC
-            _videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
-        }
+        public event EventHandler<BitmapSource> OnFrameArrived;
 
         public bool HayCamarasDisponibles()
         {
-            return _videoDevices != null && _videoDevices.Count > 0;
+            try
+            {
+                using var test = new VideoCapture(0);
+                return test.IsOpened();
+            }
+            catch { return false; }
         }
 
-        public void IniciarCamara(int indiceDispositivo = 0)
+        public void IniciarCamara(int index = 0)
         {
-            if (!HayCamarasDisponibles())
-                throw new InvalidOperationException("No se detectó ninguna cámara web en el equipo.");
-
-            // Detener si ya hay una corriendo
             DetenerCamara();
 
-            // Iniciar la cámara seleccionada
-            _videoSource = new VideoCaptureDevice(_videoDevices[indiceDispositivo].MonikerString);
-            _videoSource.NewFrame += VideoSource_NewFrame;
-            _videoSource.Start();
+            var cap = new VideoCapture(index);
+            if (!cap.IsOpened())
+            {
+                cap.Dispose();
+                throw new InvalidOperationException("No se pudo abrir la cámara. Verifique que esté conectada.");
+            }
+
+            _capture = cap;
+            _running = true;
+
+            _captureThread = new Thread(CaptureLoop)
+            {
+                IsBackground = true,
+                Name = "CameraCapture"
+            };
+            _captureThread.Start();
+        }
+
+        private void CaptureLoop()
+        {
+            using var frame = new Mat();
+
+            while (_running)
+            {
+                try
+                {
+                    // Copia local del puntero: evita race condition si DetenerCamara
+                    // nulifica _capture mientras este hilo está leyendo.
+                    var cap = _capture;
+                    if (cap == null || !cap.Read(frame) || frame.Empty())
+                    {
+                        Thread.Sleep(33);
+                        continue;
+                    }
+
+                    lock (_frameLock)
+                    {
+                        frame.CopyTo(_lastFrame);
+                    }
+
+                    var bmp = MatToBitmapSource(frame);
+                    Application.Current?.Dispatcher.BeginInvoke(
+                        () => OnFrameArrived?.Invoke(this, bmp));
+
+                    Thread.Sleep(33); // ~30 fps
+                }
+                catch (Exception)
+                {
+                    Thread.Sleep(100);
+                }
+            }
         }
 
         public void DetenerCamara()
         {
-            if (_videoSource != null && _videoSource.IsRunning)
-            {
-                _videoSource.SignalToStop();
-                _videoSource.WaitForStop();
-                _videoSource.NewFrame -= VideoSource_NewFrame;
-                _videoSource = null;
-            }
+            _running = false;
+
+            // Esperar a que el thread termine antes de liberar _capture
+            _captureThread?.Join(500);
+            _captureThread = null;
+
+            // Snapshot del puntero antes de nulificar: garantiza que CaptureLoop
+            // no acceda a un objeto ya dispuesto.
+            var cap = _capture;
+            _capture = null;
+            cap?.Release();
+            cap?.Dispose();
         }
 
-        private void VideoSource_NewFrame(object sender, NewFrameEventArgs eventArgs)
-        {
-            // 1. Guardamos el último frame capturado (lo clonamos para evitar bloqueos)
-            if (_lastFrame != null) _lastFrame.Dispose();
-            _lastFrame = (Bitmap)eventArgs.Frame.Clone();
-
-            // 2. Convertimos el formato para que WPF pueda dibujarlo en pantalla
-            BitmapImage wpfImage = ConvertirBitmapABitmapImage(_lastFrame);
-
-            // 3. Avisamos a la interfaz gráfica que hay un nuevo cuadro listo.
-            // Usamos Dispatcher porque la cámara corre en un hilo secundario y la UI en el principal.
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                OnFrameArrived?.Invoke(this, wpfImage);
-            });
-        }
-
-        // Este es el método que usará tu BiometricoController para mandar la foto a Python
+        // Captura el frame actual como JPEG en Base64 para enviar al microservicio Python.
+        // Se llama solo al momento del marcaje, no en cada frame del preview.
         public string CapturarFrameEnBase64()
         {
-            if (_lastFrame == null) return string.Empty;
-
-            using (var ms = new MemoryStream())
+            lock (_frameLock)
             {
-                // Guardamos el frame actual en memoria con formato JPEG para comprimirlo
-                // y evitar enviar un Base64 absurdamente grande a Python
-                lock (_lastFrame) 
-                {
-                    using (var bitmapClone = new Bitmap(_lastFrame))
-                    {
-                        bitmapClone.Save(ms, ImageFormat.Jpeg);
-                    }
-                }
-                
-                byte[] imageBytes = ms.ToArray();
-                return Convert.ToBase64String(imageBytes);
+                if (_lastFrame == null || _lastFrame.Empty()) return string.Empty;
+                Cv2.ImEncode(".jpg", _lastFrame, out var buffer);
+                return Convert.ToBase64String(buffer);
             }
         }
 
-        // Convierte System.Drawing.Bitmap (AForge) a System.Windows.Media.Imaging.BitmapImage (WPF)
-        private BitmapImage ConvertirBitmapABitmapImage(Bitmap bitmap)
+        private static BitmapSource MatToBitmapSource(Mat mat)
         {
-            using (MemoryStream memory = new MemoryStream())
+            Cv2.ImEncode(".bmp", mat, out var buf);
+            using var ms = new MemoryStream(buf);
+            var bmp = new BitmapImage();
+            bmp.BeginInit();
+            bmp.StreamSource  = ms;
+            bmp.CacheOption   = BitmapCacheOption.OnLoad;
+            bmp.EndInit();
+            bmp.Freeze(); // Freeze permite usar el objeto desde cualquier hilo
+            return bmp;
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+            DetenerCamara();
+            lock (_frameLock)
             {
-                bitmap.Save(memory, ImageFormat.Bmp);
-                memory.Position = 0;
-                
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = memory;
-                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapImage.EndInit();
-                bitmapImage.Freeze(); // Vital para prevenir errores al cruzar hilos (Thread-safe)
-                
-                return bitmapImage;
+                _lastFrame?.Dispose();
+                _lastFrame = null;
             }
         }
     }

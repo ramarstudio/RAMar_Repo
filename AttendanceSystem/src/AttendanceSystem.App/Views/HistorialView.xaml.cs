@@ -19,17 +19,32 @@ namespace AttendanceSystem.App.Views
         // ── Cuando la vista carga: mostrar el mes actual ──
         private async void HistorialView_Loaded(object sender, RoutedEventArgs e)
         {
-            // Establecer el mes actual en el DatePicker
-            // Esto dispara SelectedDateChanged, que llama CargarHistorial automáticamente
-            dpMes.SelectedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            try
+            {
+                // Establecer el mes actual en el DatePicker
+                // Esto dispara SelectedDateChanged, que llama CargarHistorial automáticamente
+                dpMes.SelectedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            }
+            catch (Exception ex)
+            {
+                txtSubtitulo.Text = "Error al cargar historial.";
+                txtResumen.Text   = ex.Message;
+            }
         }
 
         // ── Cada vez que el usuario cambia el mes seleccionado ──
         private async void DpMes_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             if (dpMes.SelectedDate == null) return;
-
-            await CargarHistorial(dpMes.SelectedDate.Value);
+            try
+            {
+                await CargarHistorial(dpMes.SelectedDate.Value);
+            }
+            catch (Exception ex)
+            {
+                txtSubtitulo.Text = "Error al cargar historial.";
+                txtResumen.Text   = ex.Message;
+            }
         }
 
         // ─── Método compartido de carga ────────────────────────────────────

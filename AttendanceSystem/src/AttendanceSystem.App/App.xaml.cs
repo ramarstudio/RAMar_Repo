@@ -12,8 +12,10 @@ using AttendanceSystem.Core.Enums;
 using AttendanceSystem.Services;
 using AttendanceSystem.Security;
 using AttendanceSystem.App.Controllers;
+using AttendanceSystem.App.Controllers.Admin;
 using AttendanceSystem.App.Helpers;
 using AttendanceSystem.App.Views;
+using AttendanceSystem.App.Views.Admin;
 
 
 
@@ -31,10 +33,12 @@ namespace AttendanceSystem.App
             // Compatibilidad Npgsql: permite escribir DateTime(Kind=UTC) en columnas timestamp without time zone
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-            // 0. Cargar appsettings.json para toda la aplicación
+            // 0. Cargar configuración: appsettings.json + User Secrets (sobreescribe en desarrollo)
+            // User Secrets guarda datos sensibles en %APPDATA%\Microsoft\UserSecrets\ (fuera del repo)
             _configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddUserSecrets<App>(optional: true)
                 .Build();
 
             // 1. Crear el "Contenedor" donde guardaremos todas nuestras piezas
@@ -67,7 +71,6 @@ namespace AttendanceSystem.App
             // Usamos los valores por defecto definidos en el constructor de SessionOptions
             services.AddSingleton(new SessionOptions());
             services.AddSingleton<SessionManager>(); // Singleton: Solo hay una sesión en toda la app
-            services.AddSingleton<HttpClient>(); // HttpClient debe ser Singleton por buenas prácticas
             
           
             // ==========================================
@@ -92,6 +95,13 @@ namespace AttendanceSystem.App
             // C. CAPA DE SERVICIOS (LÓGICA DE NEGOCIO)
             // ==========================================
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IMarcajeService, MarcajeService>();
+            var encryptionKey = Environment.GetEnvironmentVariable("AS_ENCRYPTION_KEY")
+                ?? _configuration["Security:EncryptionKey"];
+            var hmacKey = Environment.GetEnvironmentVariable("AS_HMAC_KEY")
+                ?? _configuration["Security:HmacKey"];
+            services.AddSingleton(new EncryptionOptions(encryptionKey, hmacKey));
+            services.AddTransient<IEncryptionService, EncryptionService>();
             // Lee el pepper de hash desde appsettings.json (sección Security.HashPepper)
             var pepper = Environment.GetEnvironmentVariable("AS_HASH_PEPPER")
                 ?? _configuration["Security:HashPepper"]
@@ -120,11 +130,20 @@ namespace AttendanceSystem.App
             services.AddTransient<MarcajeController>();
             services.AddTransient<HistorialController>();
 
+            // Controladores del módulo Admin
+            services.AddTransient<DashboardController>();
+            services.AddTransient<UsuariosController>();
+            services.AddTransient<MarcajesAdminController>();
+            services.AddTransient<ReportesController>();
+
             // Vistas (Pantallas)
             services.AddTransient<MainWindow>();
             services.AddTransient<LoginView>();
             services.AddTransient<MarcajeView>();
             services.AddTransient<HistorialView>();
+
+            // Shell de administración (las sub-vistas las crea el shell, no DI)
+            services.AddTransient<AdminShellView>();
             
             services.AddSingleton<IServiceProvider>(sp => sp);
         }
