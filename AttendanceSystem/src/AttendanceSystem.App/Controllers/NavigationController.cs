@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using AttendanceSystem.App.Helpers;
 using AttendanceSystem.Security;
 using AttendanceSystem.App.Views;
+using AttendanceSystem.App.Views.Admin;
 
 namespace AttendanceSystem.App.Controllers
 {
@@ -40,8 +41,8 @@ namespace AttendanceSystem.App.Controllers
 
             if (_sessionManager.EsAdministrador())
             {
-                //var dashboardView = (DashboardView)_serviceProvider.GetService(typeof(DashboardView));
-                //_navigationHelper.CambiarVista(dashboardView);
+                var adminShell = (AdminShellView)_serviceProvider.GetService(typeof(AdminShellView));
+                _navigationHelper.CambiarVista(adminShell);
             }
             else
             {

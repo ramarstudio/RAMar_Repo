@@ -13,6 +13,11 @@ namespace AttendanceSystem.Core.DTOs
         public DateTime ExpiresAt { get; }
         public bool IsActive => DateTime.UtcNow < ExpiresAt;
 
+        // Compatibilidad con código que use el patrón getter del dominio
+        public int    GetId()       => UserId;
+        public string GetNombre()   => Username;
+        public string GetUsername() => Username;
+
         public SessionInfo(int userId, string username, string role, string token, DateTime createdAt, DateTime expiresAt)
         {
             UserId = userId;

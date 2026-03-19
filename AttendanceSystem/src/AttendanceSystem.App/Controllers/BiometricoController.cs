@@ -18,7 +18,7 @@ namespace AttendanceSystem.App.Controllers
         }
 
         // 1. Método para encender la cámara y vincularla a la Vista (UI)
-        public void IniciarCamara(EventHandler<BitmapImage> onFrameArrivedCallback)
+        public void IniciarCamara(EventHandler<BitmapSource> onFrameArrivedCallback)
         {
             try
             {
@@ -39,8 +39,8 @@ namespace AttendanceSystem.App.Controllers
             }
         }
 
-        // 2. Método para apagar la cámara 
-        public void ApagarCamara(EventHandler<BitmapImage> onFrameArrivedCallback)
+        // 2. Método para apagar la cámara
+        public void ApagarCamara(EventHandler<BitmapSource> onFrameArrivedCallback)
         {
             _cameraHelper.OnFrameArrived -= onFrameArrivedCallback;
             _cameraHelper.DetenerCamara();

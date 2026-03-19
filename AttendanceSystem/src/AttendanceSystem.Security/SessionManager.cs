@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.Threading;
 using AttendanceSystem.Core.DTOs;
-
+using AttendanceSystem.Core.Enums;
 using AttendanceSystem.Core.Interfaces;
 
 namespace AttendanceSystem.Security
@@ -159,10 +159,15 @@ namespace AttendanceSystem.Security
         public bool EsAdministrador()
         {
             var session = GetSession(_currentSessionToken);
-            return session != null && session.Role == "ADMINISTRADOR";
+            // Compara con el nombre canónico del enum RolUsuario.Admin ("Admin")
+            // que es lo que IniciarSesion() almacena vía rol.GetNombre().ToString()
+            return session != null && session.Role == nameof(RolUsuario.Admin);
         }
         
         // Propiedad extra por si los controladores necesitan los datos del usuario actual
-        public SessionInfo GetCurrentSession() => GetSession(_currentSessionToken);
+        public SessionInfo GetCurrentSession()    => GetSession(_currentSessionToken);
+
+        // Alias semántico para código existente que usa el patrón "ObtenerUsuarioActual"
+        public SessionInfo ObtenerUsuarioActual() => GetCurrentSession();
     }
 }
