@@ -10,6 +10,90 @@
              Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{DynamicResource MaterialDesignFont}">
 
+    <UserControl.Resources>
+
+        <!-- Tipo badge DataTemplate -->
+        <DataTemplate x:Key="TipoCellTemplate">
+            <Border CornerRadius="10" Padding="10,3" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#E8F5E9"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Tipo}" Value="Entrada">
+                                <Setter Property="Background" Value="#E8F5E9"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tipo}" Value="Salida">
+                                <Setter Property="Background" Value="#FFEBEE"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tipo}" Value="BreakInicio">
+                                <Setter Property="Background" Value="#FFF3E0"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tipo}" Value="BreakFin">
+                                <Setter Property="Background" Value="#FFF3E0"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding Tipo}" FontSize="12" FontWeight="SemiBold">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#2E7D32"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Tipo}" Value="Entrada">
+                                    <Setter Property="Foreground" Value="#2E7D32"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Tipo}" Value="Salida">
+                                    <Setter Property="Foreground" Value="#C62828"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Tipo}" Value="BreakInicio">
+                                    <Setter Property="Foreground" Value="#E65100"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Tipo}" Value="BreakFin">
+                                    <Setter Property="Foreground" Value="#E65100"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Border>
+        </DataTemplate>
+
+        <!-- Tardanza badge DataTemplate -->
+        <DataTemplate x:Key="TardanzaCellTemplate">
+            <Border CornerRadius="10" Padding="10,3" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#E8F5E9"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Tardanza}" Value="Sí">
+                                <Setter Property="Background" Value="#FFF3E0"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tardanza}" Value="No">
+                                <Setter Property="Background" Value="#E8F5E9"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding Tardanza}" FontSize="12" FontWeight="SemiBold">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#2E7D32"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Tardanza}" Value="Sí">
+                                    <Setter Property="Foreground" Value="#BF360C"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Tardanza}" Value="No">
+                                    <Setter Property="Foreground" Value="#2E7D32"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Border>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -20,85 +104,122 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- ─── HEADER ─── -->
-        <md:Card Grid.Row="0" Margin="0,0,0,14" Padding="20,14" UniformCornerRadius="8">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+        <!-- HEADER -->
+        <md:Card Grid.Row="0" Margin="0,0,0,14" Padding="0" UniformCornerRadius="10"
+                 md:ElevationAssist.Elevation="Dp2">
+            <Border CornerRadius="10" Padding="22,16">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#F8FAFE" Offset="0"/>
+                        <GradientStop Color="#EEF4FF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <md:PackIcon Kind="ClipboardClock" Width="26" Height="26"
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="38" Height="38" CornerRadius="10"
+                                    Background="{DynamicResource PrimaryHueMidBrush}"
+                                    Margin="0,0,12,0" VerticalAlignment="Center">
+                                <md:PackIcon Kind="ClipboardClock" Width="22" Height="22"
+                                             Foreground="White"
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Gestión de Marcajes"
+                                           Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                                           FontWeight="Bold"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="Consulta y registro manual de asistencias"
+                                           Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                                           Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                           Margin="0,1,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Button Grid.Column="1"
+                            Style="{DynamicResource MaterialDesignRaisedButton}"
+                            Click="BtnMostrarFormManual_Click"
+                            VerticalAlignment="Center"
+                            Height="38"
+                            md:ButtonAssist.CornerRadius="8">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="PencilPlus" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                            <TextBlock Text="Marcaje Manual" VerticalAlignment="Center" FontWeight="Medium"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+        </md:Card>
+
+        <!-- FILTROS -->
+        <md:Card Grid.Row="1" Margin="0,0,0,14" Padding="0" UniformCornerRadius="10"
+                 md:ElevationAssist.Elevation="Dp1">
+            <Border CornerRadius="10" Padding="20,14">
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="32" Height="32" CornerRadius="8"
+                            Background="#F0F4FF" Margin="0,0,14,0"
+                            VerticalAlignment="Center">
+                        <md:PackIcon Kind="FilterOutline" Width="16" Height="16"
                                      Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                     VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <TextBlock Text="Gestión de Marcajes"
-                                   Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
-                                   VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <TextBlock Text="Consulta y registro manual de asistencias"
-                               Style="{DynamicResource MaterialDesignCaptionTextBlock}"
-                               Foreground="{DynamicResource MaterialDesignBodyLight}"
-                               Margin="36,2,0,0"/>
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"/>
+                    </Border>
+
+                    <ComboBox x:Name="cmbEmpleado"
+                              Width="210"
+                              md:HintAssist.Hint="Empleado"
+                              md:HintAssist.IsFloating="True"
+                              Style="{DynamicResource MaterialDesignOutlinedComboBox}"
+                              Margin="0,0,16,0">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Display}" VerticalAlignment="Center" Margin="0,2"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <DatePicker x:Name="dpMes"
+                                Width="170"
+                                md:HintAssist.Hint="Mes / Año"
+                                md:HintAssist.IsFloating="True"
+                                Style="{DynamicResource MaterialDesignOutlinedDatePicker}"
+                                VerticalContentAlignment="Center"
+                                Margin="0,0,16,0"/>
+
+                    <Button Style="{DynamicResource MaterialDesignRaisedButton}"
+                            Click="BtnBuscar_Click" VerticalAlignment="Bottom" Margin="0,0,0,2"
+                            md:ButtonAssist.CornerRadius="6">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Magnify" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Buscar" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
-
-                <Button Grid.Column="1"
-                        Style="{DynamicResource MaterialDesignRaisedButton}"
-                        Click="BtnMostrarFormManual_Click"
-                        VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <md:PackIcon Kind="PencilPlus" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <TextBlock Text="Marcaje Manual" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-            </Grid>
+            </Border>
         </md:Card>
 
-        <!-- ─── FILTROS ─── -->
-        <md:Card Grid.Row="1" Margin="0,0,0,14" Padding="20,14" UniformCornerRadius="8">
-            <StackPanel Orientation="Horizontal">
-                <md:PackIcon Kind="FilterOutline" Width="18" Height="18"
-                             Foreground="{DynamicResource MaterialDesignBodyLight}"
-                             VerticalAlignment="Center" Margin="0,0,12,0"/>
-
-                <ComboBox x:Name="cmbEmpleado"
-                          Width="210"
-                          md:HintAssist.Hint="Empleado"
-                          md:HintAssist.IsFloating="True"
-                          Style="{DynamicResource MaterialDesignOutlinedComboBox}"
-                          Margin="0,0,20,0">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Display}" VerticalAlignment="Center" Margin="0,2"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <DatePicker x:Name="dpMes"
-                            Width="170"
-                            md:HintAssist.Hint="Mes / Año"
-                            md:HintAssist.IsFloating="True"
-                            Style="{DynamicResource MaterialDesignOutlinedDatePicker}"
-                            VerticalContentAlignment="Center"
-                            Margin="0,0,20,0"/>
-
-                <Button Style="{DynamicResource MaterialDesignRaisedButton}"
-                        Click="BtnBuscar_Click" VerticalAlignment="Bottom" Margin="0,0,0,2">
-                    <StackPanel Orientation="Horizontal">
-                        <md:PackIcon Kind="Magnify" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <TextBlock Text="Buscar" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </md:Card>
-
-        <!-- ─── TABLA MARCAJES ─── -->
-        <md:Card Grid.Row="2" Margin="0,0,0,14" Padding="4" UniformCornerRadius="8">
+        <!-- TABLA MARCAJES -->
+        <md:Card Grid.Row="2" Margin="0,0,0,14" Padding="0" UniformCornerRadius="10"
+                 md:ElevationAssist.Elevation="Dp2">
             <Grid>
+                <!-- Empty state -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding Visibility, ElementName=txtSinMarcajes}">
+                    <md:PackIcon Kind="ClockRemove" Width="52" Height="52"
+                                 Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                 HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                </StackPanel>
                 <TextBlock x:Name="txtSinMarcajes"
                            Text="Selecciona un empleado y un mes para ver sus marcajes."
                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Margin="0,72,0,0"
                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
                            Foreground="{DynamicResource MaterialDesignBodyLight}"
                            Visibility="Visible"/>
@@ -108,109 +229,182 @@
                           GridLinesVisibility="Horizontal" HeadersVisibility="Column"
                           BorderThickness="0" CanUserResizeRows="False"
                           SelectionMode="Single"
+                          RowHeight="46"
+                          RowBackground="{DynamicResource MaterialDesignBackground}"
+                          AlternatingRowBackground="#F7F9FC"
                           Style="{DynamicResource MaterialDesignDataGrid}"
                           Visibility="Collapsed">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Fecha"    Binding="{Binding Fecha}"    Width="120"/>
-                        <DataGridTextColumn Header="Hora"     Binding="{Binding Hora}"     Width="85"/>
-                        <DataGridTextColumn Header="Tipo"     Binding="{Binding Tipo}"     Width="120"/>
-                        <DataGridTextColumn Header="Tardanza" Binding="{Binding Tardanza}" Width="95"/>
-                        <DataGridTextColumn Header="Minutos"  Binding="{Binding Minutos}"  Width="95"/>
-                        <DataGridTextColumn Header="Método"   Binding="{Binding Metodo}"   Width="*"/>
+                        <DataGridTextColumn Header="Fecha"    Binding="{Binding Fecha}"    Width="120">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FontWeight" Value="Medium"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Hora"     Binding="{Binding Hora}"     Width="85">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTemplateColumn Header="Tipo" Width="130"
+                                                CellTemplate="{StaticResource TipoCellTemplate}"/>
+                        <DataGridTemplateColumn Header="Tardanza" Width="100"
+                                                CellTemplate="{StaticResource TardanzaCellTemplate}"/>
+                        <DataGridTextColumn Header="Minutos"  Binding="{Binding Minutos}"  Width="95">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Método"   Binding="{Binding Metodo}"   Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
         </md:Card>
 
-        <!-- ─── RESUMEN ─── -->
-        <md:Card Grid.Row="3" Margin="0,0,0,14" Padding="16,10" UniformCornerRadius="6">
-            <StackPanel Orientation="Horizontal">
-                <md:PackIcon Kind="InformationOutline" Width="16" Height="16"
-                             Foreground="{DynamicResource MaterialDesignBodyLight}"
-                             VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBlock x:Name="txtResumen"
-                           Text="Sin datos cargados."
-                           Style="{DynamicResource MaterialDesignBody2TextBlock}"
-                           Foreground="{DynamicResource MaterialDesignBodyLight}"
-                           VerticalAlignment="Center"/>
-            </StackPanel>
+        <!-- RESUMEN -->
+        <md:Card Grid.Row="3" Margin="0,0,0,14" Padding="0" UniformCornerRadius="8"
+                 md:ElevationAssist.Elevation="Dp1">
+            <Border CornerRadius="8" Padding="16,10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#F8FAFE" Offset="0"/>
+                        <GradientStop Color="#EEF4FF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="26" Height="26" CornerRadius="6"
+                            Background="{DynamicResource PrimaryHueLightBrush}"
+                            Margin="0,0,10,0" VerticalAlignment="Center">
+                        <md:PackIcon Kind="InformationOutline" Width="14" Height="14"
+                                     Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock x:Name="txtResumen"
+                               Text="Sin datos cargados."
+                               Style="{DynamicResource MaterialDesignBody2TextBlock}"
+                               Foreground="{DynamicResource MaterialDesignBodyLight}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
         </md:Card>
 
-        <!-- ─── FORMULARIO MARCAJE MANUAL ─── -->
+        <!-- FORMULARIO MARCAJE MANUAL -->
         <md:Card x:Name="PanelMarcajeManual" Grid.Row="4"
-                 Margin="0,0,0,10" Padding="20" UniformCornerRadius="8"
-                 Visibility="Collapsed">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                    <md:PackIcon Kind="PencilPlus" Width="20" Height="20"
-                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                 VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBlock Text="Registrar Marcaje Manual"
-                               Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                               FontWeight="SemiBold" VerticalAlignment="Center"/>
-                </StackPanel>
-
+                 Margin="0,0,0,10" Padding="0" UniformCornerRadius="10"
+                 Visibility="Collapsed"
+                 md:ElevationAssist.Elevation="Dp1">
+            <Border>
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="130"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="8"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <ComboBox x:Name="cmbEmpleadoManual" Grid.Column="0"
-                              md:HintAssist.Hint="Empleado"
-                              md:HintAssist.IsFloating="True"
-                              Style="{DynamicResource MaterialDesignOutlinedComboBox}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Display}" VerticalAlignment="Center" Margin="0,2"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    <!-- Left accent border -->
+                    <Border Grid.Column="0" CornerRadius="10,0,0,10">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#1565C0" Offset="0"/>
+                                <GradientStop Color="#42A5F5" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
 
-                    <DatePicker x:Name="dpFechaMarcaje" Grid.Column="2"
-                                md:HintAssist.Hint="Fecha"
-                                md:HintAssist.IsFloating="True"
-                                Style="{DynamicResource MaterialDesignOutlinedDatePicker}"
-                                VerticalContentAlignment="Center"/>
-
-                    <TextBox x:Name="txtHoraMarcaje" Grid.Column="4"
-                             md:HintAssist.Hint="Hora (HH:mm)"
-                             md:HintAssist.IsFloating="True"
-                             Style="{DynamicResource MaterialDesignOutlinedTextBox}"
-                             Text="08:00"/>
-
-                    <Button Grid.Column="6"
-                            Style="{DynamicResource MaterialDesignRaisedButton}"
-                            Click="BtnConfirmarManual_Click" VerticalAlignment="Bottom">
-                        <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="Check" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                            <TextBlock Text="Registrar" VerticalAlignment="Center"/>
+                    <!-- Form content -->
+                    <StackPanel Grid.Column="1" Margin="20,18,20,18">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <md:PackIcon Kind="PencilPlus" Width="20" Height="20"
+                                         Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="Registrar Marcaje Manual"
+                                       Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                                       FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
-                    </Button>
 
-                    <Button Grid.Column="8"
-                            Style="{DynamicResource MaterialDesignOutlinedButton}"
-                            Click="BtnCancelarManual_Click" VerticalAlignment="Bottom">
-                        <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="Close" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                            <TextBlock Text="Cancelar" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ComboBox x:Name="cmbEmpleadoManual" Grid.Column="0"
+                                      md:HintAssist.Hint="Empleado"
+                                      md:HintAssist.IsFloating="True"
+                                      Style="{DynamicResource MaterialDesignOutlinedComboBox}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Display}" VerticalAlignment="Center" Margin="0,2"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <DatePicker x:Name="dpFechaMarcaje" Grid.Column="2"
+                                        md:HintAssist.Hint="Fecha"
+                                        md:HintAssist.IsFloating="True"
+                                        Style="{DynamicResource MaterialDesignOutlinedDatePicker}"
+                                        VerticalContentAlignment="Center"/>
+
+                            <TextBox x:Name="txtHoraMarcaje" Grid.Column="4"
+                                     md:HintAssist.Hint="Hora (HH:mm)"
+                                     md:HintAssist.IsFloating="True"
+                                     Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                                     Text="08:00"/>
+
+                            <Button Grid.Column="6"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}"
+                                    Click="BtnConfirmarManual_Click" VerticalAlignment="Bottom"
+                                    md:ButtonAssist.CornerRadius="6">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Check" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBlock Text="Registrar" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Column="8"
+                                    Style="{DynamicResource MaterialDesignOutlinedButton}"
+                                    Click="BtnCancelarManual_Click" VerticalAlignment="Bottom"
+                                    md:ButtonAssist.CornerRadius="6">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Close" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBlock Text="Cancelar" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
                 </Grid>
-            </StackPanel>
+            </Border>
         </md:Card>
 
-        <!-- ─── FEEDBACK ─── -->
-        <TextBlock x:Name="txtMensaje" Grid.Row="5"
-                   Style="{DynamicResource MaterialDesignBody2TextBlock}"
-                   FontWeight="SemiBold" HorizontalAlignment="Center"
-                   Visibility="Collapsed" Margin="0,4,0,0"/>
+        <!-- FEEDBACK -->
+        <Border Grid.Row="5" CornerRadius="20" Padding="16,6"
+                HorizontalAlignment="Center" Margin="0,4,0,0">
+            <TextBlock x:Name="txtMensaje"
+                       Style="{DynamicResource MaterialDesignBody2TextBlock}"
+                       FontWeight="SemiBold" HorizontalAlignment="Center"
+                       Visibility="Collapsed"/>
+        </Border>
     </Grid>
 </UserControl>

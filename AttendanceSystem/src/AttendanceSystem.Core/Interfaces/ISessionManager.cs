@@ -18,6 +18,7 @@ namespace AttendanceSystem.Core.Interfaces
         void        CerrarSesion();
         bool        EstaLogueado();
         bool        EsAdministrador();
+        bool        EsRRHH();
         SessionInfo GetCurrentSession();
         SessionInfo ObtenerUsuarioActual();
     }

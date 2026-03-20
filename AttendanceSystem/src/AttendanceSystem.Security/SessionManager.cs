@@ -118,6 +118,12 @@ namespace AttendanceSystem.Security
             return session != null && session.Role == nameof(RolUsuario.Admin);
         }
 
+        public bool EsRRHH()
+        {
+            var session = GetSession(_currentSessionToken);
+            return session != null && session.Role == nameof(RolUsuario.RRHH);
+        }
+
         public SessionInfo GetCurrentSession()    => GetSession(_currentSessionToken);
         public SessionInfo ObtenerUsuarioActual() => GetCurrentSession();
 

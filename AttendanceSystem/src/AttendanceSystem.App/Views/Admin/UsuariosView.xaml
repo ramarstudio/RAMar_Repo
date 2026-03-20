@@ -10,6 +10,100 @@
              Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{DynamicResource MaterialDesignFont}">
 
+    <UserControl.Resources>
+
+        <!-- Badge style for Rol column -->
+        <Style x:Key="RolBadgeBorder" TargetType="Border">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,3"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Pill style for Estado column -->
+        <Style x:Key="EstadoBadgeBorder" TargetType="Border">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,3"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Rol badge DataTemplate -->
+        <DataTemplate x:Key="RolCellTemplate">
+            <Border CornerRadius="10" Padding="10,3" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#E3F2FD"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Rol}" Value="Admin">
+                                <Setter Property="Background" Value="#E3F2FD"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rol}" Value="RRHH">
+                                <Setter Property="Background" Value="#F3E5F5"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rol}" Value="Empleado">
+                                <Setter Property="Background" Value="#E8F5E9"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding Rol}" FontSize="12" FontWeight="SemiBold">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#1565C0"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Rol}" Value="Admin">
+                                    <Setter Property="Foreground" Value="#1565C0"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Rol}" Value="RRHH">
+                                    <Setter Property="Foreground" Value="#6A1B9A"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Rol}" Value="Empleado">
+                                    <Setter Property="Foreground" Value="#2E7D32"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Border>
+        </DataTemplate>
+
+        <!-- Estado badge DataTemplate -->
+        <DataTemplate x:Key="EstadoCellTemplate">
+            <Border CornerRadius="10" Padding="10,3" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#E8F5E9"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Estado}" Value="Activo">
+                                <Setter Property="Background" Value="#E8F5E9"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Estado}" Value="Inactivo">
+                                <Setter Property="Background" Value="#FFEBEE"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding Estado}" FontSize="12" FontWeight="SemiBold">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#2E7D32"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Estado}" Value="Activo">
+                                    <Setter Property="Foreground" Value="#2E7D32"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Estado}" Value="Inactivo">
+                                    <Setter Property="Foreground" Value="#C62828"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Border>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,205 +113,319 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- ─── HEADER ─── -->
-        <md:Card Grid.Row="0" Margin="0,0,0,14" Padding="20,14" UniformCornerRadius="8">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+        <!-- HEADER -->
+        <md:Card Grid.Row="0" Margin="0,0,0,14" Padding="0" UniformCornerRadius="10"
+                 md:ElevationAssist.Elevation="Dp2">
+            <Border CornerRadius="10" Padding="22,16">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#F8FAFE" Offset="0"/>
+                        <GradientStop Color="#EEF4FF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <md:PackIcon Kind="AccountMultiple" Width="26" Height="26"
-                                     Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                     VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <TextBlock Text="Usuarios del Sistema"
-                                   Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
-                                   VerticalAlignment="Center"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="38" Height="38" CornerRadius="10"
+                                    Background="{DynamicResource PrimaryHueMidBrush}"
+                                    Margin="0,0,12,0" VerticalAlignment="Center">
+                                <md:PackIcon Kind="AccountMultiple" Width="22" Height="22"
+                                             Foreground="White"
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Usuarios del Sistema"
+                                           Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                                           FontWeight="Bold"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="Gestión de accesos y roles"
+                                           Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                                           Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                           Margin="0,1,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
-                    <TextBlock Text="Gestión de accesos y roles"
-                               Style="{DynamicResource MaterialDesignCaptionTextBlock}"
-                               Foreground="{DynamicResource MaterialDesignBodyLight}"
-                               Margin="36,2,0,0"/>
-                </StackPanel>
 
-                <Button x:Name="btnNuevoUsuario" Grid.Column="1"
-                        Style="{DynamicResource MaterialDesignRaisedButton}"
-                        Click="BtnNuevoUsuario_Click"
-                        VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <md:PackIcon Kind="AccountPlus" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <TextBlock Text="Nuevo Usuario" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-            </Grid>
+                    <Button x:Name="btnNuevoUsuario" Grid.Column="1"
+                            Style="{DynamicResource MaterialDesignRaisedButton}"
+                            Click="BtnNuevoUsuario_Click"
+                            VerticalAlignment="Center"
+                            Height="38"
+                            md:ButtonAssist.CornerRadius="8">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="AccountPlus" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                            <TextBlock Text="Nuevo Usuario" VerticalAlignment="Center" FontWeight="Medium"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
         </md:Card>
 
-        <!-- ─── TABLA USUARIOS ─── -->
-        <md:Card Grid.Row="1" Margin="0,0,0,14" Padding="4" UniformCornerRadius="8">
+        <!-- TABLA USUARIOS -->
+        <md:Card Grid.Row="1" Margin="0,0,0,14" Padding="0" UniformCornerRadius="10"
+                 md:ElevationAssist.Elevation="Dp2">
             <Grid>
-                <TextBlock x:Name="txtSinUsuarios"
-                           Text="No se encontraron usuarios."
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                           Foreground="{DynamicResource MaterialDesignBodyLight}"
-                           Visibility="Collapsed"/>
+                <!-- Empty state -->
+                <StackPanel x:Name="txtSinUsuarios"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="Collapsed">
+                    <md:PackIcon Kind="AccountOff" Width="52" Height="52"
+                                 Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                 HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock Text="No se encontraron usuarios."
+                               Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                               Foreground="{DynamicResource MaterialDesignBodyLight}"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Crea el primer usuario con el botón superior."
+                               Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                               Foreground="{DynamicResource MaterialDesignBodyLight}"
+                               HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                </StackPanel>
 
                 <DataGrid x:Name="dgUsuarios"
                           AutoGenerateColumns="False" IsReadOnly="True"
                           GridLinesVisibility="Horizontal" HeadersVisibility="Column"
                           BorderThickness="0" CanUserResizeRows="False"
                           SelectionMode="Single"
+                          RowHeight="48"
+                          RowBackground="{DynamicResource MaterialDesignBackground}"
+                          AlternatingRowBackground="#F7F9FC"
                           Style="{DynamicResource MaterialDesignDataGrid}"
                           SelectionChanged="DgUsuarios_SelectionChanged">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID"       Binding="{Binding Id}"           Width="55"/>
-                        <DataGridTextColumn Header="Username" Binding="{Binding Username}"      Width="140"/>
-                        <DataGridTextColumn Header="Nombre"   Binding="{Binding Nombre}"        Width="*"/>
-                        <DataGridTextColumn Header="Rol"      Binding="{Binding Rol}"           Width="110"/>
-                        <DataGridTextColumn Header="Estado"   Binding="{Binding Estado}"        Width="90"/>
-                        <DataGridTextColumn Header="Creado"   Binding="{Binding FechaCreacion}" Width="110"/>
+                        <DataGridTextColumn Header="ID"       Binding="{Binding Id}"           Width="55">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Username" Binding="{Binding Username}"      Width="140">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FontWeight" Value="Medium"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Nombre"   Binding="{Binding Nombre}"        Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTemplateColumn Header="Rol" Width="120"
+                                                CellTemplate="{StaticResource RolCellTemplate}"/>
+                        <DataGridTemplateColumn Header="Estado" Width="100"
+                                                CellTemplate="{StaticResource EstadoCellTemplate}"/>
+                        <DataGridTextColumn Header="Creado"   Binding="{Binding FechaCreacion}" Width="110">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
         </md:Card>
 
-        <!-- ─── ACCIONES FILA SELECCIONADA ─── -->
+        <!-- ACCIONES FILA SELECCIONADA -->
         <md:Card x:Name="PanelAcciones" Grid.Row="2"
-                 Margin="0,0,0,10" Padding="16,12" UniformCornerRadius="8"
-                 Visibility="Collapsed">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="180"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <TextBlock x:Name="txtAccionesLabel" Grid.Column="0"
-                           Text="Seleccionado: —"
-                           Style="{DynamicResource MaterialDesignBody1TextBlock}"
-                           FontWeight="SemiBold"
-                           VerticalAlignment="Center" Margin="0,0,16,0"/>
-
-                <Button x:Name="btnToggleActivo" Grid.Column="1"
-                        Style="{DynamicResource MaterialDesignOutlinedButton}"
-                        Click="BtnToggleActivo_Click"
-                        HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <md:PackIcon Kind="AccountCheck" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <TextBlock Text="Activar / Desactivar" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-
-                <TextBlock Grid.Column="2" Text="Nueva contraseña:"
-                           Style="{DynamicResource MaterialDesignBody2TextBlock}"
-                           VerticalAlignment="Center" Margin="16,0,8,0"/>
-
-                <PasswordBox x:Name="pbNuevaPass" Grid.Column="3"
-                             md:HintAssist.Hint="Nueva contraseña"
-                             md:HintAssist.IsFloating="True"
-                             Style="{DynamicResource MaterialDesignPasswordBox}"
-                             Height="40" Margin="0,0,8,0"/>
-
-                <Button Grid.Column="4"
-                        Style="{DynamicResource MaterialDesignRaisedButton}"
-                        Click="BtnCambiarPass_Click" Margin="0,0,8,0">
-                    <StackPanel Orientation="Horizontal">
-                        <md:PackIcon Kind="Key" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                        <TextBlock Text="Cambiar" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-
-                <Button Grid.Column="5"
-                        Style="{DynamicResource MaterialDesignFlatButton}"
-                        Click="BtnActualizar_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <md:PackIcon Kind="Refresh" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                        <TextBlock Text="Actualizar" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-            </Grid>
-        </md:Card>
-
-        <!-- ─── FORMULARIO NUEVO USUARIO ─── -->
-        <md:Card x:Name="PanelFormNuevo" Grid.Row="3"
-                 Margin="0,0,0,10" Padding="20" UniformCornerRadius="8"
-                 Visibility="Collapsed">
+                 Margin="0,0,0,10" Padding="0" UniformCornerRadius="10"
+                 Visibility="Collapsed"
+                 md:ElevationAssist.Elevation="Dp1">
             <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                    <md:PackIcon Kind="AccountPlus" Width="20" Height="20"
-                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                 VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBlock Text="Nuevo Usuario"
-                               Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                               FontWeight="SemiBold" VerticalAlignment="Center"/>
-                </StackPanel>
-
-                <Grid>
+                <!-- Top accent divider -->
+                <Border Height="3" CornerRadius="10,10,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#1565C0" Offset="0"/>
+                            <GradientStop Color="#42A5F5" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+                <Grid Margin="16,12,16,14">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="16"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="180"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="txtUsername" Grid.Column="0"
-                             md:HintAssist.Hint="Username"
-                             md:HintAssist.IsFloating="True"
-                             Style="{DynamicResource MaterialDesignOutlinedTextBox}"/>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Text="Usuario seleccionado" FontSize="10"
+                                   Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                   Style="{DynamicResource MaterialDesignCaptionTextBlock}"/>
+                        <TextBlock x:Name="txtAccionesLabel"
+                                   Text="Seleccionado: —"
+                                   Style="{DynamicResource MaterialDesignBody1TextBlock}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
 
-                    <TextBox x:Name="txtNombre" Grid.Column="2"
-                             md:HintAssist.Hint="Nombre completo"
-                             md:HintAssist.IsFloating="True"
-                             Style="{DynamicResource MaterialDesignOutlinedTextBox}"/>
-
-                    <PasswordBox x:Name="pbPassword" Grid.Column="4"
-                                 md:HintAssist.Hint="Contraseña"
-                                 md:HintAssist.IsFloating="True"
-                                 Style="{DynamicResource MaterialDesignOutlinedPasswordBox}"/>
-
-                    <ComboBox x:Name="cmbRol" Grid.Column="6"
-                              md:HintAssist.Hint="Rol"
-                              md:HintAssist.IsFloating="True"
-                              Style="{DynamicResource MaterialDesignOutlinedComboBox}"
-                              DisplayMemberPath="Nombre"/>
-
-                    <Button Grid.Column="8"
-                            Style="{DynamicResource MaterialDesignRaisedButton}"
-                            Click="BtnCrearUsuario_Click" VerticalAlignment="Bottom">
+                    <Button x:Name="btnToggleActivo" Grid.Column="1"
+                            Style="{DynamicResource MaterialDesignOutlinedButton}"
+                            Click="BtnToggleActivo_Click"
+                            HorizontalAlignment="Left" VerticalAlignment="Center"
+                            md:ButtonAssist.CornerRadius="6">
                         <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="AccountCheck" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                            <TextBlock Text="Crear" VerticalAlignment="Center"/>
+                            <md:PackIcon Kind="AccountCheck" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Activar / Desactivar" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Grid.Column="10"
-                            Style="{DynamicResource MaterialDesignOutlinedButton}"
-                            Click="BtnCancelarNuevo_Click" VerticalAlignment="Bottom">
+                    <TextBlock Grid.Column="2" Text="Nueva contraseña"
+                               Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                               Foreground="{DynamicResource MaterialDesignBodyLight}"
+                               VerticalAlignment="Center" Margin="16,0,8,0"/>
+
+                    <PasswordBox x:Name="pbNuevaPass" Grid.Column="3"
+                                 md:HintAssist.Hint="Nueva contraseña"
+                                 md:HintAssist.IsFloating="True"
+                                 Style="{DynamicResource MaterialDesignPasswordBox}"
+                                 Height="40" Margin="0,0,8,0"/>
+
+                    <Button Grid.Column="4"
+                            Style="{DynamicResource MaterialDesignRaisedButton}"
+                            Click="BtnCambiarPass_Click" Margin="0,0,8,0"
+                            md:ButtonAssist.CornerRadius="6">
                         <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="Close" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                            <TextBlock Text="Cancelar" VerticalAlignment="Center"/>
+                            <md:PackIcon Kind="Key" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Cambiar" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Grid.Column="5"
+                            Style="{DynamicResource MaterialDesignFlatButton}"
+                            Click="BtnActualizar_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Refresh" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Actualizar" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </Grid>
             </StackPanel>
         </md:Card>
 
-        <!-- ─── FEEDBACK ─── -->
-        <TextBlock x:Name="txtMensaje" Grid.Row="4"
-                   Style="{DynamicResource MaterialDesignBody2TextBlock}"
-                   FontWeight="SemiBold" HorizontalAlignment="Center"
-                   Visibility="Collapsed" Margin="0,4,0,0"/>
+        <!-- FORMULARIO NUEVO USUARIO -->
+        <md:Card x:Name="PanelFormNuevo" Grid.Row="3"
+                 Margin="0,0,0,10" Padding="0" UniformCornerRadius="10"
+                 Visibility="Collapsed"
+                 md:ElevationAssist.Elevation="Dp1">
+            <Border>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left accent border -->
+                    <Border Grid.Column="0" CornerRadius="10,0,0,10">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#1565C0" Offset="0"/>
+                                <GradientStop Color="#42A5F5" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <!-- Form content -->
+                    <StackPanel Grid.Column="1" Margin="20,18,20,18">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <md:PackIcon Kind="AccountPlus" Width="20" Height="20"
+                                         Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="Registrar Nuevo Usuario"
+                                       Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                                       FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox x:Name="txtUsername" Grid.Column="0"
+                                     md:HintAssist.Hint="Username"
+                                     md:HintAssist.IsFloating="True"
+                                     Style="{DynamicResource MaterialDesignOutlinedTextBox}"/>
+
+                            <TextBox x:Name="txtNombre" Grid.Column="2"
+                                     md:HintAssist.Hint="Nombre completo"
+                                     md:HintAssist.IsFloating="True"
+                                     Style="{DynamicResource MaterialDesignOutlinedTextBox}"/>
+
+                            <PasswordBox x:Name="pbPassword" Grid.Column="4"
+                                         md:HintAssist.Hint="Contraseña"
+                                         md:HintAssist.IsFloating="True"
+                                         Style="{DynamicResource MaterialDesignOutlinedPasswordBox}"/>
+
+                            <ComboBox x:Name="cmbRol" Grid.Column="6"
+                                      md:HintAssist.Hint="Rol"
+                                      md:HintAssist.IsFloating="True"
+                                      Style="{DynamicResource MaterialDesignOutlinedComboBox}"
+                                      DisplayMemberPath="Nombre"/>
+
+                            <Button Grid.Column="8"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}"
+                                    Click="BtnCrearUsuario_Click" VerticalAlignment="Bottom"
+                                    md:ButtonAssist.CornerRadius="6">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="AccountCheck" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBlock Text="Crear" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Column="10"
+                                    Style="{DynamicResource MaterialDesignOutlinedButton}"
+                                    Click="BtnCancelarNuevo_Click" VerticalAlignment="Bottom"
+                                    md:ButtonAssist.CornerRadius="6">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Close" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBlock Text="Cancelar" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </md:Card>
+
+        <!-- FEEDBACK -->
+        <Border Grid.Row="4" CornerRadius="20" Padding="16,6"
+                HorizontalAlignment="Center" Margin="0,4,0,0">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="Transparent"/>
+                </Style>
+            </Border.Style>
+            <TextBlock x:Name="txtMensaje"
+                       Style="{DynamicResource MaterialDesignBody2TextBlock}"
+                       FontWeight="SemiBold" HorizontalAlignment="Center"
+                       Visibility="Collapsed"/>
+        </Border>
     </Grid>
 </UserControl>

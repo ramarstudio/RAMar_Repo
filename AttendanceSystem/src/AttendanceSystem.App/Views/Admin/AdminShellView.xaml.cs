@@ -52,6 +52,10 @@ namespace AttendanceSystem.App.Views.Admin
             var si = _session.GetCurrentSession();
             if (si != null) txtNombreAdmin.Text = si.Username;
 
+            // RRHH no gestiona usuarios
+            if (_session.EsRRHH())
+                btnNavUsuarios.Visibility = Visibility.Collapsed;
+
             // Navegar al dashboard por defecto
             ActivarSeccion(btnNavDashboard, _dashboardView);
         }

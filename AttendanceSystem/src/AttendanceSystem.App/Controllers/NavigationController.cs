@@ -41,7 +41,7 @@ namespace AttendanceSystem.App.Controllers
         {
             if (!_sessionManager.EstaLogueado()) return;
 
-            if (_sessionManager.EsAdministrador())
+            if (_sessionManager.EsAdministrador() || _sessionManager.EsRRHH())
                 _navigationHelper.CambiarVista(_adminShellViewFactory());
             else
                 _navigationHelper.CambiarVista(_marcajeViewFactory());

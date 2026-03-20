@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AttendanceSystem.App.Controllers;
+using AttendanceSystem.App.Interfaces;
 using AttendanceSystem.Core.DTOs;
 using AttendanceSystem.Core.Enums;
 
@@ -11,8 +12,8 @@ namespace AttendanceSystem.App.Views
 {
     public partial class MarcajeView : UserControl
     {
-        private readonly MarcajeController    _marcajeController;
-        private readonly BiometricoController _biometricoController;
+        private readonly MarcajeController      _marcajeController;
+        private readonly IBiometricoController  _biometricoController;
 
         // Brushes estáticos y congelados: creados una sola vez, reutilizados en cada evento.
         // Freeze() permite usarlos desde cualquier hilo sin InvalidOperationException.
@@ -28,7 +29,7 @@ namespace AttendanceSystem.App.Views
             return brush;
         }
 
-        public MarcajeView(MarcajeController marcajeController, BiometricoController biometricoController)
+        public MarcajeView(MarcajeController marcajeController, IBiometricoController biometricoController)
         {
             InitializeComponent();
             _marcajeController    = marcajeController;

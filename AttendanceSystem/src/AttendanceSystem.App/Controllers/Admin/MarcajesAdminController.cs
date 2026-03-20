@@ -71,7 +71,10 @@ namespace AttendanceSystem.App.Controllers.Admin
             }
             catch (Exception ex)
             {
-                return (false, $"Error al registrar marcaje: {ex.Message}");
+                var inner = ex.InnerException?.InnerException?.Message
+                         ?? ex.InnerException?.Message
+                         ?? ex.Message;
+                return (false, $"Error: {inner}");
             }
         }
 

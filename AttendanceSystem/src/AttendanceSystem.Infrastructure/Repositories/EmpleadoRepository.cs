@@ -11,8 +11,6 @@ public class EmpleadoRepository : RepositoryBase<Empleado>, IEmpleadoRepository
     public async Task<Empleado> GetByIdAsync(int id)
         => await _context.Empleados
             .Include("horarios")
-            .Include("embeddingFacial")
-            .Include("consentimiento")
             .AsNoTracking()
             .FirstOrDefaultAsync(e => EF.Property<int>(e, "id") == id);
 

@@ -12,7 +12,7 @@ public class HorarioRepository : RepositoryBase<Horario>, IHorarioRepository
 
     public async Task<IEnumerable<Horario>> GetByEmpleadoIdAsync(int empleadoId)
         => await _context.Horarios
-            .Where(h => EF.Property<int>(h, "EmpleadoId") == empleadoId)
+            .Where(h => EF.Property<int>(h, "empleadoId") == empleadoId)
             .ToListAsync();
 
     public async Task<Horario> GetHorarioVigenteAsync(int empleadoId, DiaSemana dia)
@@ -20,10 +20,10 @@ public class HorarioRepository : RepositoryBase<Horario>, IHorarioRepository
         var now = DateTime.UtcNow;
         return await _context.Horarios
             .Where(h =>
-                EF.Property<int>(h, "EmpleadoId") == empleadoId &&
-                h.GetDia() == dia &&
-                h.GetVigenteDesde() <= now &&
-                h.GetVigenteHasta() >= now)
+                EF.Property<int>(h, "empleadoId")      == empleadoId &&
+                EF.Property<DiaSemana>(h, "dia")       == dia &&
+                EF.Property<DateTime>(h, "vigente_desde") <= now &&
+                EF.Property<DateTime>(h, "vigente_hasta") >= now)
             .FirstOrDefaultAsync();
     }
 }

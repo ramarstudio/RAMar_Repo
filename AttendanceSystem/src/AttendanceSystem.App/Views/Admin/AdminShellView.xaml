@@ -29,11 +29,19 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="bd" Property="Background" Value="#FFFFFF15"/>
+                                <!-- Show left accent on hover for inactive buttons -->
+                                <Setter TargetName="bd" Property="BorderBrush" Value="#4FC3F750"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <!-- Active nav button: sets left border to accent color via Background trigger in code-behind.
+             We define a secondary style that forces the BorderBrush shown when Background != Transparent. -->
+        <Style x:Key="NavBtnActiveIndicatorStyle" TargetType="Border">
+            <Setter Property="BorderBrush" Value="#4FC3F7"/>
         </Style>
     </UserControl.Resources>
 
@@ -47,10 +55,12 @@
         <Border Grid.Column="0">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#0D1B2A" Offset="0"/>
-                    <GradientStop Color="#1B2A3B" Offset="1"/>
+                    <GradientStop Color="#0A1628" Offset="0"/>
+                    <GradientStop Color="#0D1B2A" Offset="0.4"/>
+                    <GradientStop Color="#112240" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>
+
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -58,90 +68,177 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Logo -->
+                <!-- Logo / Branding -->
                 <StackPanel Grid.Row="0" Margin="0,28,0,8">
-                    <Border Width="56" Height="56" CornerRadius="28"
-                            Background="#1565C0" HorizontalAlignment="Center" Margin="0,0,0,12">
-                        <TextBlock Text="R" FontSize="28" FontWeight="Bold"
-                                   Foreground="White" HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
-                    </Border>
+                    <!-- Circular logo with glow ring -->
+                    <Grid HorizontalAlignment="Center" Margin="0,0,0,14">
+                        <!-- Outer glow ring -->
+                        <Border Width="64" Height="64" CornerRadius="32"
+                                Background="Transparent">
+                            <Border.BorderBrush>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#4FC3F7" Offset="0"/>
+                                    <GradientStop Color="#1565C0" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.BorderBrush>
+                            <Border.BorderThickness>
+                                <Thickness>2</Thickness>
+                            </Border.BorderThickness>
+                        </Border>
+                        <!-- Inner filled circle -->
+                        <Border Width="56" Height="56" CornerRadius="28"
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#1565C0" Offset="0"/>
+                                    <GradientStop Color="#1E88E5" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock Text="R" FontSize="26" FontWeight="Bold"
+                                       Foreground="White" HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+
                     <TextBlock Text="RAMar" FontSize="22" FontWeight="Bold"
-                               Foreground="White" HorizontalAlignment="Center"/>
+                               Foreground="White" HorizontalAlignment="Center"
+                              />
                     <TextBlock Text="Panel Administrativo" FontSize="10"
-                               Foreground="#546E7A" HorizontalAlignment="Center" Margin="0,2,0,20"/>
-                    <Rectangle Height="1" Margin="20,0">
-                        <Rectangle.Fill>
-                            <SolidColorBrush Color="White" Opacity="0.08"/>
-                        </Rectangle.Fill>
-                    </Rectangle>
+                               Foreground="#4FC3F780" HorizontalAlignment="Center" Margin="0,3,0,20"/>
+
+                    <!-- Separator -->
+                    <Border Height="1" Margin="20,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="Transparent" Offset="0"/>
+                                <GradientStop Color="#4FC3F730" Offset="0.5"/>
+                                <GradientStop Color="Transparent" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
                 </StackPanel>
 
                 <!-- Nav buttons -->
-                <StackPanel Grid.Row="1" Margin="0,8,0,0">
+                <StackPanel Grid.Row="1" Margin="0,10,0,0">
+
+                    <!-- Section label -->
+                    <TextBlock Text="MENÚ PRINCIPAL"
+                               Foreground="#37474F" FontSize="9" FontWeight="Bold"
+                               Margin="20,8,0,6"/>
+
                     <Button x:Name="btnNavDashboard" Tag="dashboard"
                             Style="{StaticResource NavBtnStyle}"
-                            Click="NavBtn_Click">
+                            Click="NavBtn_Click"
+                            ToolTip="Dashboard — Vista general del sistema">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ViewDashboard" Width="20" Height="20"
                                                      VerticalAlignment="Center" Margin="0,0,12,0"/>
                             <TextBlock Text="Dashboard" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
+
                     <Button x:Name="btnNavUsuarios" Tag="usuarios"
                             Style="{StaticResource NavBtnStyle}"
-                            Click="NavBtn_Click">
+                            Click="NavBtn_Click"
+                            ToolTip="Usuarios — Gestión de accesos y roles">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="AccountGroup" Width="20" Height="20"
                                                      VerticalAlignment="Center" Margin="0,0,12,0"/>
                             <TextBlock Text="Usuarios" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
+
                     <Button x:Name="btnNavMarcajes" Tag="marcajes"
                             Style="{StaticResource NavBtnStyle}"
-                            Click="NavBtn_Click">
+                            Click="NavBtn_Click"
+                            ToolTip="Marcajes — Consulta y registro de asistencias">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ClockCheck" Width="20" Height="20"
                                                      VerticalAlignment="Center" Margin="0,0,12,0"/>
                             <TextBlock Text="Marcajes" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
+
+                    <!-- Separator before reports -->
+                    <Border Height="1" Margin="20,8">
+                        <Border.Background>
+                            <SolidColorBrush Color="White" Opacity="0.05"/>
+                        </Border.Background>
+                    </Border>
+
+                    <TextBlock Text="ANÁLISIS"
+                               Foreground="#37474F" FontSize="9" FontWeight="Bold"
+                               Margin="20,0,0,6"/>
+
                     <Button x:Name="btnNavReportes" Tag="reportes"
                             Style="{StaticResource NavBtnStyle}"
-                            Click="NavBtn_Click">
+                            Click="NavBtn_Click"
+                            ToolTip="Reportes — Análisis y exportación de datos">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ChartBar" Width="20" Height="20"
                                                      VerticalAlignment="Center" Margin="0,0,12,0"/>
                             <TextBlock Text="Reportes" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
+
                 </StackPanel>
 
                 <!-- User info + logout -->
                 <StackPanel Grid.Row="2" Margin="16,0,16,20">
-                    <Rectangle Height="1" Margin="0,0,0,14">
-                        <Rectangle.Fill>
-                            <SolidColorBrush Color="White" Opacity="0.08"/>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                        <Border Width="36" Height="36" CornerRadius="18" Background="#1565C0">
-                            <TextBlock Text="A" FontSize="16" FontWeight="Bold"
-                                       Foreground="White" HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
-                            <TextBlock x:Name="txtNombreAdmin" Text="Admin"
-                                       Foreground="#ECEFF1" FontSize="13" FontWeight="SemiBold"
-                                       TextTrimming="CharacterEllipsis" MaxWidth="140"/>
-                            <TextBlock Text="Administrador" Foreground="#546E7A" FontSize="10"/>
+                    <!-- Gradient separator -->
+                    <Border Height="1" Margin="0,0,0,14">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="Transparent" Offset="0"/>
+                                <GradientStop Color="#4FC3F730" Offset="0.5"/>
+                                <GradientStop Color="Transparent" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <!-- User card -->
+                    <Border CornerRadius="10" Padding="10,8" Margin="0,0,0,10">
+                        <Border.Background>
+                            <SolidColorBrush Color="White" Opacity="0.05"/>
+                        </Border.Background>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="36" Height="36" CornerRadius="18">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#1565C0" Offset="0"/>
+                                        <GradientStop Color="#1E88E5" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <TextBlock Text="A" FontSize="16" FontWeight="Bold"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                                <TextBlock x:Name="txtNombreAdmin" Text="Admin"
+                                           Foreground="#ECEFF1" FontSize="13" FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="6" Height="6" CornerRadius="3"
+                                            Background="#4CAF50" Margin="0,0,5,0"
+                                            VerticalAlignment="Center"/>
+                                    <TextBlock Text="Administrador" Foreground="#4FC3F7" FontSize="10"/>
+                                </StackPanel>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
+                    </Border>
+
+                    <!-- Logout button -->
                     <Button Content="Cerrar Sesión" Click="BtnLogout_Click"
                             Height="36" Cursor="Hand" FontSize="12" FontWeight="SemiBold">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Border x:Name="bd" CornerRadius="8" Background="#C62828">
+                                <Border x:Name="bd" CornerRadius="8">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <GradientStop Color="#B71C1C" Offset="0"/>
+                                            <GradientStop Color="#C62828" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <materialDesign:PackIcon Kind="Logout" Width="16" Height="16"
                                                                  Foreground="White" Margin="0,0,6,0"/>
@@ -161,7 +258,17 @@
             </Grid>
         </Border>
 
+        <!-- Right edge shadow separator -->
+        <Border Grid.Column="0" Width="6" HorizontalAlignment="Right" IsHitTestVisible="False">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#00000030" Offset="0"/>
+                    <GradientStop Color="Transparent" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+
         <!-- CONTENT AREA -->
-        <ContentControl x:Name="ShellContent" Grid.Column="1" Background="#F5F5F5"/>
+        <ContentControl x:Name="ShellContent" Grid.Column="1" Background="#F0F4F8"/>
     </Grid>
 </UserControl>

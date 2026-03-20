@@ -12,67 +12,209 @@
             <ColumnDefinition Width="420"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Panel izquierdo — Branding -->
-        <Border Grid.Column="0" Background="#1A237E">
-            <Grid>
-                <!-- Fondo decorativo con degradado -->
-                <Border>
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#1A237E" Offset="0"/>
-                            <GradientStop Color="#283593" Offset="0.5"/>
-                            <GradientStop Color="#1565C0" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                </Border>
+        <!-- ═══ LEFT PANEL — Branding ═══ -->
+        <Border Grid.Column="0">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#0A1628" Offset="0"/>
+                    <GradientStop Color="#1A237E" Offset="0.45"/>
+                    <GradientStop Color="#1565C0" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
 
+            <Grid>
+                <!-- Decorative circles -->
+                <Canvas IsHitTestVisible="False">
+                    <!-- Large circle — top right -->
+                    <Ellipse Width="340" Height="340"
+                             Canvas.Right="-80" Canvas.Top="-80"
+                             Opacity="0.07">
+                        <Ellipse.Fill>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#4FC3F7" Offset="0"/>
+                                <GradientStop Color="Transparent" Offset="1"/>
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+
+                    <!-- Medium circle — bottom left -->
+                    <Ellipse Width="220" Height="220"
+                             Canvas.Left="-60" Canvas.Bottom="-60"
+                             Opacity="0.06">
+                        <Ellipse.Fill>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#90CAF9" Offset="0"/>
+                                <GradientStop Color="Transparent" Offset="1"/>
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+
+                    <!-- Small accent circle — mid right -->
+                    <Ellipse Width="80" Height="80"
+                             Canvas.Right="40" Canvas.Top="200"
+                             Opacity="0.12">
+                        <Ellipse.Fill>
+                            <SolidColorBrush Color="#4FC3F7"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+
+                    <!-- Tiny dot — lower center -->
+                    <Ellipse Width="30" Height="30"
+                             Canvas.Left="120" Canvas.Bottom="140"
+                             Opacity="0.15">
+                        <Ellipse.Fill>
+                            <SolidColorBrush Color="#64B5F6"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                </Canvas>
+
+                <!-- Content -->
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="40">
-                    <!-- Logo / Ícono -->
-                    <Border Width="80" Height="80" CornerRadius="40"
-                            Background="#FFFFFF20" HorizontalAlignment="Center" Margin="0,0,0,24">
-                        <TextBlock Text="R" FontSize="42" FontWeight="Bold"
-                                   Foreground="White" HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
-                    </Border>
+                    <!-- Logo with glow ring -->
+                    <Grid HorizontalAlignment="Center" Margin="0,0,0,28">
+                        <Ellipse Width="100" Height="100" Opacity="0.18">
+                            <Ellipse.Fill>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#4FC3F7" Offset="0"/>
+                                    <GradientStop Color="Transparent" Offset="1"/>
+                                </RadialGradientBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Border Width="80" Height="80" CornerRadius="40"
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#1E88E5" Offset="0"/>
+                                    <GradientStop Color="#1565C0" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.BorderBrush>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#4FC3F7" Offset="0"/>
+                                    <GradientStop Color="#1565C0" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.BorderBrush>
+                            <Border.BorderThickness>
+                                <Thickness>2</Thickness>
+                            </Border.BorderThickness>
+                            <TextBlock Text="R" FontSize="42" FontWeight="Bold"
+                                       Foreground="White" HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
 
                     <TextBlock Text="RAMar Studio" FontSize="34" FontWeight="Bold"
-                               Foreground="White" HorizontalAlignment="Center"/>
+                               Foreground="White" HorizontalAlignment="Center"
+                              />
                     <TextBlock Text="Control de Asistencia" FontSize="16"
-                               Foreground="#90CAF9" HorizontalAlignment="Center" Margin="0,8,0,32"/>
+                               Foreground="#90CAF9" HorizontalAlignment="Center" Margin="0,6,0,36"/>
 
-                    <!-- Features list -->
+                    <!-- Feature list -->
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <materialDesign:PackIcon Kind="CheckCircle" Foreground="#64B5F6"
-                                                     Width="20" Height="20" VerticalAlignment="Center"/>
-                            <TextBlock Text="  Reconocimiento Facial" Foreground="#E3F2FD" FontSize="14" VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <materialDesign:PackIcon Kind="CheckCircle" Foreground="#64B5F6"
-                                                     Width="20" Height="20" VerticalAlignment="Center"/>
-                            <TextBlock Text="  Control en Tiempo Real" Foreground="#E3F2FD" FontSize="14" VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="CheckCircle" Foreground="#64B5F6"
-                                                     Width="20" Height="20" VerticalAlignment="Center"/>
-                            <TextBlock Text="  Reportes y Análisis" Foreground="#E3F2FD" FontSize="14" VerticalAlignment="Center"/>
-                        </StackPanel>
+                        <Border CornerRadius="8" Padding="14,9" Margin="0,0,0,8">
+                            <Border.Background>
+                                <SolidColorBrush Color="White" Opacity="0.06"/>
+                            </Border.Background>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="28" Height="28" CornerRadius="6"
+                                        Background="#1E88E520" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <materialDesign:PackIcon Kind="FaceRecognition" Foreground="#64B5F6"
+                                                             Width="16" Height="16"
+                                                             HorizontalAlignment="Center"
+                                                             VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="Reconocimiento Facial" Foreground="#E3F2FD"
+                                           FontSize="14" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border CornerRadius="8" Padding="14,9" Margin="0,0,0,8">
+                            <Border.Background>
+                                <SolidColorBrush Color="White" Opacity="0.06"/>
+                            </Border.Background>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="28" Height="28" CornerRadius="6"
+                                        Background="#1E88E520" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <materialDesign:PackIcon Kind="ClockFast" Foreground="#64B5F6"
+                                                             Width="16" Height="16"
+                                                             HorizontalAlignment="Center"
+                                                             VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="Control en Tiempo Real" Foreground="#E3F2FD"
+                                           FontSize="14" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border CornerRadius="8" Padding="14,9">
+                            <Border.Background>
+                                <SolidColorBrush Color="White" Opacity="0.06"/>
+                            </Border.Background>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="28" Height="28" CornerRadius="6"
+                                        Background="#1E88E520" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <materialDesign:PackIcon Kind="ChartLine" Foreground="#64B5F6"
+                                                             Width="16" Height="16"
+                                                             HorizontalAlignment="Center"
+                                                             VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="Reportes y Análisis" Foreground="#E3F2FD"
+                                           FontSize="14" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Footer versión -->
-                <TextBlock Text="v1.0.0" Foreground="#FFFFFF50" FontSize="11"
-                           VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,20,16"/>
+                <!-- Version badge -->
+                <Border VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                        Margin="0,0,20,16" CornerRadius="10" Padding="8,3">
+                    <Border.Background>
+                        <SolidColorBrush Color="White" Opacity="0.08"/>
+                    </Border.Background>
+                    <TextBlock Text="v1.0.0" Foreground="#FFFFFF70" FontSize="10"/>
+                </Border>
             </Grid>
         </Border>
 
-        <!-- Panel derecho — Formulario -->
-        <Border Grid.Column="1" Background="White">
+        <!-- Shadow separator between panels -->
+        <Border Grid.Column="0" Width="8" HorizontalAlignment="Right" IsHitTestVisible="False">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#00000040" Offset="0"/>
+                    <GradientStop Color="Transparent" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+
+        <!-- ═══ RIGHT PANEL — Login Form ═══ -->
+        <Border Grid.Column="1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#FFFFFF" Offset="0"/>
+                    <GradientStop Color="#F8FAFF" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+
             <StackPanel VerticalAlignment="Center" Margin="48,0">
+
+                <!-- Form header -->
+                <Border Width="48" Height="48" CornerRadius="12"
+                        HorizontalAlignment="Left" Margin="0,0,0,20">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#1565C0" Offset="0"/>
+                            <GradientStop Color="#1E88E5" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <materialDesign:PackIcon Kind="ShieldAccount" Width="26" Height="26"
+                                             Foreground="White"
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"/>
+                </Border>
+
                 <TextBlock Text="Bienvenido" FontSize="28" FontWeight="Bold"
                            Foreground="#1A237E" Margin="0,0,0,4"/>
                 <TextBlock Text="Ingresa tus credenciales para continuar"
-                           FontSize="13" Foreground="#757575" Margin="0,0,0,36"/>
+                           FontSize="13" Foreground="#78909C" Margin="0,0,0,32"/>
 
                 <!-- Campo Usuario -->
                 <TextBox x:Name="txtUsername"
@@ -80,7 +222,7 @@
                          materialDesign:HintAssist.Hint="Usuario"
                          materialDesign:HintAssist.FloatingScale="0.8"
                          materialDesign:TextFieldAssist.HasClearButton="True"
-                         FontSize="14" Margin="0,0,0,20"
+                         FontSize="14" Margin="0,0,0,18"
                          KeyDown="TxtUsername_KeyDown"/>
 
                 <!-- Campo Contraseña -->
@@ -88,27 +230,84 @@
                              Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
                              materialDesign:HintAssist.Hint="Contraseña"
                              materialDesign:HintAssist.FloatingScale="0.8"
-                             FontSize="14" Margin="0,0,0,8"/>
+                             FontSize="14" Margin="0,0,0,16"/>
 
-                <!-- Error -->
-                <TextBlock x:Name="txtError"
-                           Foreground="#D32F2F" FontSize="12" TextWrapping="Wrap"
-                           Visibility="Collapsed" Margin="0,0,0,16"
-                           HorizontalAlignment="Center"/>
+                <!-- Error display — colored pill -->
+                <Border x:Name="ErrorBadge" CornerRadius="8" Padding="14,8"
+                        Margin="0,0,0,14" HorizontalAlignment="Stretch"
+                        Visibility="Collapsed">
+                    <Border.Background>
+                        <SolidColorBrush Color="#FFEBEE"/>
+                    </Border.Background>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="AlertCircleOutline" Width="16" Height="16"
+                                                 Foreground="#C62828"
+                                                 VerticalAlignment="Center"
+                                                 Margin="0,0,8,0"/>
+                        <TextBlock x:Name="txtError"
+                                   Foreground="#C62828" FontSize="12" TextWrapping="Wrap"
+                                   Visibility="Collapsed"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
 
                 <!-- Botón Login -->
                 <Button x:Name="btnLogin"
-                        Content="INGRESAR AL SISTEMA"
-                        Style="{StaticResource MaterialDesignRaisedButton}"
-                        materialDesign:ButtonAssist.CornerRadius="8"
-                        Background="#1A237E" Foreground="White"
-                        BorderThickness="0" Height="48" FontSize="14" FontWeight="Bold"
-                        Cursor="Hand" Margin="0,8,0,0"
-                        Click="BtnLogin_Click"/>
+                        Height="48" FontSize="14" FontWeight="Bold"
+                        Cursor="Hand" BorderThickness="0"
+                        materialDesign:ButtonAssist.CornerRadius="10"
+                        Margin="0,0,0,0"
+                        Click="BtnLogin_Click">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                            <Setter Property="Background" Value="#1A237E"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Style>
+                    </Button.Style>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="loginBd" CornerRadius="10" Height="48">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#1A237E" Offset="0"/>
+                                        <GradientStop Color="#1565C0" Offset="0.6"/>
+                                        <GradientStop Color="#1E88E5" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <materialDesign:PackIcon Kind="Login" Width="18" Height="18"
+                                                             Foreground="White" Margin="0,0,10,0"
+                                                             VerticalAlignment="Center"/>
+                                    <TextBlock Text="INGRESAR AL SISTEMA"
+                                               Foreground="White" FontSize="14" FontWeight="Bold"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="loginBd" Property="Opacity" Value="0.92"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="loginBd" Property="Opacity" Value="0.80"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
 
-                <TextBlock Text="RAMar · Sistema de Control de Asistencia"
-                           FontSize="11" Foreground="#BDBDBD"
-                           HorizontalAlignment="Center" Margin="0,32,0,0"/>
+                <!-- Footer -->
+                <Border Margin="0,28,0,0" Padding="0,16,0,0">
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="#E0E0E0"/>
+                    </Border.BorderBrush>
+                    <Border.BorderThickness>
+                        <Thickness Bottom="0" Left="0" Right="0" Top="1"/>
+                    </Border.BorderThickness>
+                    <TextBlock Text="RAMar · Sistema de Control de Asistencia"
+                               FontSize="11" Foreground="#BDBDBD"
+                               HorizontalAlignment="Center"/>
+                </Border>
             </StackPanel>
         </Border>
     </Grid>
