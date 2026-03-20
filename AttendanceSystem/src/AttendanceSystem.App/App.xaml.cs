@@ -194,6 +194,9 @@ namespace AttendanceSystem.App
             services.AddTransient<UsuariosController>();
             services.AddTransient<MarcajesAdminController>();
             services.AddTransient<ReportesController>();
+            services.AddTransient<AuditoriaController>();
+            services.AddTransient<HorariosController>();
+            services.AddTransient<ConfiguracionController>();
 
             // Vistas
             services.AddTransient<MainWindow>();

@@ -13,6 +13,7 @@ public class AuditRepository : RepositoryBase<AuditLog>, IAuditRepository
 
     public async Task<IEnumerable<AuditLog>> GetByUsuarioIdAsync(int usuarioId)
         => await _context.AuditLogs
+            .AsNoTracking()
             .Where(a => a.GetUsuarioId() == usuarioId)
             .OrderByDescending(a => a.GetFecha())
             .ToListAsync();

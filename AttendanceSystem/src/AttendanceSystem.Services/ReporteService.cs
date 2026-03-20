@@ -58,16 +58,22 @@ namespace AttendanceSystem.Services
                 sumatoriaTardanzas += m.GetMinutosTardanza();
             }
 
-            // Días laborables: recorrido O(diasDelMes) con lookup O(1) en horariosList
+            // Días laborables: preprocesar horarios por día para lookup O(1)
+            var horariosPorDia = horariosList
+                .GroupBy(h => h.GetDia())
+                .ToDictionary(g => g.Key, g => g.ToList());
+
             int diasLaborablesReales = 0;
             for (int i = 1; i <= diasDelMes; i++)
             {
                 var fecha         = new DateTime(anio, mes, i);
                 var diaSemanaEnum = ConvertirADiaSemana(fecha.DayOfWeek);
-                var fechaDateOnly = DateOnly.FromDateTime(fecha);
 
-                bool debioTrabajar = horariosList.Any(h =>
-                    h.GetDia() == diaSemanaEnum &&
+                if (!horariosPorDia.TryGetValue(diaSemanaEnum, out var horariosDelDia))
+                    continue;
+
+                var fechaDateOnly = DateOnly.FromDateTime(fecha);
+                bool debioTrabajar = horariosDelDia.Any(h =>
                     DateOnly.FromDateTime(h.GetVigenteDesde()) <= fechaDateOnly &&
                     (h.GetVigenteHasta() == DateTime.MinValue ||
                      DateOnly.FromDateTime(h.GetVigenteHasta()) >= fechaDateOnly));

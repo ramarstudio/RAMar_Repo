@@ -12,8 +12,8 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#90A4AE"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Height" Value="52"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="FontSize" Value="13"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="Padding" Value="20,0,16,0"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -29,19 +29,12 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="bd" Property="Background" Value="#FFFFFF15"/>
-                                <!-- Show left accent on hover for inactive buttons -->
                                 <Setter TargetName="bd" Property="BorderBrush" Value="#4FC3F750"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
-
-        <!-- Active nav button: sets left border to accent color via Background trigger in code-behind.
-             We define a secondary style that forces the BorderBrush shown when Background != Transparent. -->
-        <Style x:Key="NavBtnActiveIndicatorStyle" TargetType="Border">
-            <Setter Property="BorderBrush" Value="#4FC3F7"/>
         </Style>
     </UserControl.Resources>
 
@@ -69,24 +62,18 @@
                 </Grid.RowDefinitions>
 
                 <!-- Logo / Branding -->
-                <StackPanel Grid.Row="0" Margin="0,28,0,8">
-                    <!-- Circular logo with glow ring -->
-                    <Grid HorizontalAlignment="Center" Margin="0,0,0,14">
-                        <!-- Outer glow ring -->
-                        <Border Width="64" Height="64" CornerRadius="32"
-                                Background="Transparent">
+                <StackPanel Grid.Row="0" Margin="0,24,0,6">
+                    <Grid HorizontalAlignment="Center" Margin="0,0,0,12">
+                        <Border Width="60" Height="60" CornerRadius="30" Background="Transparent">
                             <Border.BorderBrush>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                     <GradientStop Color="#4FC3F7" Offset="0"/>
                                     <GradientStop Color="#1565C0" Offset="1"/>
                                 </LinearGradientBrush>
                             </Border.BorderBrush>
-                            <Border.BorderThickness>
-                                <Thickness>2</Thickness>
-                            </Border.BorderThickness>
+                            <Border.BorderThickness><Thickness>2</Thickness></Border.BorderThickness>
                         </Border>
-                        <!-- Inner filled circle -->
-                        <Border Width="56" Height="56" CornerRadius="28"
+                        <Border Width="52" Height="52" CornerRadius="26"
                                 HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -94,19 +81,15 @@
                                     <GradientStop Color="#1E88E5" Offset="1"/>
                                 </LinearGradientBrush>
                             </Border.Background>
-                            <TextBlock Text="R" FontSize="26" FontWeight="Bold"
+                            <TextBlock Text="R" FontSize="24" FontWeight="Bold"
                                        Foreground="White" HorizontalAlignment="Center"
                                        VerticalAlignment="Center"/>
                         </Border>
                     </Grid>
-
-                    <TextBlock Text="RAMar" FontSize="22" FontWeight="Bold"
-                               Foreground="White" HorizontalAlignment="Center"
-                              />
+                    <TextBlock Text="RAMar" FontSize="20" FontWeight="Bold"
+                               Foreground="White" HorizontalAlignment="Center"/>
                     <TextBlock Text="Panel Administrativo" FontSize="10"
-                               Foreground="#4FC3F780" HorizontalAlignment="Center" Margin="0,3,0,20"/>
-
-                    <!-- Separator -->
+                               Foreground="#4FC3F780" HorizontalAlignment="Center" Margin="0,3,0,16"/>
                     <Border Height="1" Margin="20,0">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
@@ -119,74 +102,142 @@
                 </StackPanel>
 
                 <!-- Nav buttons -->
-                <StackPanel Grid.Row="1" Margin="0,10,0,0">
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,8,0,0">
+                    <StackPanel>
 
-                    <!-- Section label -->
-                    <TextBlock Text="MENÚ PRINCIPAL"
-                               Foreground="#37474F" FontSize="9" FontWeight="Bold"
-                               Margin="20,8,0,6"/>
+                        <!-- MENÚ PRINCIPAL -->
+                        <TextBlock Text="MENÚ PRINCIPAL"
+                                   Foreground="#37474F" FontSize="9" FontWeight="Bold"
+                                   Margin="20,6,0,6"/>
 
-                    <Button x:Name="btnNavDashboard" Tag="dashboard"
-                            Style="{StaticResource NavBtnStyle}"
-                            Click="NavBtn_Click"
-                            ToolTip="Dashboard — Vista general del sistema">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="ViewDashboard" Width="20" Height="20"
-                                                     VerticalAlignment="Center" Margin="0,0,12,0"/>
-                            <TextBlock Text="Dashboard" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                        <Button x:Name="btnNavDashboard" Tag="dashboard"
+                                Style="{StaticResource NavBtnStyle}" Click="NavBtn_Click"
+                                ToolTip="Dashboard — Vista general del sistema">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ViewDashboard" Width="20" Height="20"
+                                                         VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                <TextBlock Text="Dashboard" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
 
-                    <Button x:Name="btnNavUsuarios" Tag="usuarios"
-                            Style="{StaticResource NavBtnStyle}"
-                            Click="NavBtn_Click"
-                            ToolTip="Usuarios — Gestión de accesos y roles">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="AccountGroup" Width="20" Height="20"
-                                                     VerticalAlignment="Center" Margin="0,0,12,0"/>
-                            <TextBlock Text="Usuarios" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                        <Button x:Name="btnNavUsuarios" Tag="usuarios"
+                                Style="{StaticResource NavBtnStyle}" Click="NavBtn_Click"
+                                ToolTip="Usuarios — Gestión de accesos y roles">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="AccountGroup" Width="20" Height="20"
+                                                         VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                <TextBlock Text="Usuarios" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
 
-                    <Button x:Name="btnNavMarcajes" Tag="marcajes"
-                            Style="{StaticResource NavBtnStyle}"
-                            Click="NavBtn_Click"
-                            ToolTip="Marcajes — Consulta y registro de asistencias">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="ClockCheck" Width="20" Height="20"
-                                                     VerticalAlignment="Center" Margin="0,0,12,0"/>
-                            <TextBlock Text="Marcajes" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                        <Button x:Name="btnNavMarcajes" Tag="marcajes"
+                                Style="{StaticResource NavBtnStyle}" Click="NavBtn_Click"
+                                ToolTip="Marcajes — Consulta y registro de asistencias">
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="ClockCheck" Width="20" Height="20"
+                                                             VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Marcajes" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
 
-                    <!-- Separator before reports -->
-                    <Border Height="1" Margin="20,8">
-                        <Border.Background>
-                            <SolidColorBrush Color="White" Opacity="0.05"/>
-                        </Border.Background>
-                    </Border>
+                        <Button x:Name="btnNavHorarios" Tag="horarios"
+                                Style="{StaticResource NavBtnStyle}" Click="NavBtn_Click"
+                                ToolTip="Horarios — Asignación de turnos por empleado">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="CalendarClock" Width="20" Height="20"
+                                                         VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                <TextBlock Text="Horarios" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
 
-                    <TextBlock Text="ANÁLISIS"
-                               Foreground="#37474F" FontSize="9" FontWeight="Bold"
-                               Margin="20,0,0,6"/>
+                        <!-- Separator -->
+                        <Border Height="1" Margin="20,8">
+                            <Border.Background>
+                                <SolidColorBrush Color="White" Opacity="0.05"/>
+                            </Border.Background>
+                        </Border>
 
-                    <Button x:Name="btnNavReportes" Tag="reportes"
-                            Style="{StaticResource NavBtnStyle}"
-                            Click="NavBtn_Click"
-                            ToolTip="Reportes — Análisis y exportación de datos">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="ChartBar" Width="20" Height="20"
-                                                     VerticalAlignment="Center" Margin="0,0,12,0"/>
-                            <TextBlock Text="Reportes" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                        <!-- ANÁLISIS -->
+                        <TextBlock Text="ANÁLISIS"
+                                   Foreground="#37474F" FontSize="9" FontWeight="Bold"
+                                   Margin="20,0,0,6"/>
 
-                </StackPanel>
+                        <Button x:Name="btnNavReportes" Tag="reportes"
+                                Style="{StaticResource NavBtnStyle}" Click="NavBtn_Click"
+                                ToolTip="Reportes — Análisis y exportación de datos">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ChartBar" Width="20" Height="20"
+                                                         VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                <TextBlock Text="Reportes" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="btnNavAuditoria" Tag="auditoria"
+                                Style="{StaticResource NavBtnStyle}" Click="NavBtn_Click"
+                                ToolTip="Auditoría — Historial de acciones del sistema">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ShieldSearch" Width="20" Height="20"
+                                                         VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                <TextBlock Text="Auditoría" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Separator -->
+                        <Border Height="1" Margin="20,8">
+                            <Border.Background>
+                                <SolidColorBrush Color="White" Opacity="0.05"/>
+                            </Border.Background>
+                        </Border>
+
+                        <!-- SISTEMA -->
+                        <TextBlock Text="SISTEMA"
+                                   Foreground="#37474F" FontSize="9" FontWeight="Bold"
+                                   Margin="20,0,0,6"/>
+
+                        <Button x:Name="btnNavConfig" Tag="configuracion"
+                                Style="{StaticResource NavBtnStyle}" Click="NavBtn_Click"
+                                ToolTip="Configuración — Parámetros del sistema">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Cog" Width="20" Height="20"
+                                                         VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                <TextBlock Text="Configuración" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- ALERTAS DEL DÍA -->
+                        <Border x:Name="pnlAlertas" Margin="16,14,16,4" Visibility="Collapsed"
+                                CornerRadius="10" Padding="12,10">
+                            <Border.Background>
+                                <SolidColorBrush Color="#E65100" Opacity="0.12"/>
+                            </Border.Background>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <materialDesign:PackIcon Kind="AlertCircle" Width="14" Height="14"
+                                                             Foreground="#FFB74D" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="ALERTAS HOY" FontSize="9" FontWeight="Bold"
+                                               Foreground="#FFB74D" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                    <Border Width="6" Height="6" CornerRadius="3"
+                                            Background="#E65100" Margin="2,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="txtAlertaTardanzas" FontSize="11" Foreground="#ECEFF1"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="6" Height="6" CornerRadius="3"
+                                            Background="#AD1457" Margin="2,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="txtAlertaAusencias" FontSize="11" Foreground="#ECEFF1"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
 
                 <!-- User info + logout -->
-                <StackPanel Grid.Row="2" Margin="16,0,16,20">
-                    <!-- Gradient separator -->
-                    <Border Height="1" Margin="0,0,0,14">
+                <StackPanel Grid.Row="2" Margin="16,0,16,16">
+                    <Border Height="1" Margin="0,0,0,12">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                 <GradientStop Color="Transparent" Offset="0"/>
@@ -202,26 +253,25 @@
                             <SolidColorBrush Color="White" Opacity="0.05"/>
                         </Border.Background>
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="36" Height="36" CornerRadius="18">
+                            <Border Width="34" Height="34" CornerRadius="17">
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                         <GradientStop Color="#1565C0" Offset="0"/>
                                         <GradientStop Color="#1E88E5" Offset="1"/>
                                     </LinearGradientBrush>
                                 </Border.Background>
-                                <TextBlock Text="A" FontSize="16" FontWeight="Bold"
+                                <TextBlock Text="A" FontSize="15" FontWeight="Bold"
                                            Foreground="White" HorizontalAlignment="Center"
                                            VerticalAlignment="Center"/>
                             </Border>
                             <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
                                 <TextBlock x:Name="txtNombreAdmin" Text="Admin"
-                                           Foreground="#ECEFF1" FontSize="13" FontWeight="SemiBold"
-                                           TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+                                           Foreground="#ECEFF1" FontSize="12" FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis" MaxWidth="120"/>
                                 <StackPanel Orientation="Horizontal">
                                     <Border Width="6" Height="6" CornerRadius="3"
-                                            Background="#4CAF50" Margin="0,0,5,0"
-                                            VerticalAlignment="Center"/>
-                                    <TextBlock Text="Administrador" Foreground="#4FC3F7" FontSize="10"/>
+                                            Background="#4CAF50" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="En línea" Foreground="#4FC3F7" FontSize="10"/>
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
@@ -229,7 +279,7 @@
 
                     <!-- Logout button -->
                     <Button Content="Cerrar Sesión" Click="BtnLogout_Click"
-                            Height="36" Cursor="Hand" FontSize="12" FontWeight="SemiBold">
+                            Height="34" Cursor="Hand" FontSize="11" FontWeight="SemiBold">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="bd" CornerRadius="8">
@@ -240,10 +290,10 @@
                                         </LinearGradientBrush>
                                     </Border.Background>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <materialDesign:PackIcon Kind="Logout" Width="16" Height="16"
+                                        <materialDesign:PackIcon Kind="Logout" Width="15" Height="15"
                                                                  Foreground="White" Margin="0,0,6,0"/>
                                         <TextBlock Text="{TemplateBinding Content}"
-                                                   Foreground="White" FontSize="12"/>
+                                                   Foreground="White" FontSize="11"/>
                                     </StackPanel>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -258,7 +308,7 @@
             </Grid>
         </Border>
 
-        <!-- Right edge shadow separator -->
+        <!-- Right edge shadow -->
         <Border Grid.Column="0" Width="6" HorizontalAlignment="Right" IsHitTestVisible="False">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">

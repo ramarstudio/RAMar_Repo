@@ -59,5 +59,9 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 
         builder.HasIndex("fecha")
                .HasDatabaseName("idx_auditlogs_fecha");
+
+        // Índice compuesto (fecha, entidad) — acelera CargarLogsAsync con filtro de entidad
+        builder.HasIndex("fecha", "entidad")
+               .HasDatabaseName("idx_auditlogs_fecha_entidad");
     }
 }

@@ -20,5 +20,6 @@ namespace AttendanceSystem.Core.Interfaces
         // Consultas analíticas para gráficos del dashboard
         Task<List<AsistenciaDiariaDto>>  GetAsistenciasDiariasAsync(int dias, CancellationToken ct = default);
         Task<List<TardanzaEmpleadoDto>>  GetTopTardanzasAsync(int topN, int dias, CancellationToken ct = default);
+        Task<List<TardanzaEmpleadoDto>>  GetTopPuntualesAsync(int topN, int dias, CancellationToken ct = default);
     }
 }

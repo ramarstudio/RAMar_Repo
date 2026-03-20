@@ -55,5 +55,9 @@ public class MarcajeConfiguration : IEntityTypeConfiguration<Marcaje>
         // Índice standalone sobre fechaHora para queries del Dashboard (sin filtro empleadoId)
         builder.HasIndex("fechaHora")
                .HasDatabaseName("idx_marcajes_fecha");
+
+        // Índice sobre tardanza — acelera GetTopTardanzasAsync y GetTopPuntualesAsync
+        builder.HasIndex("tardanza")
+               .HasDatabaseName("idx_marcajes_tardanza");
     }
 }

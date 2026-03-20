@@ -10,5 +10,6 @@ namespace AttendanceSystem.Core.Interfaces
         Task<Empleado>              GetByUsuarioIdAsync(int usuarioId);
         Task<List<Empleado>>        GetByIdsAsync(IEnumerable<int> ids, CancellationToken ct = default);
         Task<IEnumerable<Empleado>> GetAllActivosAsync();
+        Task<int>                   CountActivosAsync(CancellationToken ct = default);
     }
 }

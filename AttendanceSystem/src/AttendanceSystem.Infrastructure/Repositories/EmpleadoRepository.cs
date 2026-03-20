@@ -41,4 +41,8 @@ public class EmpleadoRepository : RepositoryBase<Empleado>, IEmpleadoRepository
             .Where(e => EF.Property<bool>(e, "activo") == true)
             .AsNoTracking()
             .ToListAsync();
+
+    public Task<int> CountActivosAsync(CancellationToken ct = default)
+        => _context.Empleados
+            .CountAsync(e => EF.Property<bool>(e, "activo") == true, ct);
 }

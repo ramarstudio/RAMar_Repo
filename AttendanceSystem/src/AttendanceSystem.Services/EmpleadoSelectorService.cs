@@ -29,9 +29,7 @@ namespace AttendanceSystem.Services
 
         public async Task<List<EmpleadoSelectorDto>> ObtenerSelectorAsync(CancellationToken ct = default)
         {
-            var empleados  = await _empleadoRepo.GetAllActivosAsync();
-            var empList    = empleados.ToList();
-
+            var empList    = (await _empleadoRepo.GetAllActivosAsync()).ToList();
             var usuarioIds = empList.Select(e => e.GetUsuarioId()).Distinct().ToList();
 
             // IN (...) query — filtra solo los IDs necesarios

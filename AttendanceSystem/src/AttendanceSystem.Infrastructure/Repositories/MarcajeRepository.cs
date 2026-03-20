@@ -132,4 +132,37 @@ public class MarcajeRepository : RepositoryBase<Marcaje>, IMarcajeRepository
             MinutosTotales = x.MinutosTotales
         }).ToList();
     }
+
+    // Top N empleados más puntuales — GROUP BY server-side, cuenta entradas sin tardanza
+    public async Task<List<TardanzaEmpleadoDto>> GetTopPuntualesAsync(
+        int topN, int dias, CancellationToken ct = default)
+    {
+        var desde = DateTime.Today.AddDays(-(dias - 1));
+        var hasta = DateTime.Today.AddDays(1);
+
+        var agrupado = await _context.Marcajes
+            .AsNoTracking()
+            .Where(m =>
+                EF.Property<TipoMarcaje>(m, "tipo") == TipoMarcaje.Entrada &&
+                EF.Property<bool>(m, "tardanza")    == false &&
+                EF.Property<DateTime>(m, "fechaHora") >= desde &&
+                EF.Property<DateTime>(m, "fechaHora") <  hasta)
+            .GroupBy(m => EF.Property<int>(m, "empleadoId"))
+            .Select(g => new
+            {
+                EmpleadoId    = g.Key,
+                EntradasATiempo = g.Count()
+            })
+            .OrderByDescending(x => x.EntradasATiempo)
+            .Take(topN)
+            .ToListAsync(ct);
+
+        return agrupado.Select(x => new TardanzaEmpleadoDto
+        {
+            EmpleadoId     = x.EmpleadoId,
+            NombreEmpleado = string.Empty,
+            TotalTardanzas = x.EntradasATiempo, // reutilizado: entradas a tiempo
+            MinutosTotales = 0
+        }).ToList();
+    }
 }

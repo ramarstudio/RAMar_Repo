@@ -1,0 +1,165 @@
+<UserControl x:Class="AttendanceSystem.App.Views.Admin.ConfiguracionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Background="#F0F4F8" Loaded="ConfiguracionView_Loaded">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="28,24,28,28">
+
+            <!-- HEADER -->
+            <Border Background="White" CornerRadius="14" Padding="24,18" Margin="0,0,0,18">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
+                </Border.Effect>
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="40" Height="40" CornerRadius="10" Margin="0,0,14,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF8F00" Offset="0"/>
+                                    <GradientStop Color="#F57F17" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <materialDesign:PackIcon Kind="Cog" Width="22" Height="22"
+                                                     Foreground="White" HorizontalAlignment="Center"
+                                                     VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Configuración del Sistema" FontSize="20" FontWeight="Bold" Foreground="#1A237E"/>
+                            <TextBlock Text="Parámetros generales del sistema — los cambios son inmediatos" FontSize="12" Foreground="#78909C"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Button x:Name="btnNueva" Click="BtnNueva_Click"
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Height="36" Padding="16,0"
+                            Style="{StaticResource MaterialDesignFlatMidBgButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Plus" Width="18" Height="18" Margin="0,0,6,0"/>
+                            <TextBlock Text="Nueva Clave"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- INFO -->
+            <Border Background="#FFF8E1" CornerRadius="10" Padding="16,12" Margin="0,0,0,18"
+                    BorderBrush="#FFE082" BorderThickness="1">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="InformationOutline" Foreground="#F57F17" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Las claves de seguridad (Security:*) están protegidas y no aparecen aquí."
+                               FontSize="12" Foreground="#795548" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <!-- TABLA -->
+            <Border Background="White" CornerRadius="14" Padding="6" Margin="0,0,0,18">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
+                </Border.Effect>
+                <DataGrid x:Name="dgConfig"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          CanUserSortColumns="True" HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal" BorderThickness="0"
+                          Background="White" RowBackground="White"
+                          AlternatingRowBackground="#F8FAFD"
+                          MaxHeight="400" FontSize="12"
+                          SelectionChanged="DgConfig_SelectionChanged">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Clave" Binding="{Binding Clave}" Width="200">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Foreground" Value="#F57F17"/>
+                                    <Setter Property="FontFamily" Value="Consolas"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Valor" Binding="{Binding Valor}" Width="200"/>
+                        <DataGridTextColumn Header="Tipo" Binding="{Binding TipoDato}" Width="80"/>
+                        <DataGridTextColumn Header="Descripción" Binding="{Binding Descripcion}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#78909C"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    <Setter Property="ToolTip" Value="{Binding Descripcion}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- PANEL EDITAR VALOR -->
+            <Border x:Name="pnlEditar" Background="White" CornerRadius="14" Padding="24,18"
+                    Margin="0,0,0,18" Visibility="Collapsed">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.06" Color="#F57F17"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="EDITAR VALOR" FontSize="10" FontWeight="Bold" Foreground="#FF8F00" Margin="0,0,0,10"/>
+                    <TextBlock x:Name="txtClaveSeleccionada" FontSize="14" FontWeight="SemiBold" Foreground="#1A237E" Margin="0,0,0,10"/>
+                    <WrapPanel>
+                        <TextBox x:Name="txtNuevoValor" Width="300"
+                                 materialDesign:HintAssist.Hint="Nuevo valor"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Margin="0,0,12,0"/>
+                        <Button x:Name="btnGuardar" Click="BtnGuardar_Click"
+                                Content="Guardar" Height="40" Padding="20,0"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- FORMULARIO NUEVA CLAVE -->
+            <Border x:Name="pnlNueva" Background="White" CornerRadius="14" Padding="24,20"
+                    Margin="0,0,0,18" Visibility="Collapsed">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#FF8F00"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="NUEVA CONFIGURACIÓN" FontSize="11" FontWeight="Bold" Foreground="#FF8F00" Margin="0,0,0,16"/>
+                    <WrapPanel>
+                        <StackPanel Margin="0,0,16,12">
+                            <TextBlock Text="Clave" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBox x:Name="txtClave" Width="200"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,12">
+                            <TextBlock Text="Valor" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBox x:Name="txtValor" Width="200"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,12">
+                            <TextBlock Text="Tipo" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <ComboBox x:Name="cmbTipo" Width="110"
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                                <ComboBoxItem Content="string" IsSelected="True"/>
+                                <ComboBoxItem Content="int"/>
+                                <ComboBoxItem Content="bool"/>
+                                <ComboBoxItem Content="decimal"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </WrapPanel>
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock Text="Descripción" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                        <TextBox x:Name="txtDescripcion" Width="400" HorizontalAlignment="Left"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="btnCrear" Click="BtnCrear_Click"
+                                Content="Crear" Height="36" Padding="20,0" Margin="0,0,10,0"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
+                        <Button Content="Cancelar" Click="BtnCancelarNueva_Click"
+                                Height="36" Padding="20,0"
+                                Style="{StaticResource MaterialDesignFlatButton}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- FEEDBACK -->
+            <TextBlock x:Name="txtMensaje" Visibility="Collapsed"
+                       FontSize="13" Margin="0,4,0,0" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
