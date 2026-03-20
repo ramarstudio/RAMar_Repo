@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,34 +49,85 @@ namespace AttendanceSystem.App
                 .AddUserSecrets<App>(optional: true)
                 .Build();
 
+            // 1. Crear/migrar la BD y obtener las claves de seguridad persistidas
+            var connectionString = Environment.GetEnvironmentVariable("AS_DB_CONNECTION")
+                ?? _configuration.GetConnectionString("DefaultConnection");
+            var securityKeys = InitSecurityKeys(connectionString);
+
+            // 2. Configurar DI con las claves de la BD
             var services = new ServiceCollection();
-            ConfigureServices(services);
+            ConfigureServices(services, connectionString, securityKeys);
             _serviceProvider = services.BuildServiceProvider();
 
+            // 3. Seed de roles y usuario admin
             using (var scope = _serviceProvider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var hasher  = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-                context.Database.EnsureCreated();
                 SeedData(context, hasher);
             }
 
             _serviceProvider.GetRequiredService<MainWindow>().Show();
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        /// <summary>
+        /// Lee las claves de seguridad de la tabla configuraciones.
+        /// Si no existen, las genera y las guarda. Así nunca dependen del appsettings.json.
+        /// </summary>
+        private SecurityKeys InitSecurityKeys(string connectionString)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseNpgsql(connectionString);
+
+            using var context = new AppDbContext(optionsBuilder.Options);
+            context.Database.EnsureCreated();
+
+            string pepper        = GetOrCreateConfig(context, "Security:HashPepper",    "Pepper para hashing de contraseñas",  () => GenerateRandomBase64(32));
+            string encryptionKey = GetOrCreateConfig(context, "Security:EncryptionKey", "Clave AES-256 para cifrado",          () => GenerateRandomBase64(32));
+            string hmacKey       = GetOrCreateConfig(context, "Security:HmacKey",       "Clave HMAC-SHA256 para integridad",   () => GenerateRandomBase64(32));
+
+            return new SecurityKeys(pepper, encryptionKey, hmacKey);
+        }
+
+        private string GetOrCreateConfig(AppDbContext context, string clave, string descripcion, Func<string> generarValor)
+        {
+            var config = context.Configuraciones
+                .AsEnumerable()
+                .FirstOrDefault(c => c.GetClave() == clave);
+
+            if (config != null)
+                return config.GetValor();
+
+            // No existe → generar y persistir
+            string valor = generarValor();
+            var nueva = new Configuracion();
+            nueva.SetClave(clave);
+            nueva.SetValor(valor);
+            nueva.SetTipoDato("string");
+            nueva.SetDescripcion(descripcion);
+            context.Configuraciones.Add(nueva);
+            context.SaveChanges();
+
+            return valor;
+        }
+
+        private static string GenerateRandomBase64(int sizeBytes)
+        {
+            byte[] buffer = new byte[sizeBytes];
+            using (var rng = RandomNumberGenerator.Create()) { rng.GetBytes(buffer); }
+            return Convert.ToBase64String(buffer);
+        }
+
+        private void ConfigureServices(IServiceCollection services, string connectionString, SecurityKeys keys)
         {
             // ── Logging ──────────────────────────────────────────────────────
             services.AddLogging(b => b.AddDebug().SetMinimumLevel(LogLevel.Debug));
 
             // ── Seguridad y sesión ────────────────────────────────────────────
             services.AddSingleton(new SessionOptions());
-            // Registrado como ISessionManager para que todos los controllers dependan de la abstracción
             services.AddSingleton<ISessionManager, SessionManager>();
 
             // ── Base de datos ─────────────────────────────────────────────────
-            var connectionString = Environment.GetEnvironmentVariable("AS_DB_CONNECTION")
-                ?? _configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
             // ── Repositorios ──────────────────────────────────────────────────
@@ -85,17 +138,9 @@ namespace AttendanceSystem.App
             services.AddScoped<IAuditRepository,         AuditRepository>();
             services.AddScoped<IHorarioRepository,       HorarioRepository>();
 
-            // ── Opciones de configuración ──────────────────────────────────────
-            var encryptionKey = Environment.GetEnvironmentVariable("AS_ENCRYPTION_KEY")
-                ?? _configuration["Security:EncryptionKey"];
-            var hmacKey = Environment.GetEnvironmentVariable("AS_HMAC_KEY")
-                ?? _configuration["Security:HmacKey"];
-            services.AddSingleton(new EncryptionOptions(encryptionKey, hmacKey));
-
-            var pepper = Environment.GetEnvironmentVariable("AS_HASH_PEPPER")
-                ?? _configuration["Security:HashPepper"]
-                ?? "ZGV2X3BlcHBlcl9zYW1wbGU=";
-            services.AddSingleton(new HashingOptions(pepper));
+            // ── Claves de seguridad (desde la BD, no desde appsettings) ───────
+            services.AddSingleton(new EncryptionOptions(keys.EncryptionKey, keys.HmacKey));
+            services.AddSingleton(new HashingOptions(keys.Pepper));
 
             // FacialServiceOptions — URL relativa leída desde appsettings (elimina hardcoded)
             var facialBaseUrl   = _configuration["FacialService:BaseUrl"]   ?? "http://localhost:5001";
@@ -181,6 +226,21 @@ namespace AttendanceSystem.App
                 admin.SetRol(rolAdmin);
                 context.Usuarios.Add(admin);
                 context.SaveChanges();
+            }
+        }
+
+        /// <summary>DTO interno para transportar las 3 claves desde InitSecurityKeys a ConfigureServices.</summary>
+        private sealed class SecurityKeys
+        {
+            public string Pepper { get; }
+            public string EncryptionKey { get; }
+            public string HmacKey { get; }
+
+            public SecurityKeys(string pepper, string encryptionKey, string hmacKey)
+            {
+                Pepper        = pepper;
+                EncryptionKey = encryptionKey;
+                HmacKey       = hmacKey;
             }
         }
     }
