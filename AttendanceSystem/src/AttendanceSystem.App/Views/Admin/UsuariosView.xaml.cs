@@ -109,7 +109,12 @@ namespace AttendanceSystem.App.Views.Admin
             }
             catch (Exception ex)
             {
-                MostrarMensaje($"Error inesperado: {ex.Message}", false);
+                // Extraer el mensaje más profundo (el error real de PostgreSQL)
+                var inner = ex;
+                while (inner.InnerException != null) inner = inner.InnerException;
+                var detalle = inner == ex ? ex.Message : $"{ex.Message} → {inner.Message}";
+                MostrarMensaje($"Error: {detalle}", false);
+                System.Diagnostics.Debug.WriteLine($"[UsuariosView] {ex}");
             }
         }
 

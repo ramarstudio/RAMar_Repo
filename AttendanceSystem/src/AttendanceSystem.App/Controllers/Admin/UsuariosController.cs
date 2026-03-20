@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AttendanceSystem.Core.Interfaces;
@@ -114,6 +115,9 @@ namespace AttendanceSystem.App.Controllers.Admin
             nuevo.SetRol(rol);
 
             _context.Usuarios.Add(nuevo);
+            // El shadow property "RolId" no se propaga automáticamente con PropertyAccessMode.Field.
+            // Se asigna explícitamente en el entry del change tracker antes de guardar.
+            _context.Entry(nuevo).Property("RolId").CurrentValue = rolId;
             await _context.SaveChangesAsync();   // ← ID asignado aquí por BD
 
             // ── Crear Empleado vinculado automáticamente ─────────────────────────
@@ -143,7 +147,7 @@ namespace AttendanceSystem.App.Controllers.Admin
             await _auditService.RegistrarAsync(
                 accion: "CREAR", entidad: "Usuario", registroId: nuevo.GetId(),
                 usuarioId: adminId, anterior: null,
-                nuevo: $"username={username}, rol={rol.GetNombre()}",
+                nuevo: JsonSerializer.Serialize(new { username, rol = rol.GetNombre().ToString() }),
                 motivo: "Alta de usuario por administrador");
 
             return (true, $"Usuario '{username}' creado correctamente.");
@@ -164,7 +168,9 @@ namespace AttendanceSystem.App.Controllers.Admin
             int adminId = _session.GetCurrentSession()?.UserId ?? 0;
             await _auditService.RegistrarAsync(
                 accion: "ACTUALIZAR", entidad: "Usuario", registroId: usuarioId,
-                usuarioId: adminId, anterior: anterior, nuevo: nuevo,
+                usuarioId: adminId,
+                anterior: JsonSerializer.Serialize(anterior),
+                nuevo: JsonSerializer.Serialize(nuevo),
                 motivo: "Cambio de estado por administrador");
 
             return (true, $"Usuario '{usuario.GetUsername()}' → {nuevo}.");
@@ -186,7 +192,9 @@ namespace AttendanceSystem.App.Controllers.Admin
             int adminId = _session.GetCurrentSession()?.UserId ?? 0;
             await _auditService.RegistrarAsync(
                 accion: "ACTUALIZAR", entidad: "Usuario", registroId: usuarioId,
-                usuarioId: adminId, anterior: "***", nuevo: "***",
+                usuarioId: adminId,
+                anterior: JsonSerializer.Serialize("***"),
+                nuevo: JsonSerializer.Serialize("***"),
                 motivo: "Reset de contraseña por administrador");
 
             return (true, "Contraseña actualizada correctamente.");
