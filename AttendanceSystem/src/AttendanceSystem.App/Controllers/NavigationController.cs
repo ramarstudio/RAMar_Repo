@@ -1,54 +1,50 @@
 using System;
 using System.Windows.Controls;
 using AttendanceSystem.App.Helpers;
-using AttendanceSystem.Security;
 using AttendanceSystem.App.Views;
 using AttendanceSystem.App.Views.Admin;
+using AttendanceSystem.Core.Interfaces;
 
 namespace AttendanceSystem.App.Controllers
 {
+    // Ruta de navegación basada en Func<T> en lugar de IServiceProvider.
+    // Esto elimina el anti-patrón Service Locator y hace el router testeable.
     public class NavigationController
     {
-        private readonly SessionManager _sessionManager;
-        private readonly NavigationHelper _navigationHelper;
-        private readonly IServiceProvider _serviceProvider; 
+        private readonly ISessionManager    _sessionManager;
+        private readonly NavigationHelper   _navigationHelper;
+        private readonly Func<LoginView>    _loginViewFactory;
+        private readonly Func<AdminShellView> _adminShellViewFactory;
+        private readonly Func<MarcajeView>  _marcajeViewFactory;
 
         public NavigationController(
-            SessionManager sessionManager, 
-            NavigationHelper navigationHelper,
-            IServiceProvider serviceProvider)
+            ISessionManager      sessionManager,
+            NavigationHelper     navigationHelper,
+            Func<LoginView>      loginViewFactory,
+            Func<AdminShellView> adminShellViewFactory,
+            Func<MarcajeView>    marcajeViewFactory)
         {
-            _sessionManager = sessionManager;
-            _navigationHelper = navigationHelper;
-            _serviceProvider = serviceProvider;
+            _sessionManager        = sessionManager;
+            _navigationHelper      = navigationHelper;
+            _loginViewFactory      = loginViewFactory;
+            _adminShellViewFactory = adminShellViewFactory;
+            _marcajeViewFactory    = marcajeViewFactory;
         }
 
         public void InicializarContenedor(ContentControl container)
-        {
-            _navigationHelper.Inicializar(container);
-        }
+            => _navigationHelper.Inicializar(container);
 
         public void NavegarALogin()
-        {
-            // Usamos el ServiceProvider para que resuelva la vista y sus controladores automáticamente
-            var loginView = (LoginView)_serviceProvider.GetService(typeof(LoginView));
-            _navigationHelper.CambiarVista(loginView);
-        }
+            => _navigationHelper.CambiarVista(_loginViewFactory());
 
         public void NavegarAlMenuPrincipal()
         {
             if (!_sessionManager.EstaLogueado()) return;
 
             if (_sessionManager.EsAdministrador())
-            {
-                var adminShell = (AdminShellView)_serviceProvider.GetService(typeof(AdminShellView));
-                _navigationHelper.CambiarVista(adminShell);
-            }
+                _navigationHelper.CambiarVista(_adminShellViewFactory());
             else
-            {
-                var marcajeView = (MarcajeView)_serviceProvider.GetService(typeof(MarcajeView));
-                _navigationHelper.CambiarVista(marcajeView);
-            }
+                _navigationHelper.CambiarVista(_marcajeViewFactory());
         }
     }
 }

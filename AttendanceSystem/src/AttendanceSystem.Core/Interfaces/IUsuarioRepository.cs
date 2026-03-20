@@ -1,15 +1,15 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AttendanceSystem.Core.Interfaces
 {
-    public interface IUsuarioRepository
+    public interface IUsuarioRepository : IRepositoryBase<Usuario>
     {
-        Task<Usuario> GetByIdAsync(int id);
-        Task<Usuario> GetByUsernameAsync(string username);
+        Task<Usuario>              GetByIdAsync(int id);
+        Task<Usuario>              GetByUsernameAsync(string username);
         Task<IEnumerable<Usuario>> GetAllAsync();
-        Task AddAsync(Usuario usuario);
-        Task UpdateAsync(Usuario usuario);
-        Task DeleteAsync(int id);
+        Task<List<Usuario>>        GetByIdsAsync(IEnumerable<int> ids, CancellationToken ct = default);
+        Task                       DeleteAsync(int id);
     }
 }

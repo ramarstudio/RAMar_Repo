@@ -3,12 +3,10 @@ using System.Threading.Tasks;
 
 namespace AttendanceSystem.Core.Interfaces
 {
-    public interface IEmpleadoRepository
+    public interface IEmpleadoRepository : IRepositoryBase<Empleado>
     {
-        Task<Empleado> GetByIdAsync(int id);
-        Task<Empleado> GetByCodigoAsync(string codigo);
+        Task<Empleado>              GetByIdAsync(int id);
+        Task<Empleado>              GetByCodigoAsync(string codigo);
         Task<IEnumerable<Empleado>> GetAllActivosAsync();
-        Task AddAsync(Empleado empleado);
-        Task UpdateAsync(Empleado empleado);
     }
 }

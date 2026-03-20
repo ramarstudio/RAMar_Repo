@@ -1,30 +1,39 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AttendanceSystem.Core.DTOs;
+using AttendanceSystem.Core.Interfaces;
+using AttendanceSystem.Core.Options;
+using Microsoft.Extensions.Logging;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
 namespace AttendanceSystem.Services
 {
-    public class ExportService
+    public class ExportService : IExportService
     {
-        // Ruta única calculada una sola vez: evita llamadas repetidas a Path.Combine + AppDomain
-        private static readonly string CarpetaExportaciones =
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exportaciones");
+        private readonly string              _carpetaExportaciones;
+        private readonly ILogger<ExportService> _logger;
 
-        public ExportService()
+        public ExportService(ExportOptions options, ILogger<ExportService> logger)
         {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            // Carpeta calculada una sola vez en construcción
+            _carpetaExportaciones = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                options?.Carpeta ?? "Exportaciones");
+
             QuestPDF.Settings.License = LicenseType.Community;
         }
 
-        public async Task<string> ExportarACsvAsync(ReporteDto reporte)
+        public async Task<string> ExportarACsvAsync(ReporteDto reporte, CancellationToken ct = default)
         {
-            Directory.CreateDirectory(CarpetaExportaciones);
+            Directory.CreateDirectory(_carpetaExportaciones);
 
-            string rutaCompleta = Path.Combine(CarpetaExportaciones,
+            string ruta = Path.Combine(_carpetaExportaciones,
                 $"Reporte_{reporte.CodigoEmpleado}_{reporte.PeriodoInicio:MMyyyy}.csv");
 
             var sb = new StringBuilder();
@@ -37,22 +46,23 @@ namespace AttendanceSystem.Services
                           $"{reporte.SumatoriaMinutosTardanza}," +
                           $"{reporte.TotalFaltas}");
 
-            await File.WriteAllTextAsync(rutaCompleta, sb.ToString(), Encoding.UTF8);
-            return rutaCompleta;
+            await File.WriteAllTextAsync(ruta, sb.ToString(), Encoding.UTF8, ct);
+            _logger.LogInformation("CSV exportado: {Ruta}", ruta);
+            return ruta;
         }
 
-        // PDF ahora es async: se ejecuta en el thread pool para no bloquear el dispatcher WPF.
-        public Task<string> ExportarAPdfAsync(ReporteDto reporte)
+        // PDF en ThreadPool para no bloquear el dispatcher WPF
+        public Task<string> ExportarAPdfAsync(ReporteDto reporte, CancellationToken ct = default)
         {
-            Directory.CreateDirectory(CarpetaExportaciones);
+            Directory.CreateDirectory(_carpetaExportaciones);
 
-            string rutaCompleta = Path.Combine(CarpetaExportaciones,
+            string ruta = Path.Combine(_carpetaExportaciones,
                 $"Reporte_{reporte.CodigoEmpleado}_{reporte.PeriodoInicio:MMyyyy}.pdf");
 
-            // Task.Run mueve la generación del PDF al ThreadPool,
-            // liberando el dispatcher WPF durante la operación bloqueante.
             return Task.Run(() =>
             {
+                ct.ThrowIfCancellationRequested();
+
                 Document.Create(container =>
                 {
                     container.Page(page =>
@@ -102,10 +112,11 @@ namespace AttendanceSystem.Services
                             x.Span($"{DateTime.Now:dd/MM/yyyy HH:mm}");
                         });
                     });
-                }).GeneratePdf(rutaCompleta);
+                }).GeneratePdf(ruta);
 
-                return rutaCompleta;
-            });
+                _logger.LogInformation("PDF exportado: {Ruta}", ruta);
+                return ruta;
+            }, ct);
         }
     }
 }

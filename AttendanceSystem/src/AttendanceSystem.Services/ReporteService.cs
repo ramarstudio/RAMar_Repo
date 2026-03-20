@@ -1,34 +1,40 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AttendanceSystem.Core.DTOs;
-using AttendanceSystem.Core.Interfaces;
 using AttendanceSystem.Core.Enums;
+using AttendanceSystem.Core.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace AttendanceSystem.Services
 {
-    public class ReporteService
+    public class ReporteService : IReporteService
     {
-        private readonly IMarcajeRepository  _marcajeRepository;
-        private readonly IEmpleadoRepository _empleadoRepository;
-        private readonly IHorarioRepository  _horarioRepository;
+        private readonly IMarcajeRepository      _marcajeRepository;
+        private readonly IEmpleadoRepository     _empleadoRepository;
+        private readonly IHorarioRepository      _horarioRepository;
+        private readonly ILogger<ReporteService> _logger;
 
         public ReporteService(
-            IMarcajeRepository  marcajeRepository,
-            IEmpleadoRepository empleadoRepository,
-            IHorarioRepository  horarioRepository)
+            IMarcajeRepository      marcajeRepository,
+            IEmpleadoRepository     empleadoRepository,
+            IHorarioRepository      horarioRepository,
+            ILogger<ReporteService> logger)
         {
             _marcajeRepository  = marcajeRepository;
             _empleadoRepository = empleadoRepository;
             _horarioRepository  = horarioRepository;
+            _logger             = logger;
         }
 
-        public async Task<ReporteDto> GenerarReporteMensualAsync(int empleadoId, int mes, int anio)
+        public async Task<ReporteDto> GenerarReporteMensualAsync(
+            int empleadoId, int mes, int anio, CancellationToken ct = default)
         {
             var empleado = await _empleadoRepository.GetByIdAsync(empleadoId);
             if (empleado == null)
-                throw new ArgumentException("El empleado especificado no existe.");
+                throw new ArgumentException($"Empleado con ID {empleadoId} no existe.");
 
             var periodoInicio = new DateTime(anio, mes, 1);
             int diasDelMes    = DateTime.DaysInMonth(anio, mes);
@@ -37,37 +43,32 @@ namespace AttendanceSystem.Services
             var marcajes = await _marcajeRepository.GetByEmpleadoIdAsync(empleadoId, periodoInicio, periodoFin);
             var horarios = await _horarioRepository.GetByEmpleadoIdAsync(empleadoId);
 
-            // Materializar una vez para evitar múltiples enumeraciones del IEnumerable
             var entradas     = marcajes.Where(m => m.EsEntrada()).ToList();
             var horariosList = horarios.ToList();
 
-            // Un solo recorrido sobre entradas para calcular tardanzas y minutos
+            // Un solo recorrido sobre entradas para totalizar tardanzas
             int totalAsistencias   = entradas.Count;
             int totalTardanzas     = 0;
             int sumatoriaTardanzas = 0;
 
             foreach (var m in entradas)
             {
-                if (m.EsTardanza())
-                {
-                    totalTardanzas++;
-                    sumatoriaTardanzas += m.GetMinutosTardanza();
-                }
+                if (!m.EsTardanza()) continue;
+                totalTardanzas++;
+                sumatoriaTardanzas += m.GetMinutosTardanza();
             }
 
-            // Calcular días laborables: un recorrido por el mes con acceso O(1) al horario
+            // Días laborables: recorrido O(diasDelMes) con lookup O(1) en horariosList
             int diasLaborablesReales = 0;
-
             for (int i = 1; i <= diasDelMes; i++)
             {
-                var fechaIteracion = new DateTime(anio, mes, i);
-                var diaSemanaEnum  = ConvertirADiaSemana(fechaIteracion.DayOfWeek);
-                var fechaDateOnly  = DateOnly.FromDateTime(fechaIteracion);
+                var fecha         = new DateTime(anio, mes, i);
+                var diaSemanaEnum = ConvertirADiaSemana(fecha.DayOfWeek);
+                var fechaDateOnly = DateOnly.FromDateTime(fecha);
 
                 bool debioTrabajar = horariosList.Any(h =>
                     h.GetDia() == diaSemanaEnum &&
                     DateOnly.FromDateTime(h.GetVigenteDesde()) <= fechaDateOnly &&
-                    // DateTime.MinValue se usa como centinela de "sin fecha fin"
                     (h.GetVigenteHasta() == DateTime.MinValue ||
                      DateOnly.FromDateTime(h.GetVigenteHasta()) >= fechaDateOnly));
 
@@ -75,6 +76,10 @@ namespace AttendanceSystem.Services
             }
 
             int totalFaltas = Math.Max(0, diasLaborablesReales - totalAsistencias);
+
+            _logger.LogInformation(
+                "Reporte generado — empleado {Id}: {A} asist., {T} tard., {F} faltas.",
+                empleadoId, totalAsistencias, totalTardanzas, totalFaltas);
 
             return new ReporteDto
             {
@@ -89,7 +94,7 @@ namespace AttendanceSystem.Services
             };
         }
 
-        private static DiaSemana ConvertirADiaSemana(DayOfWeek dayOfWeek) => dayOfWeek switch
+        private static DiaSemana ConvertirADiaSemana(DayOfWeek d) => d switch
         {
             DayOfWeek.Monday    => DiaSemana.Lunes,
             DayOfWeek.Tuesday   => DiaSemana.Martes,
@@ -98,7 +103,7 @@ namespace AttendanceSystem.Services
             DayOfWeek.Friday    => DiaSemana.Viernes,
             DayOfWeek.Saturday  => DiaSemana.Sabado,
             DayOfWeek.Sunday    => DiaSemana.Domingo,
-            _                   => throw new ArgumentOutOfRangeException(nameof(dayOfWeek))
+            _                   => throw new ArgumentOutOfRangeException(nameof(d))
         };
     }
 }

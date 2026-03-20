@@ -48,7 +48,12 @@ public class MarcajeConfiguration : IEntityTypeConfiguration<Marcaje>
                .OnDelete(DeleteBehavior.SetNull)
                .HasConstraintName("fk_marcajes_usuario_admin");
 
+        // Índice compuesto para queries filtradas por empleado+fecha (historial, reportes)
         builder.HasIndex("empleadoId", "fechaHora")
                .HasDatabaseName("idx_marcajes_empleado_fecha");
+
+        // Índice standalone sobre fechaHora para queries del Dashboard (sin filtro empleadoId)
+        builder.HasIndex("fechaHora")
+               .HasDatabaseName("idx_marcajes_fecha");
     }
 }

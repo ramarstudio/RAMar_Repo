@@ -4,57 +4,38 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using AttendanceSystem.Core.DTOs;
 using AttendanceSystem.Core.Interfaces;
-using AttendanceSystem.Core.Enums;
-using AttendanceSystem.Security;
+using AttendanceSystem.Core.Options;
 using AttendanceSystem.Services;
 
 namespace AttendanceSystem.App.Controllers.Admin
 {
-    // ─── DTOs ────────────────────────────────────────────────────────────────────
-
-    public class UsuarioFilaDto
-    {
-        public int    Id            { get; set; }
-        public string Username      { get; set; }
-        public string Nombre        { get; set; }
-        public string Rol           { get; set; }
-        public string Estado        { get; set; }
-        public string FechaCreacion { get; set; }
-    }
-
-    public class RolSelectorDto
-    {
-        public int        Id    { get; set; }
-        public RolUsuario Valor { get; set; }
-        public string     Nombre => Valor.ToString();
-    }
-
-    // ─── Controller ──────────────────────────────────────────────────────────────
-
     public class UsuariosController
     {
-        private readonly IUsuarioRepository _usuarioRepo;
-        private readonly IPasswordHasher    _hasher;
-        private readonly AuditService       _auditService;
-        private readonly SessionManager     _session;
-        private readonly AppDbContext       _context;
+        private readonly IUsuarioRepository  _usuarioRepo;
+        private readonly IPasswordHasher     _hasher;
+        private readonly AuditService        _auditService;
+        private readonly ISessionManager     _session;
+        private readonly AppDbContext        _context;
+        private readonly EmpleadoDefaultOptions _empleadoDefaults;
 
         public UsuariosController(
-            IUsuarioRepository usuarioRepo,
-            IPasswordHasher    hasher,
-            AuditService       auditService,
-            SessionManager     session,
-            AppDbContext       context)
+            IUsuarioRepository     usuarioRepo,
+            IPasswordHasher        hasher,
+            AuditService           auditService,
+            ISessionManager        session,
+            AppDbContext           context,
+            EmpleadoDefaultOptions empleadoDefaults)
         {
-            _usuarioRepo  = usuarioRepo;
-            _hasher       = hasher;
-            _auditService = auditService;
-            _session      = session;
-            _context      = context;
+            _usuarioRepo      = usuarioRepo;
+            _hasher           = hasher;
+            _auditService     = auditService;
+            _session          = session;
+            _context          = context;
+            _empleadoDefaults = empleadoDefaults;
         }
 
-        // ── Listar todos los usuarios ────────────────────────────────────────────
         public async Task<List<UsuarioFilaDto>> ObtenerTodosAsync()
         {
             var usuarios = await _usuarioRepo.GetAllAsync();
@@ -69,7 +50,6 @@ namespace AttendanceSystem.App.Controllers.Admin
             }).ToList();
         }
 
-        // ── Roles disponibles para el selector del formulario ────────────────────
         public async Task<List<RolSelectorDto>> ObtenerRolesAsync()
         {
             var roles = await _context.Roles.AsNoTracking().ToListAsync();
@@ -80,10 +60,6 @@ namespace AttendanceSystem.App.Controllers.Admin
             }).ToList();
         }
 
-        // ── Crear usuario nuevo + empleado vinculado automáticamente ─────────────
-        // Cada usuario del sistema de asistencia es también un empleado.
-        // Si no se crea el registro Empleado, el usuario no aparecerá en los
-        // selectores de Marcajes ni Reportes.
         public async Task<(bool Ok, string Mensaje)> CrearUsuarioAsync(
             string username, string nombre, string password, int rolId)
         {
@@ -92,20 +68,18 @@ namespace AttendanceSystem.App.Controllers.Admin
                 string.IsNullOrWhiteSpace(password))
                 return (false, "Todos los campos son obligatorios.");
 
-            // Verificar username único
             var existente = await _context.Usuarios
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => EF.Property<string>(u, "username") == username.Trim());
             if (existente != null)
                 return (false, $"Ya existe un usuario con username '{username}'.");
 
-            // Cargar rol sin tracking para evitar conflictos de estado
             var rol = await _context.Roles
                 .FirstOrDefaultAsync(r => EF.Property<int>(r, "id") == rolId);
             if (rol == null)
                 return (false, "Rol no encontrado.");
 
-            // ── Crear Usuario ────────────────────────────────────────────────────
+            // ── Crear Usuario ────────────────────────────────────────────────
             var nuevo = new Usuario();
             nuevo.SetUsername(username.Trim());
             nuevo.SetNombre(nombre.Trim());
@@ -115,34 +89,29 @@ namespace AttendanceSystem.App.Controllers.Admin
             nuevo.SetRol(rol);
 
             _context.Usuarios.Add(nuevo);
-            // El shadow property "RolId" no se propaga automáticamente con PropertyAccessMode.Field.
-            // Se asigna explícitamente en el entry del change tracker antes de guardar.
             _context.Entry(nuevo).Property("RolId").CurrentValue = rolId;
-            await _context.SaveChangesAsync();   // ← ID asignado aquí por BD
+            await _context.SaveChangesAsync();
 
-            // ── Crear Empleado vinculado automáticamente ─────────────────────────
-            // Necesario para que aparezca en selectores de Marcajes y Reportes.
-            // Se usan valores por defecto: entrada 08:00, salida 17:00, tolerancia 15 min.
+            // ── Crear Empleado vinculado — valores leídos desde configuración ─
             var empleadoExistente = await _context.Empleados
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => EF.Property<int>(e, "usuarioId") == nuevo.GetId());
 
             if (empleadoExistente == null)
             {
-                var baseDate        = DateTime.Today;
-                var empleado        = new Empleado();
+                var baseDate = DateTime.Today;
+                var empleado = new Empleado();
                 empleado.SetCodigo(username.Trim().ToLowerInvariant());
                 empleado.SetUsuarioId(nuevo.GetId());
                 empleado.SetActivo(true);
-                empleado.SetTolerancia(15);
-                empleado.SetHorarioEntrada(baseDate.AddHours(8));
-                empleado.SetHorarioSalida(baseDate.AddHours(17));
+                empleado.SetTolerancia(_empleadoDefaults.ToleranciaMins);
+                empleado.SetHorarioEntrada(baseDate.AddHours(_empleadoDefaults.HorarioEntradaHora));
+                empleado.SetHorarioSalida(baseDate.AddHours(_empleadoDefaults.HorarioSalidaHora));
 
                 _context.Empleados.Add(empleado);
                 await _context.SaveChangesAsync();
             }
 
-            // ── Auditoría ────────────────────────────────────────────────────────
             int adminId = _session.GetCurrentSession()?.UserId ?? 0;
             await _auditService.RegistrarAsync(
                 accion: "CREAR", entidad: "Usuario", registroId: nuevo.GetId(),
@@ -153,7 +122,6 @@ namespace AttendanceSystem.App.Controllers.Admin
             return (true, $"Usuario '{username}' creado correctamente.");
         }
 
-        // ── Activar / desactivar (soft-delete) ──────────────────────────────────
         public async Task<(bool Ok, string Mensaje)> ToggleActivoAsync(int usuarioId)
         {
             var usuario = await _usuarioRepo.GetByIdAsync(usuarioId);
@@ -176,9 +144,7 @@ namespace AttendanceSystem.App.Controllers.Admin
             return (true, $"Usuario '{usuario.GetUsername()}' → {nuevo}.");
         }
 
-        // ── Cambiar contraseña ───────────────────────────────────────────────────
-        public async Task<(bool Ok, string Mensaje)> CambiarPasswordAsync(
-            int usuarioId, string nuevaPassword)
+        public async Task<(bool Ok, string Mensaje)> CambiarPasswordAsync(int usuarioId, string nuevaPassword)
         {
             if (string.IsNullOrWhiteSpace(nuevaPassword))
                 return (false, "La nueva contraseña no puede estar vacía.");

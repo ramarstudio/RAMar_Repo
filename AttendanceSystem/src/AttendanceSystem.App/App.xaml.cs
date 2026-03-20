@@ -1,54 +1,48 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 
 using AttendanceSystem.Core.Interfaces;
 using AttendanceSystem.Core.Enums;
+using AttendanceSystem.Core.Options;
 using AttendanceSystem.Services;
 using AttendanceSystem.Security;
 using AttendanceSystem.App.Controllers;
 using AttendanceSystem.App.Controllers.Admin;
 using AttendanceSystem.App.Helpers;
+using AttendanceSystem.App.Interfaces;
 using AttendanceSystem.App.Views;
 using AttendanceSystem.App.Views.Admin;
-
-
 
 namespace AttendanceSystem.App
 {
     public partial class App : Application
     {
         private IServiceProvider _serviceProvider;
-        private IConfiguration _configuration;
+        private IConfiguration   _configuration;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            // Compatibilidad Npgsql: permite escribir DateTime(Kind=UTC) en columnas timestamp without time zone
+            // Compatibilidad Npgsql: permite DateTime(Kind=UTC) en timestamp without time zone
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-            // 0. Cargar configuración: appsettings.json + User Secrets (sobreescribe en desarrollo)
-            // User Secrets guarda datos sensibles en %APPDATA%\Microsoft\UserSecrets\ (fuera del repo)
             _configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddUserSecrets<App>(optional: true)
                 .Build();
 
-            // 1. Crear el "Contenedor" donde guardaremos todas nuestras piezas
             var services = new ServiceCollection();
             ConfigureServices(services);
-
-            // 2. Construir el proveedor de servicios
             _serviceProvider = services.BuildServiceProvider();
 
-            // 3. Inicializar base de datos y sembrar datos por defecto
             using (var scope = _serviceProvider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -57,131 +51,126 @@ namespace AttendanceSystem.App
                 SeedData(context, hasher);
             }
 
-            // 4. ¡Pedirle al contenedor que nos dé el MainWindow ya armado y mostrarlo!
-            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+            _serviceProvider.GetRequiredService<MainWindow>().Show();
         }
 
         private void ConfigureServices(IServiceCollection services)
         {
-            // ==========================================
-            // A. CAPA DE SEGURIDAD Y CONFIGURACIÓN GLOBAL
-            // ==========================================
-            // Registrar las opciones de sesión para que puedan ser inyectadas en SessionManager
-            // Usamos los valores por defecto definidos en el constructor de SessionOptions
+            // ── Logging ──────────────────────────────────────────────────────
+            services.AddLogging(b => b.AddDebug().SetMinimumLevel(LogLevel.Debug));
+
+            // ── Seguridad y sesión ────────────────────────────────────────────
             services.AddSingleton(new SessionOptions());
-            services.AddSingleton<SessionManager>(); // Singleton: Solo hay una sesión en toda la app
-            
-          
-            // ==========================================
-            // B. CAPA DE INFRAESTRUCTURA (REPOSITORIOS / DB)
-            // ==========================================
-            // Lee la cadena de conexión desde appsettings.json
-            // Si hay una variable de entorno AS_DB_CONNECTION, tiene prioridad (útil en servidores)
+            // Registrado como ISessionManager para que todos los controllers dependan de la abstracción
+            services.AddSingleton<ISessionManager, SessionManager>();
+
+            // ── Base de datos ─────────────────────────────────────────────────
             var connectionString = Environment.GetEnvironmentVariable("AS_DB_CONNECTION")
                 ?? _configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(connectionString));
+            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
-            // Repositorios: Scoped es la opción recomendada para DbContext-based services
-            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
-            services.AddScoped<IMarcajeRepository, MarcajeRepository>();
+            // ── Repositorios ──────────────────────────────────────────────────
+            services.AddScoped<IUsuarioRepository,       UsuarioRepository>();
+            services.AddScoped<IEmpleadoRepository,      EmpleadoRepository>();
+            services.AddScoped<IMarcajeRepository,       MarcajeRepository>();
             services.AddScoped<IConsentimientoRepository, ConsentimientoRepository>();
-            services.AddScoped<IAuditRepository, AuditRepository>();
-            services.AddScoped<IHorarioRepository, HorarioRepository>();
+            services.AddScoped<IAuditRepository,         AuditRepository>();
+            services.AddScoped<IHorarioRepository,       HorarioRepository>();
 
-            // ==========================================
-            // C. CAPA DE SERVICIOS (LÓGICA DE NEGOCIO)
-            // ==========================================
-            services.AddTransient<IAuthService, AuthService>();
-            services.AddTransient<IMarcajeService, MarcajeService>();
+            // ── Opciones de configuración ──────────────────────────────────────
             var encryptionKey = Environment.GetEnvironmentVariable("AS_ENCRYPTION_KEY")
                 ?? _configuration["Security:EncryptionKey"];
             var hmacKey = Environment.GetEnvironmentVariable("AS_HMAC_KEY")
                 ?? _configuration["Security:HmacKey"];
             services.AddSingleton(new EncryptionOptions(encryptionKey, hmacKey));
-            services.AddTransient<IEncryptionService, EncryptionService>();
-            // Lee el pepper de hash desde appsettings.json (sección Security.HashPepper)
+
             var pepper = Environment.GetEnvironmentVariable("AS_HASH_PEPPER")
                 ?? _configuration["Security:HashPepper"]
                 ?? "ZGV2X3BlcHBlcl9zYW1wbGU=";
             services.AddSingleton(new HashingOptions(pepper));
-            services.AddTransient<IPasswordHasher, PasswordHasher>();
-            // Lee la URL del microservicio Python desde appsettings.json (sección FacialService.BaseUrl)
-            var facialBaseUrl = _configuration["FacialService:BaseUrl"] ?? "http://localhost:5000";
-            services.AddSingleton(new HttpClient { BaseAddress = new Uri(facialBaseUrl) });
-            services.AddTransient<IBiometricoService, BiometricoService>();
-            services.AddTransient<AuditService>();
-            services.AddTransient<ReporteService>();
-            services.AddTransient<ExportService>();
 
-            // ==========================================
-            // D. CAPA DE PRESENTACIÓN (APP)
-            // ==========================================
-            // Helpers
+            // FacialServiceOptions — URL relativa leída desde appsettings (elimina hardcoded)
+            var facialBaseUrl   = _configuration["FacialService:BaseUrl"]   ?? "http://localhost:5001";
+            var facialVerifyPath = _configuration["FacialService:VerifyPath"] ?? "/api/verify";
+            var facialEncodePath = _configuration["FacialService:EncodePath"] ?? "/api/encode";
+            services.AddSingleton(new FacialServiceOptions(facialVerifyPath, facialEncodePath));
+            services.AddSingleton(new HttpClient { BaseAddress = new Uri(facialBaseUrl) });
+
+            // EmpleadoDefaultOptions — valores por defecto al crear empleados
+            int entradaHora   = int.TryParse(_configuration["Empleado:HorarioEntradaHora"], out var eh) ? eh : 8;
+            int salidaHora    = int.TryParse(_configuration["Empleado:HorarioSalidaHora"],  out var sh) ? sh : 17;
+            int toleranciaMins = int.TryParse(_configuration["Empleado:ToleranciaMins"],    out var tm) ? tm : 15;
+            services.AddSingleton(new EmpleadoDefaultOptions(entradaHora, salidaHora, toleranciaMins));
+
+            // ExportOptions — carpeta de exportación configurable
+            var carpetaExport = _configuration["Exportacion:Carpeta"] ?? "Exportaciones";
+            services.AddSingleton(new ExportOptions(carpetaExport));
+
+            // ── Servicios de negocio ───────────────────────────────────────────
+            services.AddTransient<IAuthService,    AuthService>();
+            services.AddTransient<IMarcajeService, MarcajeService>();
+            services.AddTransient<IEncryptionService, EncryptionService>();
+            services.AddTransient<IPasswordHasher,    PasswordHasher>();
+            services.AddTransient<IBiometricoService, BiometricoService>();
+            services.AddTransient<ITardanzaService,   TardanzaService>();
+            services.AddTransient<IReporteService,    ReporteService>();
+            services.AddTransient<IExportService,     ExportService>();
+            services.AddTransient<IEmpleadoSelectorService, EmpleadoSelectorService>();
+            services.AddTransient<AuditService>();
+
+            // ── Capa de presentación ──────────────────────────────────────────
             services.AddSingleton<NavigationHelper>();
             services.AddTransient<CameraHelper>();
 
+            // IBiometricoController — abstracción para MarcajeController
+            services.AddTransient<IBiometricoController, BiometricoController>();
+
+            // Factories Func<T> para NavigationController — elimina Service Locator
+            services.AddSingleton<Func<LoginView>>(sp      => () => sp.GetRequiredService<LoginView>());
+            services.AddSingleton<Func<AdminShellView>>(sp => () => sp.GetRequiredService<AdminShellView>());
+            services.AddSingleton<Func<MarcajeView>>(sp    => () => sp.GetRequiredService<MarcajeView>());
+
             // Controladores
-            services.AddSingleton<NavigationController>(); // Singleton para que todos usen el mismo ruteador
+            services.AddSingleton<NavigationController>();
             services.AddTransient<AuthController>();
-            services.AddTransient<BiometricoController>();
             services.AddTransient<MarcajeController>();
             services.AddTransient<HistorialController>();
 
-            // Controladores del módulo Admin
+            // Controladores admin
             services.AddTransient<DashboardController>();
             services.AddTransient<UsuariosController>();
             services.AddTransient<MarcajesAdminController>();
             services.AddTransient<ReportesController>();
 
-            // Vistas (Pantallas)
+            // Vistas
             services.AddTransient<MainWindow>();
             services.AddTransient<LoginView>();
             services.AddTransient<MarcajeView>();
             services.AddTransient<HistorialView>();
-
-            // Shell de administración (las sub-vistas las crea el shell, no DI)
             services.AddTransient<AdminShellView>();
-            
-            services.AddSingleton<IServiceProvider>(sp => sp);
         }
 
         private void SeedData(AppDbContext context, IPasswordHasher hasher)
         {
-            // Sembrar roles si no existen
             if (!context.Roles.Any())
             {
-                var rolAdmin = new Rol();
-                rolAdmin.SetNombre(RolUsuario.Admin);
-                rolAdmin.SetDescripcion("Administrador del sistema");
-
-                var rolRRHH = new Rol();
-                rolRRHH.SetNombre(RolUsuario.RRHH);
-                rolRRHH.SetDescripcion("Recursos Humanos");
-
-                var rolEmpleado = new Rol();
-                rolEmpleado.SetNombre(RolUsuario.Empleado);
-                rolEmpleado.SetDescripcion("Empleado regular");
-
+                var rolAdmin    = new Rol(); rolAdmin.SetNombre(RolUsuario.Admin);    rolAdmin.SetDescripcion("Administrador del sistema");
+                var rolRRHH     = new Rol(); rolRRHH.SetNombre(RolUsuario.RRHH);      rolRRHH.SetDescripcion("Recursos Humanos");
+                var rolEmpleado = new Rol(); rolEmpleado.SetNombre(RolUsuario.Empleado); rolEmpleado.SetDescripcion("Empleado regular");
                 context.Roles.AddRange(rolAdmin, rolRRHH, rolEmpleado);
                 context.SaveChanges();
             }
 
-            // Sembrar usuario admin por defecto si no existe
             if (!context.Usuarios.Any())
             {
                 var rolAdmin = context.Roles.AsEnumerable().First(r => r.GetNombre() == RolUsuario.Admin);
-
-                var admin = new Usuario();
+                var admin    = new Usuario();
                 admin.SetUsername("admin");
                 admin.SetPassword(hasher.HashPassword("admin123"));
                 admin.SetNombre("Administrador");
                 admin.SetActivo(true);
                 admin.SetFechaCreacion(DateTime.UtcNow);
                 admin.SetRol(rolAdmin);
-
                 context.Usuarios.Add(admin);
                 context.SaveChanges();
             }
