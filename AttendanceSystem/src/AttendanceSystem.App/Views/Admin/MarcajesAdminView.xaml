@@ -7,29 +7,29 @@
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="900"
              Loaded="MarcajesAdminView_Loaded"
-             Background="{DynamicResource MaterialDesignBackground}"
+             Background="{DynamicResource AppBg}"
              FontFamily="{DynamicResource MaterialDesignFont}">
 
     <UserControl.Resources>
 
-        <!-- Tipo badge DataTemplate -->
+        <!-- Tipo badge DataTemplate — dark theme -->
         <DataTemplate x:Key="TipoCellTemplate">
             <Border CornerRadius="10" Padding="10,3" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <Border.Style>
                     <Style TargetType="Border">
-                        <Setter Property="Background" Value="#E8F5E9"/>
+                        <Setter Property="Background" Value="{DynamicResource BadgeGreenBg}"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Tipo}" Value="Entrada">
-                                <Setter Property="Background" Value="#E8F5E9"/>
+                                <Setter Property="Background" Value="{DynamicResource BadgeGreenBg}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Tipo}" Value="Salida">
-                                <Setter Property="Background" Value="#FFEBEE"/>
+                                <Setter Property="Background" Value="{DynamicResource BadgeRedBg}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Tipo}" Value="BreakInicio">
-                                <Setter Property="Background" Value="#FFF3E0"/>
+                                <Setter Property="Background" Value="{DynamicResource BadgeOrangeBg}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Tipo}" Value="BreakFin">
-                                <Setter Property="Background" Value="#FFF3E0"/>
+                                <Setter Property="Background" Value="{DynamicResource BadgeOrangeBg}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -37,19 +37,19 @@
                 <TextBlock Text="{Binding Tipo}" FontSize="12" FontWeight="SemiBold">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="#2E7D32"/>
+                            <Setter Property="Foreground" Value="{DynamicResource PastelGreen}"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Tipo}" Value="Entrada">
-                                    <Setter Property="Foreground" Value="#2E7D32"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource PastelGreen}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Tipo}" Value="Salida">
-                                    <Setter Property="Foreground" Value="#C62828"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource PastelPink}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Tipo}" Value="BreakInicio">
-                                    <Setter Property="Foreground" Value="#E65100"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource PastelOrange}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Tipo}" Value="BreakFin">
-                                    <Setter Property="Foreground" Value="#E65100"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource PastelOrange}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -58,18 +58,18 @@
             </Border>
         </DataTemplate>
 
-        <!-- Tardanza badge DataTemplate -->
+        <!-- Tardanza badge DataTemplate — dark theme -->
         <DataTemplate x:Key="TardanzaCellTemplate">
             <Border CornerRadius="10" Padding="10,3" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <Border.Style>
                     <Style TargetType="Border">
-                        <Setter Property="Background" Value="#E8F5E9"/>
+                        <Setter Property="Background" Value="{DynamicResource BadgeGreenBg}"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Tardanza}" Value="Sí">
-                                <Setter Property="Background" Value="#FFF3E0"/>
+                            <DataTrigger Binding="{Binding Tardanza}" Value="Si">
+                                <Setter Property="Background" Value="{DynamicResource BadgeOrangeBg}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Tardanza}" Value="No">
-                                <Setter Property="Background" Value="#E8F5E9"/>
+                                <Setter Property="Background" Value="{DynamicResource BadgeGreenBg}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -77,13 +77,13 @@
                 <TextBlock Text="{Binding Tardanza}" FontSize="12" FontWeight="SemiBold">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="#2E7D32"/>
+                            <Setter Property="Foreground" Value="{DynamicResource PastelGreen}"/>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Tardanza}" Value="Sí">
-                                    <Setter Property="Foreground" Value="#BF360C"/>
+                                <DataTrigger Binding="{Binding Tardanza}" Value="Si">
+                                    <Setter Property="Foreground" Value="{DynamicResource PastelOrange}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Tardanza}" Value="No">
-                                    <Setter Property="Foreground" Value="#2E7D32"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource PastelGreen}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -94,80 +94,55 @@
 
     </UserControl.Resources>
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="28,24,28,28">
 
-        <!-- HEADER -->
-        <md:Card Grid.Row="0" Margin="0,0,0,14" Padding="0" UniformCornerRadius="10"
-                 md:ElevationAssist.Elevation="Dp2">
-            <Border CornerRadius="10" Padding="22,16">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <GradientStop Color="#F8FAFE" Offset="0"/>
-                        <GradientStop Color="#EEF4FF" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>
+            <!-- HEADER -->
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="24,18" Margin="0,0,0,18">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
+                </Border.Effect>
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal">
-                            <Border Width="38" Height="38" CornerRadius="10"
-                                    Background="{DynamicResource PrimaryHueMidBrush}"
-                                    Margin="0,0,12,0" VerticalAlignment="Center">
-                                <md:PackIcon Kind="ClipboardClock" Width="22" Height="22"
-                                             Foreground="White"
-                                             HorizontalAlignment="Center"
-                                             VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="Gestión de Marcajes"
-                                           Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
-                                           FontWeight="Bold"
-                                           VerticalAlignment="Center"/>
-                                <TextBlock Text="Consulta y registro manual de asistencias"
-                                           Style="{DynamicResource MaterialDesignCaptionTextBlock}"
-                                           Foreground="{DynamicResource MaterialDesignBodyLight}"
-                                           Margin="0,1,0,0"/>
-                            </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="40" Height="40" CornerRadius="10" Margin="0,0,14,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#1565C0" Offset="0"/>
+                                    <GradientStop Color="#1E88E5" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <md:PackIcon Kind="ClipboardClock" Width="22" Height="22"
+                                         Foreground="White" HorizontalAlignment="Center"
+                                         VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Gestion de Marcajes" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                            <TextBlock Text="Consulta y registro manual de asistencias" FontSize="12" Foreground="{DynamicResource TextMuted}"/>
                         </StackPanel>
                     </StackPanel>
-
-                    <Button Grid.Column="1"
-                            Style="{DynamicResource MaterialDesignRaisedButton}"
-                            Click="BtnMostrarFormManual_Click"
-                            VerticalAlignment="Center"
-                            Height="38"
-                            md:ButtonAssist.CornerRadius="8">
+                    <Button Click="BtnMostrarFormManual_Click"
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Height="36" Padding="16,0"
+                            Style="{StaticResource MaterialDesignFlatMidBgButton}">
                         <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="PencilPlus" VerticalAlignment="Center" Margin="0,0,7,0"/>
-                            <TextBlock Text="Marcaje Manual" VerticalAlignment="Center" FontWeight="Medium"/>
+                            <md:PackIcon Kind="PencilPlus" Width="18" Height="18" Margin="0,0,6,0"/>
+                            <TextBlock Text="Marcaje Manual"/>
                         </StackPanel>
                     </Button>
                 </Grid>
             </Border>
-        </md:Card>
 
-        <!-- FILTROS -->
-        <md:Card Grid.Row="1" Margin="0,0,0,14" Padding="0" UniformCornerRadius="10"
-                 md:ElevationAssist.Elevation="Dp1">
-            <Border CornerRadius="10" Padding="20,14">
+            <!-- FILTROS -->
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="20,16" Margin="0,0,0,18">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.06" Color="#1A237E"/>
+                </Border.Effect>
                 <StackPanel Orientation="Horizontal">
                     <Border Width="32" Height="32" CornerRadius="8"
-                            Background="#F0F4FF" Margin="0,0,14,0"
+                            Background="{DynamicResource AccentBg}" Margin="0,0,14,0"
                             VerticalAlignment="Center">
                         <md:PackIcon Kind="FilterOutline" Width="16" Height="16"
-                                     Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                     Foreground="{DynamicResource AccentBlue}"
                                      HorizontalAlignment="Center"
                                      VerticalAlignment="Center"/>
                     </Border>
@@ -176,7 +151,7 @@
                               Width="210"
                               md:HintAssist.Hint="Empleado"
                               md:HintAssist.IsFloating="True"
-                              Style="{DynamicResource MaterialDesignOutlinedComboBox}"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
                               Margin="0,0,16,0">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
@@ -187,15 +162,15 @@
 
                     <DatePicker x:Name="dpMes"
                                 Width="170"
-                                md:HintAssist.Hint="Mes / Año"
+                                md:HintAssist.Hint="Mes / Ano"
                                 md:HintAssist.IsFloating="True"
-                                Style="{DynamicResource MaterialDesignOutlinedDatePicker}"
+                                Style="{StaticResource MaterialDesignOutlinedDatePicker}"
                                 VerticalContentAlignment="Center"
                                 Margin="0,0,16,0"/>
 
-                    <Button Style="{DynamicResource MaterialDesignRaisedButton}"
-                            Click="BtnBuscar_Click" VerticalAlignment="Bottom" Margin="0,0,0,2"
-                            md:ButtonAssist.CornerRadius="6">
+                    <Button Click="BtnBuscar_Click" VerticalAlignment="Bottom" Margin="0,0,0,2"
+                            Height="36" Padding="16,0"
+                            Style="{StaticResource MaterialDesignFlatMidBgButton}">
                         <StackPanel Orientation="Horizontal">
                             <md:PackIcon Kind="Magnify" VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBlock Text="Buscar" VerticalAlignment="Center"/>
@@ -203,138 +178,126 @@
                     </Button>
                 </StackPanel>
             </Border>
-        </md:Card>
 
-        <!-- TABLA MARCAJES -->
-        <md:Card Grid.Row="2" Margin="0,0,0,14" Padding="0" UniformCornerRadius="10"
-                 md:ElevationAssist.Elevation="Dp2">
-            <Grid>
-                <!-- Empty state -->
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
-                            Visibility="{Binding Visibility, ElementName=txtSinMarcajes}">
-                    <md:PackIcon Kind="ClockRemove" Width="52" Height="52"
-                                 Foreground="{DynamicResource MaterialDesignBodyLight}"
-                                 HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                </StackPanel>
-                <TextBlock x:Name="txtSinMarcajes"
-                           Text="Selecciona un empleado y un mes para ver sus marcajes."
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Margin="0,72,0,0"
-                           Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                           Foreground="{DynamicResource MaterialDesignBodyLight}"
-                           Visibility="Visible"/>
+            <!-- TABLA MARCAJES -->
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="6" Margin="0,0,0,18">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
+                </Border.Effect>
+                <Grid>
+                    <!-- Empty state -->
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                                Visibility="{Binding Visibility, ElementName=txtSinMarcajes}">
+                        <md:PackIcon Kind="ClockRemove" Width="52" Height="52"
+                                     Foreground="{DynamicResource TextDim}"
+                                     HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    </StackPanel>
+                    <TextBlock x:Name="txtSinMarcajes"
+                               Text="Selecciona un empleado y un mes para ver sus marcajes."
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Margin="0,72,0,0"
+                               FontSize="14" Foreground="{DynamicResource TextMuted}"
+                               Visibility="Visible"/>
 
-                <DataGrid x:Name="dgMarcajes"
-                          AutoGenerateColumns="False" IsReadOnly="True"
-                          GridLinesVisibility="Horizontal" HeadersVisibility="Column"
-                          BorderThickness="0" CanUserResizeRows="False"
-                          SelectionMode="Single"
-                          RowHeight="46"
-                          RowBackground="{DynamicResource MaterialDesignBackground}"
-                          AlternatingRowBackground="#F7F9FC"
-                          Style="{DynamicResource MaterialDesignDataGrid}"
-                          Visibility="Collapsed">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Fecha"    Binding="{Binding Fecha}"    Width="120">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="FontWeight" Value="Medium"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Hora"     Binding="{Binding Hora}"     Width="85">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTemplateColumn Header="Tipo" Width="130"
-                                                CellTemplate="{StaticResource TipoCellTemplate}"/>
-                        <DataGridTemplateColumn Header="Tardanza" Width="100"
-                                                CellTemplate="{StaticResource TardanzaCellTemplate}"/>
-                        <DataGridTextColumn Header="Minutos"  Binding="{Binding Minutos}"  Width="95">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Método"   Binding="{Binding Metodo}"   Width="*">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
-                                    <Setter Property="FontSize" Value="12"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Grid>
-        </md:Card>
+                    <DataGrid x:Name="dgMarcajes"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              GridLinesVisibility="Horizontal" HeadersVisibility="Column"
+                              BorderThickness="0" CanUserResizeRows="False"
+                              SelectionMode="Single"
+                              RowHeight="46"
+                              Background="{DynamicResource CardBg}" RowBackground="{DynamicResource GridRowBg}"
+                              Foreground="{DynamicResource TextPrimary}"
+                              AlternatingRowBackground="{DynamicResource GridRowAltBg}"
+                              FontSize="12"
+                              Visibility="Collapsed">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="FontWeight" Value="Medium"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Hora" Binding="{Binding Hora}" Width="85">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTemplateColumn Header="Tipo" Width="130"
+                                                    CellTemplate="{StaticResource TipoCellTemplate}"/>
+                            <DataGridTemplateColumn Header="Tardanza" Width="100"
+                                                    CellTemplate="{StaticResource TardanzaCellTemplate}"/>
+                            <DataGridTextColumn Header="Minutos" Binding="{Binding Minutos}" Width="95">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Metodo" Binding="{Binding Metodo}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
 
-        <!-- RESUMEN -->
-        <md:Card Grid.Row="3" Margin="0,0,0,14" Padding="0" UniformCornerRadius="8"
-                 md:ElevationAssist.Elevation="Dp1">
-            <Border CornerRadius="8" Padding="16,10">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <GradientStop Color="#F8FAFE" Offset="0"/>
-                        <GradientStop Color="#EEF4FF" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>
+            <!-- RESUMEN -->
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="16,12" Margin="0,0,0,18">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.06" Color="#1A237E"/>
+                </Border.Effect>
                 <StackPanel Orientation="Horizontal">
-                    <Border Width="26" Height="26" CornerRadius="6"
-                            Background="{DynamicResource PrimaryHueLightBrush}"
-                            Margin="0,0,10,0" VerticalAlignment="Center">
-                        <md:PackIcon Kind="InformationOutline" Width="14" Height="14"
-                                     Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                     HorizontalAlignment="Center"
-                                     VerticalAlignment="Center"/>
-                    </Border>
+                    <md:PackIcon Kind="InformationOutline" Foreground="{DynamicResource AccentBlue}" Width="18" Height="18"
+                                 Margin="0,0,10,0" VerticalAlignment="Center"/>
                     <TextBlock x:Name="txtResumen"
                                Text="Sin datos cargados."
-                               Style="{DynamicResource MaterialDesignBody2TextBlock}"
-                               Foreground="{DynamicResource MaterialDesignBodyLight}"
+                               FontSize="13" Foreground="{DynamicResource TextMuted}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
-        </md:Card>
 
-        <!-- FORMULARIO MARCAJE MANUAL -->
-        <md:Card x:Name="PanelMarcajeManual" Grid.Row="4"
-                 Margin="0,0,0,10" Padding="0" UniformCornerRadius="10"
-                 Visibility="Collapsed"
-                 md:ElevationAssist.Elevation="Dp1">
-            <Border>
+            <!-- FORMULARIO MARCAJE MANUAL -->
+            <Border x:Name="PanelMarcajeManual" Background="{DynamicResource CardBg}" CornerRadius="14" Padding="0"
+                    Margin="0,0,0,18" Visibility="Collapsed">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1565C0"/>
+                </Border.Effect>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="4"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Left accent border -->
-                    <Border Grid.Column="0" CornerRadius="10,0,0,10">
+                    <Border Grid.Column="0" CornerRadius="14,0,0,14">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                 <GradientStop Color="#1565C0" Offset="0"/>
-                                <GradientStop Color="#42A5F5" Offset="1"/>
+                                <GradientStop Color="#7EB8DA" Offset="1"/>
                             </LinearGradientBrush>
                         </Border.Background>
                     </Border>
 
-                    <!-- Form content -->
                     <StackPanel Grid.Column="1" Margin="20,18,20,18">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
                             <md:PackIcon Kind="PencilPlus" Width="20" Height="20"
-                                         Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                         Foreground="{DynamicResource AccentBlue}"
                                          VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <TextBlock Text="Registrar Marcaje Manual"
-                                       Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                                       FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                       FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}"
+                                       VerticalAlignment="Center"/>
                         </StackPanel>
 
                         <Grid>
@@ -353,7 +316,7 @@
                             <ComboBox x:Name="cmbEmpleadoManual" Grid.Column="0"
                                       md:HintAssist.Hint="Empleado"
                                       md:HintAssist.IsFloating="True"
-                                      Style="{DynamicResource MaterialDesignOutlinedComboBox}">
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Display}" VerticalAlignment="Center" Margin="0,2"/>
@@ -364,19 +327,19 @@
                             <DatePicker x:Name="dpFechaMarcaje" Grid.Column="2"
                                         md:HintAssist.Hint="Fecha"
                                         md:HintAssist.IsFloating="True"
-                                        Style="{DynamicResource MaterialDesignOutlinedDatePicker}"
+                                        Style="{StaticResource MaterialDesignOutlinedDatePicker}"
                                         VerticalContentAlignment="Center"/>
 
                             <TextBox x:Name="txtHoraMarcaje" Grid.Column="4"
                                      md:HintAssist.Hint="Hora (HH:mm)"
                                      md:HintAssist.IsFloating="True"
-                                     Style="{DynamicResource MaterialDesignOutlinedTextBox}"
-                                     Text="08:00"/>
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     Foreground="{DynamicResource TextPrimary}" Text="08:00"/>
 
                             <Button Grid.Column="6"
-                                    Style="{DynamicResource MaterialDesignRaisedButton}"
                                     Click="BtnConfirmarManual_Click" VerticalAlignment="Bottom"
-                                    md:ButtonAssist.CornerRadius="6">
+                                    Height="36" Padding="16,0"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}">
                                 <StackPanel Orientation="Horizontal">
                                     <md:PackIcon Kind="Check" VerticalAlignment="Center" Margin="0,0,4,0"/>
                                     <TextBlock Text="Registrar" VerticalAlignment="Center"/>
@@ -384,9 +347,9 @@
                             </Button>
 
                             <Button Grid.Column="8"
-                                    Style="{DynamicResource MaterialDesignOutlinedButton}"
                                     Click="BtnCancelarManual_Click" VerticalAlignment="Bottom"
-                                    md:ButtonAssist.CornerRadius="6">
+                                    Height="36" Padding="16,0"
+                                    Style="{StaticResource MaterialDesignFlatButton}">
                                 <StackPanel Orientation="Horizontal">
                                     <md:PackIcon Kind="Close" VerticalAlignment="Center" Margin="0,0,4,0"/>
                                     <TextBlock Text="Cancelar" VerticalAlignment="Center"/>
@@ -396,15 +359,10 @@
                     </StackPanel>
                 </Grid>
             </Border>
-        </md:Card>
 
-        <!-- FEEDBACK -->
-        <Border Grid.Row="5" CornerRadius="20" Padding="16,6"
-                HorizontalAlignment="Center" Margin="0,4,0,0">
-            <TextBlock x:Name="txtMensaje"
-                       Style="{DynamicResource MaterialDesignBody2TextBlock}"
-                       FontWeight="SemiBold" HorizontalAlignment="Center"
-                       Visibility="Collapsed"/>
-        </Border>
-    </Grid>
+            <!-- FEEDBACK -->
+            <TextBlock x:Name="txtMensaje" Visibility="Collapsed"
+                       FontSize="13" Margin="0,4,0,0" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

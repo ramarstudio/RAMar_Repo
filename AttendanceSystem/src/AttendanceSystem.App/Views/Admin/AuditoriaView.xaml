@@ -2,13 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             Background="#F0F4F8" Loaded="AuditoriaView_Loaded">
+             Background="{DynamicResource AppBg}" Loaded="AuditoriaView_Loaded">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="28,24,28,28">
 
             <!-- HEADER -->
-            <Border Background="White" CornerRadius="14" Padding="24,18" Margin="0,0,0,18">
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="24,18" Margin="0,0,0,18">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
                 </Border.Effect>
@@ -27,8 +27,8 @@
                                                          VerticalAlignment="Center"/>
                             </Border>
                             <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="Registro de Auditoría" FontSize="20" FontWeight="Bold" Foreground="#1A237E"/>
-                                <TextBlock Text="Historial completo de acciones del sistema" FontSize="12" Foreground="#78909C"/>
+                                <TextBlock Text="Registro de Auditoría" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                <TextBlock Text="Historial completo de acciones del sistema" FontSize="12" Foreground="{DynamicResource TextMuted}"/>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -36,27 +36,27 @@
             </Border>
 
             <!-- FILTROS -->
-            <Border Background="White" CornerRadius="14" Padding="20,16" Margin="0,0,0,18">
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="20,16" Margin="0,0,0,18">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.06" Color="#1A237E"/>
                 </Border.Effect>
                 <StackPanel>
-                    <TextBlock Text="FILTROS" FontSize="10" FontWeight="Bold" Foreground="#90A4AE" Margin="0,0,0,12"/>
+                    <TextBlock Text="FILTROS" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextLabel}" Margin="0,0,0,12"/>
                     <WrapPanel>
                         <StackPanel Margin="0,0,16,8">
-                            <TextBlock Text="Desde" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBlock Text="Desde" FontSize="11" Foreground="{DynamicResource TextDim}" Margin="0,0,0,4"/>
                             <DatePicker x:Name="dpDesde" Width="150"
                                         materialDesign:HintAssist.Hint="Fecha inicio"
                                         Style="{StaticResource MaterialDesignOutlinedDatePicker}"/>
                         </StackPanel>
                         <StackPanel Margin="0,0,16,8">
-                            <TextBlock Text="Hasta" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBlock Text="Hasta" FontSize="11" Foreground="{DynamicResource TextDim}" Margin="0,0,0,4"/>
                             <DatePicker x:Name="dpHasta" Width="150"
                                         materialDesign:HintAssist.Hint="Fecha fin"
                                         Style="{StaticResource MaterialDesignOutlinedDatePicker}"/>
                         </StackPanel>
                         <StackPanel Margin="0,0,16,8">
-                            <TextBlock Text="Entidad" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBlock Text="Entidad" FontSize="11" Foreground="{DynamicResource TextDim}" Margin="0,0,0,4"/>
                             <ComboBox x:Name="cmbEntidad" Width="160"
                                       materialDesign:HintAssist.Hint="Todas"
                                       Style="{StaticResource MaterialDesignOutlinedComboBox}"/>
@@ -74,18 +74,18 @@
             </Border>
 
             <!-- CONTADOR -->
-            <Border Background="White" CornerRadius="14" Padding="16,12" Margin="0,0,0,18">
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="16,12" Margin="0,0,0,18">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.06" Color="#1A237E"/>
                 </Border.Effect>
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="FormatListBulleted" Foreground="#5C6BC0" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="txtContador" Text="0 registros encontrados" FontSize="13" Foreground="#546E7A" VerticalAlignment="Center"/>
+                    <materialDesign:PackIcon Kind="FormatListBulleted" Foreground="{DynamicResource AccentBlue}" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txtContador" Text="0 registros encontrados" FontSize="13" Foreground="{DynamicResource TextDim}" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
 
             <!-- TABLA -->
-            <Border Background="White" CornerRadius="14" Padding="6" Margin="0,0,0,12">
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="6" Margin="0,0,0,12">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
                 </Border.Effect>
@@ -95,9 +95,10 @@
                           HeadersVisibility="Column"
                           GridLinesVisibility="Horizontal"
                           BorderThickness="0"
-                          Background="White"
-                          RowBackground="White"
-                          AlternatingRowBackground="#F8FAFD"
+                          Background="{DynamicResource CardBg}"
+                          Foreground="{DynamicResource TextPrimary}"
+                          RowBackground="{DynamicResource GridRowBg}"
+                          AlternatingRowBackground="{DynamicResource GridRowAltBg}"
                           MaxHeight="500"
                           FontSize="12">
                     <DataGrid.Columns>
@@ -107,7 +108,7 @@
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="#3949AB"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource AccentBlue}"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
@@ -126,7 +127,7 @@
 
             <!-- MENSAJE VACÍO -->
             <TextBlock x:Name="txtVacio" Text="No hay registros de auditoría en el rango seleccionado."
-                       Visibility="Collapsed" FontSize="13" Foreground="#90A4AE"
+                       Visibility="Collapsed" FontSize="13" Foreground="{DynamicResource TextLabel}"
                        HorizontalAlignment="Center" Margin="0,12,0,0"/>
 
             <!-- FEEDBACK -->

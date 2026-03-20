@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <Style x:Key="NavBtnStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#90A4AE"/>
+            <Setter Property="Foreground" Value="{DynamicResource NavInactiveFg}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Height" Value="48"/>
             <Setter Property="FontSize" Value="13"/>
@@ -28,8 +28,16 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="bd" Property="Background" Value="#FFFFFF15"/>
-                                <Setter TargetName="bd" Property="BorderBrush" Value="#4FC3F750"/>
+                                <Setter TargetName="bd" Property="Background">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{DynamicResource SidebarHover}"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="bd" Property="BorderBrush">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{DynamicResource SidebarHoverBorder}"/>
+                                    </Setter.Value>
+                                </Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -48,9 +56,9 @@
         <Border Grid.Column="0">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#0A1628" Offset="0"/>
-                    <GradientStop Color="#0D1B2A" Offset="0.4"/>
-                    <GradientStop Color="#112240" Offset="1"/>
+                    <GradientStop Color="{DynamicResource SidebarBg1}" Offset="0"/>
+                    <GradientStop Color="{DynamicResource SidebarBg2}" Offset="0.4"/>
+                    <GradientStop Color="{DynamicResource SidebarBg3}" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>
 
@@ -89,12 +97,12 @@
                     <TextBlock Text="RAMar" FontSize="20" FontWeight="Bold"
                                Foreground="White" HorizontalAlignment="Center"/>
                     <TextBlock Text="Panel Administrativo" FontSize="10"
-                               Foreground="#4FC3F780" HorizontalAlignment="Center" Margin="0,3,0,16"/>
+                               Foreground="{DynamicResource SidebarAccentDim}" HorizontalAlignment="Center" Margin="0,3,0,16"/>
                     <Border Height="1" Margin="20,0">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                 <GradientStop Color="Transparent" Offset="0"/>
-                                <GradientStop Color="#4FC3F730" Offset="0.5"/>
+                                <GradientStop Color="{DynamicResource SidebarAccentLine}" Offset="0.5"/>
                                 <GradientStop Color="Transparent" Offset="1"/>
                             </LinearGradientBrush>
                         </Border.Background>
@@ -107,7 +115,7 @@
 
                         <!-- MENÚ PRINCIPAL -->
                         <TextBlock Text="MENÚ PRINCIPAL"
-                                   Foreground="#37474F" FontSize="9" FontWeight="Bold"
+                                   Foreground="{DynamicResource SidebarSectionLabel}" FontSize="9" FontWeight="Bold"
                                    Margin="20,6,0,6"/>
 
                         <Button x:Name="btnNavDashboard" Tag="dashboard"
@@ -161,7 +169,7 @@
 
                         <!-- ANÁLISIS -->
                         <TextBlock Text="ANÁLISIS"
-                                   Foreground="#37474F" FontSize="9" FontWeight="Bold"
+                                   Foreground="{DynamicResource SidebarSectionLabel}" FontSize="9" FontWeight="Bold"
                                    Margin="20,0,0,6"/>
 
                         <Button x:Name="btnNavReportes" Tag="reportes"
@@ -193,7 +201,7 @@
 
                         <!-- SISTEMA -->
                         <TextBlock Text="SISTEMA"
-                                   Foreground="#37474F" FontSize="9" FontWeight="Bold"
+                                   Foreground="{DynamicResource SidebarSectionLabel}" FontSize="9" FontWeight="Bold"
                                    Margin="20,0,0,6"/>
 
                         <Button x:Name="btnNavConfig" Tag="configuracion"
@@ -222,12 +230,12 @@
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                     <Border Width="6" Height="6" CornerRadius="3"
                                             Background="#E65100" Margin="2,0,8,0" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="txtAlertaTardanzas" FontSize="11" Foreground="#ECEFF1"/>
+                                    <TextBlock x:Name="txtAlertaTardanzas" FontSize="11" Foreground="{DynamicResource TextPrimary}"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <Border Width="6" Height="6" CornerRadius="3"
                                             Background="#AD1457" Margin="2,0,8,0" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="txtAlertaAusencias" FontSize="11" Foreground="#ECEFF1"/>
+                                    <TextBlock x:Name="txtAlertaAusencias" FontSize="11" Foreground="{DynamicResource TextPrimary}"/>
                                 </StackPanel>
                             </StackPanel>
                         </Border>
@@ -241,7 +249,7 @@
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                 <GradientStop Color="Transparent" Offset="0"/>
-                                <GradientStop Color="#4FC3F730" Offset="0.5"/>
+                                <GradientStop Color="{DynamicResource SidebarAccentLine}" Offset="0.5"/>
                                 <GradientStop Color="Transparent" Offset="1"/>
                             </LinearGradientBrush>
                         </Border.Background>
@@ -266,15 +274,38 @@
                             </Border>
                             <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
                                 <TextBlock x:Name="txtNombreAdmin" Text="Admin"
-                                           Foreground="#ECEFF1" FontSize="12" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimary}" FontSize="12" FontWeight="SemiBold"
                                            TextTrimming="CharacterEllipsis" MaxWidth="120"/>
                                 <StackPanel Orientation="Horizontal">
                                     <Border Width="6" Height="6" CornerRadius="3"
                                             Background="#4CAF50" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="En línea" Foreground="#4FC3F7" FontSize="10"/>
+                                    <TextBlock Text="En línea" Foreground="{DynamicResource SidebarAccent}" FontSize="10"/>
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
+                    </Border>
+
+                    <!-- Theme toggle -->
+                    <Border CornerRadius="8" Padding="8,6" Margin="0,0,0,10">
+                        <Border.Background>
+                            <SolidColorBrush Color="White" Opacity="0.05"/>
+                        </Border.Background>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <materialDesign:PackIcon x:Name="icoTheme" Kind="WeatherNight" Width="16" Height="16"
+                                                     Foreground="{DynamicResource AccentBlue}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="txtThemeLabel" Grid.Column="1" Text="Modo Oscuro"
+                                       Foreground="{DynamicResource NavInactiveFg}" FontSize="11" VerticalAlignment="Center"/>
+                            <ToggleButton x:Name="tglTheme" Grid.Column="2"
+                                          IsChecked="True"
+                                          Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                          Click="TglTheme_Click"
+                                          ToolTip="Alternar tema claro/oscuro"/>
+                        </Grid>
                     </Border>
 
                     <!-- Logout button -->
@@ -319,6 +350,82 @@
         </Border>
 
         <!-- CONTENT AREA -->
-        <ContentControl x:Name="ShellContent" Grid.Column="1" Background="#F0F4F8"/>
+        <Grid Grid.Column="1" Background="{DynamicResource AppBg}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Zoom bar -->
+            <Border Grid.Row="0" Background="{DynamicResource ZoomBarBg}" Padding="8,4"
+                    HorizontalAlignment="Right" CornerRadius="0,0,0,10" Margin="0,0,16,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Zoom:" Foreground="{DynamicResource TextSubtle}" FontSize="11"
+                               VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <Button x:Name="btnZoomOut" Click="BtnZoomOut_Click" Width="24" Height="24"
+                            Padding="0" BorderThickness="0" Cursor="Hand" ToolTip="Reducir zoom (Ctrl+Rueda)">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="bd" Background="{DynamicResource ZoomBtnBg}" CornerRadius="4">
+                                    <TextBlock Text="-" Foreground="{DynamicResource AccentBlue}" FontSize="14"
+                                               FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bd" Property="Background" Value="{DynamicResource ZoomBtnHover}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <TextBlock x:Name="txtZoomLevel" Text="100%" Foreground="{DynamicResource TextPrimary}"
+                               FontSize="11" VerticalAlignment="Center" Margin="6,0,6,0" MinWidth="36"
+                               TextAlignment="Center"/>
+                    <Button x:Name="btnZoomIn" Click="BtnZoomIn_Click" Width="24" Height="24"
+                            Padding="0" BorderThickness="0" Cursor="Hand" ToolTip="Aumentar zoom (Ctrl+Rueda)">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="bd" Background="{DynamicResource ZoomBtnBg}" CornerRadius="4">
+                                    <TextBlock Text="+" Foreground="{DynamicResource AccentBlue}" FontSize="14"
+                                               FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bd" Property="Background" Value="{DynamicResource ZoomBtnHover}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <Button x:Name="btnZoomReset" Click="BtnZoomReset_Click" Width="24" Height="24"
+                            Padding="0" BorderThickness="0" Cursor="Hand" Margin="4,0,0,0" ToolTip="Restablecer zoom">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="bd" Background="{DynamicResource ZoomBtnBg}" CornerRadius="4">
+                                    <materialDesign:PackIcon Kind="Refresh" Width="14" Height="14"
+                                                             Foreground="{DynamicResource TextSubtle}"
+                                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bd" Property="Background" Value="{DynamicResource ZoomBtnHover}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled"
+                          HorizontalScrollBarVisibility="Auto"
+                          PreviewMouseWheel="ContentScroll_PreviewMouseWheel">
+                <ContentControl x:Name="ShellContent">
+                    <ContentControl.LayoutTransform>
+                        <ScaleTransform x:Name="ContentScale" ScaleX="1" ScaleY="1"/>
+                    </ContentControl.LayoutTransform>
+                </ContentControl>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>

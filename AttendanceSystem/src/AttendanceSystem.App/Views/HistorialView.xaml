@@ -70,6 +70,10 @@
                           GridLinesVisibility="Horizontal" HeadersVisibility="Column"
                           SelectionMode="Single"
                           BorderThickness="0" CanUserResizeRows="False"
+                          Background="{DynamicResource CardBg}"
+                          Foreground="{DynamicResource TextPrimary}"
+                          RowBackground="{DynamicResource GridRowBg}"
+                          AlternatingRowBackground="{DynamicResource GridRowAltBg}"
                           Style="{DynamicResource MaterialDesignDataGrid}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Fecha"    Binding="{Binding Fecha}"    Width="120"/>

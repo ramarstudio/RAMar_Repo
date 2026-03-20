@@ -7,7 +7,7 @@
              mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="1100"
              Loaded="MarcajeView_Loaded" Unloaded="MarcajeView_Unloaded">
 
-    <Grid Background="#F5F5F5">
+    <Grid Background="{DynamicResource AppBg}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="360"/>
@@ -16,7 +16,7 @@
         <!-- CÁMARA EN VIVO -->
         <materialDesign:Card Grid.Column="0" Margin="16" UniformCornerRadius="12"
                              materialDesign:ElevationAssist.Elevation="Dp4">
-            <Grid Background="#111827" ClipToBounds="True">
+            <Grid Background="{DynamicResource CameraBg}" ClipToBounds="True">
                 <Image x:Name="imgCamara" Stretch="UniformToFill"/>
 
                 <!-- Overlay superior con info -->
@@ -46,13 +46,13 @@
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                             <materialDesign:PackIcon Kind="FaceRecognition" Width="24" Height="24"
-                                                     Foreground="#1A237E" VerticalAlignment="Center"
+                                                     Foreground="{DynamicResource MarcajeHeaderFg}" VerticalAlignment="Center"
                                                      Margin="0,0,8,0"/>
                             <TextBlock Text="Registro de Asistencia" FontSize="18" FontWeight="Bold"
-                                       Foreground="#1A237E" VerticalAlignment="Center"/>
+                                       Foreground="{DynamicResource MarcajeHeaderFg}" VerticalAlignment="Center"/>
                         </StackPanel>
                         <TextBlock Text="Selecciona el tipo de marcaje y presiona el botón"
-                                   FontSize="12" Foreground="#757575"/>
+                                   FontSize="12" Foreground="{DynamicResource TextMuted}"/>
                     </StackPanel>
                 </materialDesign:Card>
 
@@ -118,7 +118,7 @@
                         <TextBlock x:Name="txtResultadoMensaje" FontSize="14" FontWeight="SemiBold"
                                    TextWrapping="Wrap" HorizontalAlignment="Center"
                                    TextAlignment="Center"/>
-                        <TextBlock x:Name="txtResultadoTardanza" FontSize="12" Foreground="#D32F2F"
+                        <TextBlock x:Name="txtResultadoTardanza" FontSize="12" Foreground="{DynamicResource ErrorText}"
                                    HorizontalAlignment="Center" Margin="0,6,0,0"
                                    Visibility="Collapsed"/>
                     </StackPanel>

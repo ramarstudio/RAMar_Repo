@@ -2,13 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             Background="#F0F4F8" Loaded="HorariosView_Loaded">
+             Background="{DynamicResource AppBg}" Loaded="HorariosView_Loaded">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="28,24,28,28">
 
             <!-- HEADER -->
-            <Border Background="White" CornerRadius="14" Padding="24,18" Margin="0,0,0,18">
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="24,18" Margin="0,0,0,18">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
                 </Border.Effect>
@@ -26,8 +26,8 @@
                                                      VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Gestión de Horarios" FontSize="20" FontWeight="Bold" Foreground="#1A237E"/>
-                            <TextBlock Text="Asigna horarios personalizados por empleado y día" FontSize="12" Foreground="#78909C"/>
+                            <TextBlock Text="Gestión de Horarios" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                            <TextBlock Text="Asigna horarios personalizados por empleado y día" FontSize="12" Foreground="{DynamicResource TextMuted}"/>
                         </StackPanel>
                     </StackPanel>
                     <Button x:Name="btnNuevo" Click="BtnNuevo_Click"
@@ -43,12 +43,12 @@
             </Border>
 
             <!-- FILTRO EMPLEADO -->
-            <Border Background="White" CornerRadius="14" Padding="20,16" Margin="0,0,0,18">
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="20,16" Margin="0,0,0,18">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.06" Color="#1A237E"/>
                 </Border.Effect>
                 <StackPanel>
-                    <TextBlock Text="SELECCIONAR EMPLEADO" FontSize="10" FontWeight="Bold" Foreground="#90A4AE" Margin="0,0,0,10"/>
+                    <TextBlock Text="SELECCIONAR EMPLEADO" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextLabel}" Margin="0,0,0,10"/>
                     <WrapPanel>
                         <ComboBox x:Name="cmbEmpleado" Width="280"
                                   DisplayMemberPath="Display"
@@ -68,7 +68,7 @@
             </Border>
 
             <!-- TABLA HORARIOS -->
-            <Border Background="White" CornerRadius="14" Padding="6" Margin="0,0,0,18">
+            <Border Background="{DynamicResource CardBg}" CornerRadius="14" Padding="6" Margin="0,0,0,18">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
                 </Border.Effect>
@@ -76,15 +76,16 @@
                           AutoGenerateColumns="False" IsReadOnly="True"
                           CanUserSortColumns="True" HeadersVisibility="Column"
                           GridLinesVisibility="Horizontal" BorderThickness="0"
-                          Background="White" RowBackground="White"
-                          AlternatingRowBackground="#F8FAFD"
+                          Background="{DynamicResource CardBg}" RowBackground="{DynamicResource GridRowBg}"
+                          Foreground="{DynamicResource TextPrimary}"
+                          AlternatingRowBackground="{DynamicResource GridRowAltBg}"
                           MaxHeight="350" FontSize="12">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Día" Binding="{Binding Dia}" Width="100">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="#00695C"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource PastelTeal}"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
@@ -97,45 +98,45 @@
             </Border>
 
             <!-- FORMULARIO NUEVO HORARIO -->
-            <Border x:Name="pnlFormulario" Background="White" CornerRadius="14" Padding="24,20"
+            <Border x:Name="pnlFormulario" Background="{DynamicResource CardBg}" CornerRadius="14" Padding="24,20"
                     Margin="0,0,0,18" Visibility="Collapsed">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#00695C"/>
                 </Border.Effect>
                 <StackPanel>
-                    <TextBlock Text="NUEVO HORARIO" FontSize="11" FontWeight="Bold" Foreground="#00897B" Margin="0,0,0,16"/>
+                    <TextBlock Text="NUEVO HORARIO" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource PastelTeal}" Margin="0,0,0,16"/>
 
                     <WrapPanel>
                         <StackPanel Margin="0,0,16,12">
-                            <TextBlock Text="Empleado" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBlock Text="Empleado" FontSize="11" Foreground="{DynamicResource FormLabelFg}" Margin="0,0,0,4"/>
                             <ComboBox x:Name="cmbEmpleadoForm" Width="220"
                                       DisplayMemberPath="Display"
                                       Style="{StaticResource MaterialDesignOutlinedComboBox}"/>
                         </StackPanel>
                         <StackPanel Margin="0,0,16,12">
-                            <TextBlock Text="Día" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBlock Text="Día" FontSize="11" Foreground="{DynamicResource FormLabelFg}" Margin="0,0,0,4"/>
                             <ComboBox x:Name="cmbDia" Width="130"
                                       Style="{StaticResource MaterialDesignOutlinedComboBox}"/>
                         </StackPanel>
                         <StackPanel Margin="0,0,16,12">
-                            <TextBlock Text="Entrada (HH:mm)" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBlock Text="Entrada (HH:mm)" FontSize="11" Foreground="{DynamicResource FormLabelFg}" Margin="0,0,0,4"/>
                             <TextBox x:Name="txtEntrada" Width="110" Text="08:00"
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
                         </StackPanel>
                         <StackPanel Margin="0,0,16,12">
-                            <TextBlock Text="Salida (HH:mm)" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBlock Text="Salida (HH:mm)" FontSize="11" Foreground="{DynamicResource FormLabelFg}" Margin="0,0,0,4"/>
                             <TextBox x:Name="txtSalida" Width="110" Text="17:00"
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
                         </StackPanel>
                     </WrapPanel>
                     <WrapPanel Margin="0,4,0,0">
                         <StackPanel Margin="0,0,16,12">
-                            <TextBlock Text="Vigente Desde" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBlock Text="Vigente Desde" FontSize="11" Foreground="{DynamicResource FormLabelFg}" Margin="0,0,0,4"/>
                             <DatePicker x:Name="dpVigDesde" Width="150"
                                         Style="{StaticResource MaterialDesignOutlinedDatePicker}"/>
                         </StackPanel>
                         <StackPanel Margin="0,0,16,12">
-                            <TextBlock Text="Vigente Hasta" FontSize="11" Foreground="#546E7A" Margin="0,0,0,4"/>
+                            <TextBlock Text="Vigente Hasta" FontSize="11" Foreground="{DynamicResource FormLabelFg}" Margin="0,0,0,4"/>
                             <DatePicker x:Name="dpVigHasta" Width="150"
                                         Style="{StaticResource MaterialDesignOutlinedDatePicker}"/>
                         </StackPanel>

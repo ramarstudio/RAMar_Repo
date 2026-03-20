@@ -7,11 +7,11 @@
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="900"
              Loaded="ReportesView_Loaded"
-             Background="{DynamicResource MaterialDesignBackground}"
+             Background="{DynamicResource AppBg}"
              FontFamily="{DynamicResource MaterialDesignFont}">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="20">
+        <Grid Margin="24,20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -19,26 +19,22 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- ─── HEADER ─── -->
-            <md:Card Grid.Row="0" Margin="0,0,0,14" Padding="20,14" UniformCornerRadius="8">
+            <!-- HEADER -->
+            <Border Grid.Row="0" CornerRadius="12" Margin="0,0,0,14" Padding="20,14" Background="{DynamicResource CardBg}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <md:PackIcon Kind="FileChartOutline" Width="26" Height="26"
-                                     Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                     VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <TextBlock Text="Reportes de Asistencia"
-                                   Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
-                                   VerticalAlignment="Center"/>
+                                     Foreground="{DynamicResource AccentBlue}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBlock Text="Reportes de Asistencia" FontSize="20" FontWeight="Bold"
+                                   Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
                     </StackPanel>
                     <TextBlock Text="Genera y exporta resúmenes mensuales por empleado"
-                               Style="{DynamicResource MaterialDesignCaptionTextBlock}"
-                               Foreground="{DynamicResource MaterialDesignBodyLight}"
-                               Margin="36,2,0,0"/>
+                               FontSize="12" Foreground="{DynamicResource TextSubtle}" Margin="36,2,0,0"/>
                 </StackPanel>
-            </md:Card>
+            </Border>
 
-            <!-- ─── PARÁMETROS ─── -->
-            <md:Card Grid.Row="1" Margin="0,0,0,14" Padding="20,16" UniformCornerRadius="8">
+            <!-- PARÁMETROS -->
+            <Border Grid.Row="1" CornerRadius="12" Margin="0,0,0,14" Padding="20,16" Background="{DynamicResource CardBg}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -71,23 +67,35 @@
                               md:HintAssist.IsFloating="True"
                               Style="{DynamicResource MaterialDesignOutlinedComboBox}"/>
 
-                    <Button Grid.Column="6"
-                            Style="{DynamicResource MaterialDesignRaisedButton}"
-                            Click="BtnGenerar_Click" VerticalAlignment="Bottom" Margin="0,0,0,2">
-                        <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="ChartBar" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                            <TextBlock Text="Generar Reporte" VerticalAlignment="Center"/>
-                        </StackPanel>
+                    <Button Grid.Column="6" Click="BtnGenerar_Click" VerticalAlignment="Bottom"
+                            Margin="0,0,0,2" Cursor="Hand" Height="40" Padding="20,0"
+                            BorderThickness="0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="bd" CornerRadius="8" Background="{DynamicResource AccentBg}" Height="40" Padding="20,0">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <md:PackIcon Kind="ChartBar" Foreground="{DynamicResource AccentBlue}" Width="16" Height="16"
+                                                     VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Generar Reporte" Foreground="{DynamicResource SectionLabelFg}" FontSize="13"
+                                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bd" Property="Background" Value="{DynamicResource GenerateBtnHover}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
                     </Button>
                 </Grid>
-            </md:Card>
+            </Border>
 
-            <!-- ─── RESULTADOS (colapsable) ─── -->
-            <StackPanel x:Name="PanelResultados" Grid.Row="2"
-                        Visibility="Collapsed" Margin="0,0,0,14">
+            <!-- RESULTADOS -->
+            <StackPanel x:Name="PanelResultados" Grid.Row="2" Visibility="Collapsed" Margin="0,0,0,14">
 
-                <!-- Encabezado con botones de exportar -->
-                <md:Card Margin="0,0,0,14" Padding="20,14" UniformCornerRadius="8">
+                <!-- Header con export -->
+                <Border CornerRadius="12" Margin="0,0,0,14" Padding="20,14" Background="{DynamicResource CardBg}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -97,130 +105,105 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock x:Name="txtTituloReporte"
-                                       Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                                       FontWeight="Bold"/>
-                            <TextBlock x:Name="txtPeriodo"
-                                       Style="{DynamicResource MaterialDesignCaptionTextBlock}"
-                                       Foreground="{DynamicResource MaterialDesignBodyLight}"
-                                       Margin="0,2,0,0"/>
+                            <TextBlock x:Name="txtTituloReporte" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                            <TextBlock x:Name="txtPeriodo" FontSize="12" Foreground="{DynamicResource TextSubtle}" Margin="0,2,0,0"/>
                         </StackPanel>
 
-                        <Button Grid.Column="1"
-                                Style="{DynamicResource MaterialDesignRaisedButton}"
-                                Background="#C62828" BorderBrush="#C62828"
-                                Click="BtnExportarPdf_Click">
-                            <StackPanel Orientation="Horizontal">
-                                <md:PackIcon Kind="FilePdfBox" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBlock Text="PDF" VerticalAlignment="Center"/>
-                            </StackPanel>
+                        <Button Grid.Column="1" Click="BtnExportarPdf_Click" Cursor="Hand" BorderThickness="0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="bd" CornerRadius="8" Background="{DynamicResource ExportPdfBg}" Padding="16,8">
+                                        <StackPanel Orientation="Horizontal">
+                                            <md:PackIcon Kind="FilePdfBox" Foreground="{DynamicResource PastelPink}" Width="16" Height="16"
+                                                         VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                            <TextBlock Text="PDF" Foreground="{DynamicResource PastelPink}" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="bd" Property="Background" Value="{DynamicResource ExportPdfHover}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
                         </Button>
 
-                        <Button Grid.Column="3"
-                                Style="{DynamicResource MaterialDesignRaisedButton}"
-                                Background="#2E7D32" BorderBrush="#2E7D32"
-                                Click="BtnExportarCsv_Click">
-                            <StackPanel Orientation="Horizontal">
-                                <md:PackIcon Kind="FileDelimited" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBlock Text="CSV" VerticalAlignment="Center"/>
-                            </StackPanel>
+                        <Button Grid.Column="3" Click="BtnExportarCsv_Click" Cursor="Hand" BorderThickness="0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="bd" CornerRadius="8" Background="{DynamicResource ExportCsvBg}" Padding="16,8">
+                                        <StackPanel Orientation="Horizontal">
+                                            <md:PackIcon Kind="FileDelimited" Foreground="{DynamicResource PastelGreen}" Width="16" Height="16"
+                                                         VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                            <TextBlock Text="CSV" Foreground="{DynamicResource PastelGreen}" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="bd" Property="Background" Value="{DynamicResource ExportCsvHover}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
                         </Button>
                     </Grid>
-                </md:Card>
+                </Border>
 
                 <!-- KPI Cards -->
                 <UniformGrid Rows="1" Columns="4">
-
-                    <!-- Asistencias -->
-                    <md:Card Margin="0,0,8,0" Padding="20" UniformCornerRadius="8">
+                    <Border CornerRadius="12" Margin="0,0,8,0" Background="{DynamicResource CardBg}">
                         <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="4"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Border Grid.Row="0" Background="#2E7D32" CornerRadius="2"/>
-                            <StackPanel Grid.Row="1" Margin="0,12,0,0">
-                                <md:PackIcon Kind="CalendarCheck" Width="28" Height="28"
-                                             Foreground="#2E7D32" Margin="0,0,0,6"/>
-                                <TextBlock x:Name="txtAsistencias" Text="—"
-                                           FontSize="40" FontWeight="Bold" Foreground="#2E7D32"/>
-                                <TextBlock Text="Días Asistidos"
-                                           Style="{DynamicResource MaterialDesignCaptionTextBlock}"
-                                           Foreground="{DynamicResource MaterialDesignBodyLight}"
-                                           Margin="0,4,0,0"/>
+                            <Grid.RowDefinitions><RowDefinition Height="4"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <Border Grid.Row="0" Background="#81C995" CornerRadius="12,12,0,0"/>
+                            <StackPanel Grid.Row="1" Margin="20,14,20,16">
+                                <md:PackIcon Kind="CalendarCheck" Width="28" Height="28" Foreground="{DynamicResource PastelGreen}" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="txtAsistencias" Text="—" FontSize="38" FontWeight="Bold" Foreground="{DynamicResource PastelGreen}"/>
+                                <TextBlock Text="Días Asistidos" FontSize="11" Foreground="{DynamicResource TextSubtle}" FontWeight="Medium"/>
                             </StackPanel>
                         </Grid>
-                    </md:Card>
+                    </Border>
 
-                    <!-- Tardanzas -->
-                    <md:Card Margin="4,0,4,0" Padding="20" UniformCornerRadius="8">
+                    <Border CornerRadius="12" Margin="4,0,4,0" Background="{DynamicResource CardBg}">
                         <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="4"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Border Grid.Row="0" Background="#E65100" CornerRadius="2"/>
-                            <StackPanel Grid.Row="1" Margin="0,12,0,0">
-                                <md:PackIcon Kind="ClockAlert" Width="28" Height="28"
-                                             Foreground="#E65100" Margin="0,0,0,6"/>
-                                <TextBlock x:Name="txtTardanzas" Text="—"
-                                           FontSize="40" FontWeight="Bold" Foreground="#E65100"/>
-                                <TextBlock Text="Tardanzas"
-                                           Style="{DynamicResource MaterialDesignCaptionTextBlock}"
-                                           Foreground="{DynamicResource MaterialDesignBodyLight}"
-                                           Margin="0,4,0,0"/>
+                            <Grid.RowDefinitions><RowDefinition Height="4"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <Border Grid.Row="0" Background="#F4A97D" CornerRadius="12,12,0,0"/>
+                            <StackPanel Grid.Row="1" Margin="20,14,20,16">
+                                <md:PackIcon Kind="ClockAlert" Width="28" Height="28" Foreground="{DynamicResource PastelOrange}" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="txtTardanzas" Text="—" FontSize="38" FontWeight="Bold" Foreground="{DynamicResource PastelOrange}"/>
+                                <TextBlock Text="Tardanzas" FontSize="11" Foreground="{DynamicResource TextSubtle}" FontWeight="Medium"/>
                             </StackPanel>
                         </Grid>
-                    </md:Card>
+                    </Border>
 
-                    <!-- Faltas -->
-                    <md:Card Margin="4,0,4,0" Padding="20" UniformCornerRadius="8">
+                    <Border CornerRadius="12" Margin="4,0,4,0" Background="{DynamicResource CardBg}">
                         <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="4"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Border Grid.Row="0" Background="#B71C1C" CornerRadius="2"/>
-                            <StackPanel Grid.Row="1" Margin="0,12,0,0">
-                                <md:PackIcon Kind="CalendarRemove" Width="28" Height="28"
-                                             Foreground="#B71C1C" Margin="0,0,0,6"/>
-                                <TextBlock x:Name="txtFaltas" Text="—"
-                                           FontSize="40" FontWeight="Bold" Foreground="#B71C1C"/>
-                                <TextBlock Text="Faltas"
-                                           Style="{DynamicResource MaterialDesignCaptionTextBlock}"
-                                           Foreground="{DynamicResource MaterialDesignBodyLight}"
-                                           Margin="0,4,0,0"/>
+                            <Grid.RowDefinitions><RowDefinition Height="4"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <Border Grid.Row="0" Background="#E8879B" CornerRadius="12,12,0,0"/>
+                            <StackPanel Grid.Row="1" Margin="20,14,20,16">
+                                <md:PackIcon Kind="CalendarRemove" Width="28" Height="28" Foreground="{DynamicResource PastelPink}" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="txtFaltas" Text="—" FontSize="38" FontWeight="Bold" Foreground="{DynamicResource PastelPink}"/>
+                                <TextBlock Text="Faltas" FontSize="11" Foreground="{DynamicResource TextSubtle}" FontWeight="Medium"/>
                             </StackPanel>
                         </Grid>
-                    </md:Card>
+                    </Border>
 
-                    <!-- Minutos tardanza -->
-                    <md:Card Margin="8,0,0,0" Padding="20" UniformCornerRadius="8">
+                    <Border CornerRadius="12" Margin="8,0,0,0" Background="{DynamicResource CardBg}">
                         <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="4"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Border Grid.Row="0" Background="#6A1B9A" CornerRadius="2"/>
-                            <StackPanel Grid.Row="1" Margin="0,12,0,0">
-                                <md:PackIcon Kind="TimerSand" Width="28" Height="28"
-                                             Foreground="#6A1B9A" Margin="0,0,0,6"/>
-                                <TextBlock x:Name="txtMinutos" Text="—"
-                                           FontSize="40" FontWeight="Bold" Foreground="#6A1B9A"/>
-                                <TextBlock Text="Min. Tardanza"
-                                           Style="{DynamicResource MaterialDesignCaptionTextBlock}"
-                                           Foreground="{DynamicResource MaterialDesignBodyLight}"
-                                           Margin="0,4,0,0"/>
+                            <Grid.RowDefinitions><RowDefinition Height="4"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <Border Grid.Row="0" Background="#B8A9D4" CornerRadius="12,12,0,0"/>
+                            <StackPanel Grid.Row="1" Margin="20,14,20,16">
+                                <md:PackIcon Kind="TimerSand" Width="28" Height="28" Foreground="{DynamicResource PastelPurple}" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="txtMinutos" Text="—" FontSize="38" FontWeight="Bold" Foreground="{DynamicResource PastelPurple}"/>
+                                <TextBlock Text="Min. Tardanza" FontSize="11" Foreground="{DynamicResource TextSubtle}" FontWeight="Medium"/>
                             </StackPanel>
                         </Grid>
-                    </md:Card>
+                    </Border>
                 </UniformGrid>
             </StackPanel>
 
-            <!-- ─── FEEDBACK ─── -->
+            <!-- FEEDBACK -->
             <TextBlock x:Name="txtMensaje" Grid.Row="3"
-                       Style="{DynamicResource MaterialDesignBody2TextBlock}"
-                       FontWeight="SemiBold" HorizontalAlignment="Center"
+                       FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"
                        Visibility="Collapsed" Margin="0,4,0,0"/>
         </Grid>
     </ScrollViewer>
