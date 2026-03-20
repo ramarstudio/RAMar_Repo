@@ -185,5 +185,17 @@ namespace AttendanceSystem.App.Views.Admin
 
         private void OcultarMensaje()
             => txtMensaje.Visibility = Visibility.Collapsed;
+
+        private void DgUsuarios_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Username": e.Column.Header = "Usuario"; e.Column.Width = new DataGridLength(150); break;
+                case "Rol": e.Column.Header = "Rol"; e.Column.Width = new DataGridLength(100); break;
+                case "Activo": e.Column.Header = "Activo"; e.Column.Width = new DataGridLength(80); break;
+                case "FechaCreacion": e.Column.Header = "Fecha Creación"; e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star); break;
+                default: e.Cancel = true; break;
+            }
+        }
     }
 }

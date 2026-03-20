@@ -20,9 +20,9 @@
                 <Image x:Name="imgCamara" Stretch="UniformToFill"/>
 
                 <!-- Overlay superior con info -->
-                <Border VerticalAlignment="Top" Background="#60000000" Padding="16,10">
+                <Border VerticalAlignment="Top" Background="{DynamicResource OverlayBg}" Padding="16,10">
                     <StackPanel Orientation="Horizontal">
-                        <Ellipse Width="8" Height="8" Fill="#4CAF50" VerticalAlignment="Center"
+                        <Ellipse Width="8" Height="8" Fill="{DynamicResource CameraLedColor}" VerticalAlignment="Center"
                                  Margin="0,0,8,0"/>
                         <TextBlock x:Name="txtEstadoCamara" Text="Cámara activa"
                                    Foreground="White" FontSize="13"/>
@@ -30,7 +30,7 @@
                 </Border>
 
                 <!-- Overlay inferior con fecha -->
-                <Border VerticalAlignment="Bottom" Background="#80000000" Padding="16,10">
+                <Border VerticalAlignment="Bottom" Background="{DynamicResource OverlayBottomBg}" Padding="16,10">
                     <TextBlock x:Name="txtFechaHora" Foreground="White" FontSize="14"
                                HorizontalAlignment="Center"/>
                 </Border>
@@ -64,7 +64,7 @@
                         <Button x:Name="btnEntrada"
                                 Style="{StaticResource MaterialDesignRaisedButton}"
                                 materialDesign:ButtonAssist.CornerRadius="10"
-                                Background="#2E7D32" Foreground="White"
+                                Background="{DynamicResource BtnEntradaBg}" Foreground="White"
                                 BorderThickness="0" Height="56" FontSize="15" FontWeight="Bold"
                                 Cursor="Hand" Margin="0,0,0,10"
                                 Click="BtnEntrada_Click">
@@ -79,7 +79,7 @@
                         <Button x:Name="btnSalida"
                                 Style="{StaticResource MaterialDesignRaisedButton}"
                                 materialDesign:ButtonAssist.CornerRadius="10"
-                                Background="#C62828" Foreground="White"
+                                Background="{DynamicResource BtnSalidaBg}" Foreground="White"
                                 BorderThickness="0" Height="56" FontSize="15" FontWeight="Bold"
                                 Cursor="Hand" Margin="0,0,0,10"
                                 Click="BtnSalida_Click">
@@ -94,7 +94,7 @@
                         <Button x:Name="btnBreak"
                                 Style="{StaticResource MaterialDesignRaisedButton}"
                                 materialDesign:ButtonAssist.CornerRadius="10"
-                                Background="#E65100" Foreground="White"
+                                Background="{DynamicResource BtnBreakBg}" Foreground="White"
                                 BorderThickness="0" Height="56" FontSize="15" FontWeight="Bold"
                                 Cursor="Hand"
                                 Click="BtnBreak_Click">

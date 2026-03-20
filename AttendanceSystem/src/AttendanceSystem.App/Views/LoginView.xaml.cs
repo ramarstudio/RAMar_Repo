@@ -22,9 +22,10 @@ namespace AttendanceSystem.App.Views
         private async void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
             // Ocultamos errores previos y deshabilitamos el botón para evitar doble envío
-            txtError.Visibility = Visibility.Collapsed;
-            btnLogin.IsEnabled = false;
-            btnLogin.Content = "Validando...";
+            ErrorBadge.Visibility = Visibility.Collapsed;
+            txtError.Visibility   = Visibility.Collapsed;
+            btnLogin.IsEnabled    = false;
+            btnLogin.Content      = "VALIDANDO...";
 
             string username = txtUsername.Text;
             string password = txtPassword.Password;
@@ -34,14 +35,15 @@ namespace AttendanceSystem.App.Views
 
             if (!resultado.Exito)
             {
-                // Si falla, mostramos el mensaje de error que nos manda el controlador
-                txtError.Text = resultado.Mensaje;
-                txtError.Visibility = Visibility.Visible;
+                // Si falla, mostramos el badge completo Y el texto de error
+                txtError.Text         = resultado.Mensaje;
+                txtError.Visibility   = Visibility.Visible;
+                ErrorBadge.Visibility = Visibility.Visible;
             }
 
             // Restauramos el botón
             btnLogin.IsEnabled = true;
-            btnLogin.Content = "INGRESAR AL SISTEMA";
+            btnLogin.Content   = "INGRESAR AL SISTEMA";
         }
     }
 }

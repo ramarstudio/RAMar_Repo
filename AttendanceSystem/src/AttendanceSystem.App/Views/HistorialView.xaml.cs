@@ -77,5 +77,19 @@ namespace AttendanceSystem.App.Views
                 txtResumen.Text   = _historialController.GenerarResumen(filas);
             }
         }
+
+        private void DgHistorial_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Fecha": e.Column.Header = "Fecha"; e.Column.Width = new DataGridLength(120); break;
+                case "Hora": e.Column.Header = "Hora"; e.Column.Width = new DataGridLength(85); break;
+                case "Tipo": e.Column.Header = "Tipo"; e.Column.Width = new DataGridLength(110); break;
+                case "Tardanza": e.Column.Header = "Tardanza"; e.Column.Width = new DataGridLength(95); break;
+                case "Minutos": e.Column.Header = "Minutos"; e.Column.Width = new DataGridLength(95); break;
+                case "Metodo": e.Column.Header = "Método"; e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star); break;
+                default: e.Cancel = true; break;
+            }
+        }
     }
 }

@@ -66,5 +66,18 @@ namespace AttendanceSystem.App.Views.Admin
                 : System.Windows.Media.Brushes.ForestGreen;
             txtMensaje.Visibility = Visibility.Visible;
         }
+
+        private void DgAudit_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Fecha":   e.Column.Header = "Fecha";   e.Column.Width = new DataGridLength(150); break;
+                case "Usuario": e.Column.Header = "Usuario"; e.Column.Width = new DataGridLength(120); break;
+                case "Accion":  e.Column.Header = "Acción";  e.Column.Width = new DataGridLength(160); break;
+                case "Entidad": e.Column.Header = "Entidad"; e.Column.Width = new DataGridLength(110); break;
+                case "Motivo":  e.Column.Header = "Motivo";  e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star); break;
+                default: e.Cancel = true; break;
+            }
+        }
     }
 }

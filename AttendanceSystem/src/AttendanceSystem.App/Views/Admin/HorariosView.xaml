@@ -73,28 +73,17 @@
                     <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
                 </Border.Effect>
                 <DataGrid x:Name="dgHorarios"
-                          AutoGenerateColumns="False" IsReadOnly="True"
-                          CanUserSortColumns="True" HeadersVisibility="Column"
-                          GridLinesVisibility="Horizontal" BorderThickness="0"
-                          Background="{DynamicResource CardBg}" RowBackground="{DynamicResource GridRowBg}"
                           Foreground="{DynamicResource TextPrimary}"
+                          Background="{DynamicResource CardBg}"
+                          RowBackground="{DynamicResource GridRowBg}"
                           AlternatingRowBackground="{DynamicResource GridRowAltBg}"
-                          MaxHeight="350" FontSize="12">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Día" Binding="{Binding Dia}" Width="100">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource PastelTeal}"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Entrada" Binding="{Binding Entrada}" Width="90"/>
-                        <DataGridTextColumn Header="Salida" Binding="{Binding Salida}" Width="90"/>
-                        <DataGridTextColumn Header="Vigente Desde" Binding="{Binding VigenteDesde}" Width="120"/>
-                        <DataGridTextColumn Header="Vigente Hasta" Binding="{Binding VigenteHasta}" Width="120"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                          HorizontalGridLinesBrush="{DynamicResource BorderSubtle}"
+                          BorderThickness="0"
+                          AutoGenerateColumns="True" IsReadOnly="True"
+                          CanUserSortColumns="True" HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal"
+                          MaxHeight="350" FontSize="12"
+                          AutoGeneratingColumn="DgHorarios_AutoGeneratingColumn"/>
             </Border>
 
             <!-- FORMULARIO NUEVO HORARIO -->

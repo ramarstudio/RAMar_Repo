@@ -108,5 +108,18 @@ namespace AttendanceSystem.App.Views.Admin
                 : System.Windows.Media.Brushes.ForestGreen;
             txtMensaje.Visibility = Visibility.Visible;
         }
+
+        private void DgHorarios_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Dia": e.Column.Header = "Día"; e.Column.Width = new DataGridLength(100); break;
+                case "Entrada": e.Column.Header = "Entrada"; e.Column.Width = new DataGridLength(90); break;
+                case "Salida": e.Column.Header = "Salida"; e.Column.Width = new DataGridLength(90); break;
+                case "VigenteDesde": e.Column.Header = "Vigente Desde"; e.Column.Width = new DataGridLength(120); break;
+                case "VigenteHasta": e.Column.Header = "Vigente Hasta"; e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star); break;
+                default: e.Cancel = true; break;
+            }
+        }
     }
 }

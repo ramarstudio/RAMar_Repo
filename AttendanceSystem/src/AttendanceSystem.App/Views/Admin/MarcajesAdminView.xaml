@@ -200,57 +200,20 @@
                                Visibility="Visible"/>
 
                     <DataGrid x:Name="dgMarcajes"
-                              AutoGenerateColumns="False" IsReadOnly="True"
+                              Foreground="{DynamicResource TextPrimary}"
+                              Background="{DynamicResource CardBg}"
+                              RowBackground="{DynamicResource GridRowBg}"
+                              AlternatingRowBackground="{DynamicResource GridRowAltBg}"
+                              HorizontalGridLinesBrush="{DynamicResource BorderSubtle}"
+                              BorderThickness="0"
+                              AutoGenerateColumns="True" IsReadOnly="True"
                               GridLinesVisibility="Horizontal" HeadersVisibility="Column"
-                              BorderThickness="0" CanUserResizeRows="False"
+                              CanUserResizeRows="False"
                               SelectionMode="Single"
                               RowHeight="46"
-                              Background="{DynamicResource CardBg}" RowBackground="{DynamicResource GridRowBg}"
-                              Foreground="{DynamicResource TextPrimary}"
-                              AlternatingRowBackground="{DynamicResource GridRowAltBg}"
                               FontSize="12"
-                              Visibility="Collapsed">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="120">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="FontWeight" Value="Medium"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="Hora" Binding="{Binding Hora}" Width="85">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTemplateColumn Header="Tipo" Width="130"
-                                                    CellTemplate="{StaticResource TipoCellTemplate}"/>
-                            <DataGridTemplateColumn Header="Tardanza" Width="100"
-                                                    CellTemplate="{StaticResource TardanzaCellTemplate}"/>
-                            <DataGridTextColumn Header="Minutos" Binding="{Binding Minutos}" Width="95">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="Metodo" Binding="{Binding Metodo}" Width="*">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
-                                        <Setter Property="FontSize" Value="12"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                              Visibility="Collapsed"
+                              AutoGeneratingColumn="DgMarcajes_AutoGeneratingColumn"/>
                 </Grid>
             </Border>
 

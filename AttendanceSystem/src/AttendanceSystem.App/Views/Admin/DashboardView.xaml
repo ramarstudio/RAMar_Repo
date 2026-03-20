@@ -88,15 +88,15 @@
                                 <TextBlock Text="{Binding FechaCorta}" FontSize="10" Foreground="{DynamicResource TextSubtle}"
                                            HorizontalAlignment="Center" Margin="0,2,0,10"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
-                                    <Border Width="8" Height="8" CornerRadius="4" Background="#81C995" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <Border Width="8" Height="8" CornerRadius="4" Background="{DynamicResource PastelGreen}" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                     <TextBlock Text="{Binding Asistencias}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource PastelGreen}"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
-                                    <Border Width="8" Height="8" CornerRadius="4" Background="#F4A97D" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <Border Width="8" Height="8" CornerRadius="4" Background="{DynamicResource PastelOrange}" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                     <TextBlock Text="{Binding Tardanzas}" FontSize="13" Foreground="{DynamicResource PastelOrange}"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Border Width="8" Height="8" CornerRadius="4" Background="#E8879B" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <Border Width="8" Height="8" CornerRadius="4" Background="{DynamicResource PastelPink}" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                     <TextBlock Text="{Binding Ausencias}" FontSize="13" Foreground="{DynamicResource PastelPink}"/>
                                 </StackPanel>
                             </StackPanel>
@@ -121,7 +121,7 @@
                             <RowDefinition Height="4"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="#7EB8DA" CornerRadius="12,12,0,0"/>
+                        <Border Grid.Row="0" Background="{DynamicResource AccentBlue}" CornerRadius="12,12,0,0"/>
                         <StackPanel Grid.Row="1" Margin="20,16,20,18">
                             <Border Background="{DynamicResource KpiBadgeBg1}" CornerRadius="8" Width="40" Height="40"
                                     HorizontalAlignment="Left" Margin="0,0,0,10">
@@ -142,7 +142,7 @@
                             <RowDefinition Height="4"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="#81C995" CornerRadius="12,12,0,0"/>
+                        <Border Grid.Row="0" Background="{DynamicResource PastelGreen}" CornerRadius="12,12,0,0"/>
                         <StackPanel Grid.Row="1" Margin="20,16,20,18">
                             <Grid Margin="0,0,0,10">
                                 <Border Background="{DynamicResource KpiBadgeBg2}" CornerRadius="8" Width="40" Height="40" HorizontalAlignment="Left">
@@ -172,7 +172,7 @@
                             <RowDefinition Height="4"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="#F4A97D" CornerRadius="12,12,0,0"/>
+                        <Border Grid.Row="0" Background="{DynamicResource PastelOrange}" CornerRadius="12,12,0,0"/>
                         <StackPanel Grid.Row="1" Margin="20,16,20,18">
                             <Grid Margin="0,0,0,10">
                                 <Border Background="{DynamicResource KpiBadgeBg3}" CornerRadius="8" Width="40" Height="40" HorizontalAlignment="Left">
@@ -202,7 +202,7 @@
                             <RowDefinition Height="4"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="#E8879B" CornerRadius="12,12,0,0"/>
+                        <Border Grid.Row="0" Background="{DynamicResource PastelPink}" CornerRadius="12,12,0,0"/>
                         <StackPanel Grid.Row="1" Margin="20,16,20,18">
                             <Grid Margin="0,0,0,10">
                                 <Border Background="{DynamicResource KpiBadgeBg4}" CornerRadius="8" Width="40" Height="40" HorizontalAlignment="Left">
@@ -232,7 +232,7 @@
                             <RowDefinition Height="4"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="#B8A9D4" CornerRadius="12,12,0,0"/>
+                        <Border Grid.Row="0" Background="{DynamicResource PastelPurple}" CornerRadius="12,12,0,0"/>
                         <Grid Grid.Row="1" Margin="20,16,20,18">
                             <StackPanel>
                                 <Border Background="{DynamicResource KpiBadgeBg5}" CornerRadius="8" Width="40" Height="40"
@@ -244,7 +244,7 @@
                                            FontSize="34" FontWeight="Bold" Foreground="{DynamicResource PastelPurple}" LineHeight="36"/>
                                 <Grid Height="6" Margin="0,8,0,0">
                                     <Border Background="{DynamicResource GaugeBg}" CornerRadius="3"/>
-                                    <Border x:Name="barGauge" Background="#B8A9D4" CornerRadius="3"
+                                    <Border x:Name="barGauge" Background="{DynamicResource PastelPurple}" CornerRadius="3"
                                             HorizontalAlignment="Left" Width="0"/>
                                 </Grid>
                                 <TextBlock Text="Tasa Asistencia" FontSize="11" Foreground="{DynamicResource TextSubtle}" Margin="0,4,0,0" FontWeight="Medium"/>
@@ -260,7 +260,7 @@
                             <RowDefinition Height="4"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="#7EC8B8" CornerRadius="12,12,0,0"/>
+                        <Border Grid.Row="0" Background="{DynamicResource PastelTeal}" CornerRadius="12,12,0,0"/>
                         <StackPanel Grid.Row="1" Margin="20,16,20,18">
                             <Border Background="{DynamicResource KpiBadgeBg6}" CornerRadius="8" Width="40" Height="40"
                                     HorizontalAlignment="Left" Margin="0,0,0,10">
@@ -381,11 +381,11 @@
                                            FontSize="13" FontWeight="Medium" Foreground="{DynamicResource SectionLabelFg}"/>
                             </StackPanel>
                             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                                <Border Width="12" Height="12" CornerRadius="2" Background="#81C995" Margin="0,0,4,0"/>
+                                <Border Width="12" Height="12" CornerRadius="2" Background="{DynamicResource PastelGreen}" Margin="0,0,4,0"/>
                                 <TextBlock Text="Bien" FontSize="10" Foreground="{DynamicResource TextSubtle}" Margin="0,0,12,0"/>
-                                <Border Width="12" Height="12" CornerRadius="2" Background="#F4D97D" Margin="0,0,4,0"/>
+                                <Border Width="12" Height="12" CornerRadius="2" Background="{DynamicResource HeatmapWarning}" Margin="0,0,4,0"/>
                                 <TextBlock Text="Tardanzas" FontSize="10" Foreground="{DynamicResource TextSubtle}" Margin="0,0,12,0"/>
-                                <Border Width="12" Height="12" CornerRadius="2" Background="#E8879B" Margin="0,0,4,0"/>
+                                <Border Width="12" Height="12" CornerRadius="2" Background="{DynamicResource PastelPink}" Margin="0,0,4,0"/>
                                 <TextBlock Text="Ausencias" FontSize="10" Foreground="{DynamicResource TextSubtle}"/>
                             </StackPanel>
                         </Grid>
@@ -424,63 +424,16 @@
                     </Border>
 
                     <DataGrid Grid.Row="1" x:Name="dgReciente"
-                              AutoGenerateColumns="False" IsReadOnly="True"
-                              GridLinesVisibility="Horizontal" HeadersVisibility="Column"
-                              BorderThickness="0" CanUserResizeRows="False"
-                              Background="{DynamicResource CardBg}" RowBackground="{DynamicResource GridRowBg}"
+                              Foreground="{DynamicResource TextPrimary}"
+                              Background="{DynamicResource CardBg}"
+                              RowBackground="{DynamicResource GridRowBg}"
                               AlternatingRowBackground="{DynamicResource GridRowAltBg}"
-                              Foreground="{DynamicResource TextSecondary}"
-                              Style="{DynamicResource MaterialDesignDataGrid}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Empleado" Binding="{Binding NombreEmpleado}" Width="140">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="FontWeight" Value="SemiBold"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource AccentBlue}"/>
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="Fecha / Hora" Binding="{Binding FechaHora}" Width="150"/>
-                            <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="120">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="FontWeight" Value="Medium"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTemplateColumn Header="Estado" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border CornerRadius="10" Padding="10,3" HorizontalAlignment="Left" Margin="4,2">
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Setter Property="Background" Value="{DynamicResource BadgeGreenBg}"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding EsTardanza}" Value="Sí">
-                                                            <Setter Property="Background" Value="{DynamicResource BadgeOrangeBg}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                            <TextBlock Text="{Binding EsTardanza}" FontSize="11" FontWeight="SemiBold">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Foreground" Value="{DynamicResource PastelGreen}"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding EsTardanza}" Value="Sí">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PastelOrange}"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </Border>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
+                              HorizontalGridLinesBrush="{DynamicResource BorderSubtle}"
+                              BorderThickness="0"
+                              AutoGenerateColumns="True" IsReadOnly="True"
+                              GridLinesVisibility="Horizontal" HeadersVisibility="Column"
+                              CanUserResizeRows="False"
+                              AutoGeneratingColumn="DgReciente_AutoGeneratingColumn">
                     </DataGrid>
                 </Grid>
             </Border>

@@ -139,5 +139,19 @@ namespace AttendanceSystem.App.Views.Admin
 
         private void OcultarMensaje()
             => txtMensaje.Visibility = Visibility.Collapsed;
+
+        private void DgMarcajes_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Empleado": e.Column.Header = "Empleado"; e.Column.Width = new DataGridLength(130); break;
+                case "Fecha": e.Column.Header = "Fecha"; e.Column.Width = new DataGridLength(100); break;
+                case "Hora": e.Column.Header = "Hora"; e.Column.Width = new DataGridLength(80); break;
+                case "Tipo": e.Column.Header = "Tipo"; e.Column.Width = new DataGridLength(100); break;
+                case "Tardanza": e.Column.Header = "Tardanza"; e.Column.Width = new DataGridLength(80); break;
+                case "Metodo": e.Column.Header = "Método"; e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star); break;
+                default: e.Cancel = true; break;
+            }
+        }
     }
 }

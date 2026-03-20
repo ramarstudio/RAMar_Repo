@@ -66,24 +66,17 @@
                            Visibility="Collapsed"/>
 
                 <DataGrid x:Name="dgHistorial"
-                          AutoGenerateColumns="False" IsReadOnly="True"
-                          GridLinesVisibility="Horizontal" HeadersVisibility="Column"
-                          SelectionMode="Single"
-                          BorderThickness="0" CanUserResizeRows="False"
-                          Background="{DynamicResource CardBg}"
                           Foreground="{DynamicResource TextPrimary}"
+                          Background="{DynamicResource CardBg}"
                           RowBackground="{DynamicResource GridRowBg}"
                           AlternatingRowBackground="{DynamicResource GridRowAltBg}"
-                          Style="{DynamicResource MaterialDesignDataGrid}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Fecha"    Binding="{Binding Fecha}"    Width="120"/>
-                        <DataGridTextColumn Header="Hora"     Binding="{Binding Hora}"     Width="85"/>
-                        <DataGridTextColumn Header="Tipo"     Binding="{Binding Tipo}"     Width="110"/>
-                        <DataGridTextColumn Header="Tardanza" Binding="{Binding Tardanza}" Width="95"/>
-                        <DataGridTextColumn Header="Minutos"  Binding="{Binding Minutos}"  Width="95"/>
-                        <DataGridTextColumn Header="Método"   Binding="{Binding Metodo}"   Width="*"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                          HorizontalGridLinesBrush="{DynamicResource BorderSubtle}"
+                          BorderThickness="0"
+                          AutoGenerateColumns="True" IsReadOnly="True"
+                          GridLinesVisibility="Horizontal" HeadersVisibility="Column"
+                          SelectionMode="Single"
+                          CanUserResizeRows="False"
+                          AutoGeneratingColumn="DgHistorial_AutoGeneratingColumn"/>
             </Grid>
         </md:Card>
 

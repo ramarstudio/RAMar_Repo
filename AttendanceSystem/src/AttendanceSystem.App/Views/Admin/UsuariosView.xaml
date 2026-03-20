@@ -148,58 +148,20 @@
                     </StackPanel>
 
                     <DataGrid x:Name="dgUsuarios"
-                              AutoGenerateColumns="False" IsReadOnly="True"
+                              Foreground="{DynamicResource TextPrimary}"
+                              Background="{DynamicResource CardBg}"
+                              RowBackground="{DynamicResource GridRowBg}"
+                              AlternatingRowBackground="{DynamicResource GridRowAltBg}"
+                              HorizontalGridLinesBrush="{DynamicResource BorderSubtle}"
+                              BorderThickness="0"
+                              AutoGenerateColumns="True" IsReadOnly="True"
                               GridLinesVisibility="Horizontal" HeadersVisibility="Column"
-                              BorderThickness="0" CanUserResizeRows="False"
+                              CanUserResizeRows="False"
                               SelectionMode="Single"
                               RowHeight="48"
-                              Background="{DynamicResource CardBg}" RowBackground="{DynamicResource GridRowBg}"
-                              Foreground="{DynamicResource TextPrimary}"
-                              AlternatingRowBackground="{DynamicResource GridRowAltBg}"
                               FontSize="12"
-                              SelectionChanged="DgUsuarios_SelectionChanged">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="55">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
-                                        <Setter Property="FontSize" Value="12"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="140">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="FontWeight" Value="SemiBold"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTemplateColumn Header="Rol" Width="120"
-                                                    CellTemplate="{StaticResource RolCellTemplate}"/>
-                            <DataGridTemplateColumn Header="Estado" Width="100"
-                                                    CellTemplate="{StaticResource EstadoCellTemplate}"/>
-                            <DataGridTextColumn Header="Creado" Binding="{Binding FechaCreacion}" Width="110">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
-                                        <Setter Property="FontSize" Value="12"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                              SelectionChanged="DgUsuarios_SelectionChanged"
+                              AutoGeneratingColumn="DgUsuarios_AutoGeneratingColumn"/>
                 </Grid>
             </Border>
 

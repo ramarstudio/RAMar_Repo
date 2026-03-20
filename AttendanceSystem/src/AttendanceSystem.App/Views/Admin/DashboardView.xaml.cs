@@ -20,16 +20,9 @@ namespace AttendanceSystem.App.Views.Admin
 
         public event Action<int, int> AlertasCalculadas;
 
-        // ── Paleta pastel oscura ─────────────────────────────────────────────────
-        private static readonly SKColor PastelBlue   = new(126, 184, 218);  // #7EB8DA
-        private static readonly SKColor PastelGreen  = new(129, 201, 149);  // #81C995
-        private static readonly SKColor PastelOrange = new(244, 169, 125);  // #F4A97D
-        private static readonly SKColor PastelPink   = new(232, 135, 155);  // #E8879B
-        private static readonly SKColor PastelPurple = new(184, 169, 212);  // #B8A9D4
-        private static readonly SKColor PastelTeal   = new(126, 200, 184);  // #7EC8B8
-        private static readonly SKColor TextMuted    = new(107, 141, 166);  // #6B8DA6
-        private static readonly SKColor GridLine     = new(42, 55, 70);     // #2A3746
-        private static readonly SKColor CardBg       = new(26, 35, 50);     // #1A2332
+        // ── Colores de gráficos (se resuelven en cada carga según el tema activo) ──
+        private SKColor PastelBlue, PastelGreen, PastelOrange, PastelPink,
+                        PastelPurple, PastelTeal, TextMuted, GridLine, CardBg;
 
         public DashboardView(DashboardController ctrl)
         {
@@ -37,8 +30,32 @@ namespace AttendanceSystem.App.Views.Admin
             _ctrl = ctrl;
         }
 
+        private SKColor ThemeColor(string resourceKey, byte r, byte g, byte b)
+        {
+            if (TryFindResource(resourceKey) is SolidColorBrush brush)
+            {
+                var c = brush.Color;
+                return new SKColor(c.R, c.G, c.B, c.A);
+            }
+            return new SKColor(r, g, b);
+        }
+
+        private void ResolveThemeColors()
+        {
+            PastelBlue   = ThemeColor("AccentBlue",    126, 184, 218);
+            PastelGreen  = ThemeColor("PastelGreen",   129, 201, 149);
+            PastelOrange = ThemeColor("PastelOrange",  244, 169, 125);
+            PastelPink   = ThemeColor("PastelPink",    232, 135, 155);
+            PastelPurple = ThemeColor("PastelPurple",  184, 169, 212);
+            PastelTeal   = ThemeColor("PastelTeal",    126, 200, 184);
+            TextMuted    = ThemeColor("TextSubtle",    107, 141, 166);
+            GridLine     = ThemeColor("BorderSubtle",   42,  55,  70);
+            CardBg       = ThemeColor("CardBg",         26,  35,  50);
+        }
+
         private async void DashboardView_Loaded(object sender, RoutedEventArgs e)
         {
+            ResolveThemeColors();
             int hora = DateTime.Now.Hour;
             txtSaludo.Text      = hora < 12 ? "Buenos días," : hora < 18 ? "Buenas tardes," : "Buenas noches,";
             txtNombreAdmin.Text = _ctrl.ObtenerNombreAdmin();
@@ -55,6 +72,7 @@ namespace AttendanceSystem.App.Views.Admin
 
         private async void BtnRefresh_Click(object sender, RoutedEventArgs e)
         {
+            ResolveThemeColors();
             try { await CargarDatosAsync(); }
             catch (Exception ex)
             {
@@ -109,6 +127,18 @@ namespace AttendanceSystem.App.Views.Admin
             AlertasCalculadas?.Invoke(kpis.TardanzasHoy, kpis.AusenciasHoy);
         }
 
+        // ── AutoGeneratingColumn ─────────────────────────────────────────────────
+        private void DgReciente_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "NombreEmpleado": e.Column.Header = "Empleado";     e.Column.Width = new DataGridLength(140); break;
+                case "FechaHora":     e.Column.Header = "Fecha / Hora"; e.Column.Width = new DataGridLength(150); break;
+                case "Tipo":          e.Column.Width = new DataGridLength(120); break;
+                case "EsTardanza":    e.Column.Header = "Estado";       e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star); break;
+            }
+        }
+
         // ── Tendencias ────────────────────────────────────────────────────────────
         private void AplicarTendencia(KpiTendenciaDto tend, Border badge,
             MaterialDesignThemes.Wpf.PackIcon icon, TextBlock txt, bool subirEsBueno)
@@ -118,28 +148,42 @@ namespace AttendanceSystem.App.Views.Admin
             badge.Visibility = Visibility.Visible;
             bool esBueno = subirEsBueno ? tend.Subio : tend.Bajo;
 
-            // Fondo sutil oscuro
-            badge.Background = new SolidColorBrush(esBueno
-                ? Color.FromRgb(0x1A, 0x30, 0x25)   // verde oscuro sutil
-                : Color.FromRgb(0x2D, 0x1A, 0x22));  // rojo oscuro sutil
+            var goodBg = WpfColor("BadgeGreenBg", 0x1A, 0x30, 0x25);
+            var badBg  = WpfColor("BadgeRedBg",   0x2D, 0x1A, 0x22);
+            badge.Background = new SolidColorBrush(esBueno ? goodBg : badBg);
 
             icon.Kind = tend.Subio
                 ? MaterialDesignThemes.Wpf.PackIconKind.TrendingUp
                 : MaterialDesignThemes.Wpf.PackIconKind.TrendingDown;
 
-            var color = esBueno
-                ? new SolidColorBrush(Color.FromRgb(0x81, 0xC9, 0x95))  // pastel green
-                : new SolidColorBrush(Color.FromRgb(0xE8, 0x87, 0x9B)); // pastel pink
+            var goodFg = WpfColor("PastelGreen", 0x81, 0xC9, 0x95);
+            var badFg  = WpfColor("PastelPink",  0xE8, 0x87, 0x9B);
+            var color = new SolidColorBrush(esBueno ? goodFg : badFg);
 
             icon.Foreground = color;
             txt.Foreground  = color;
             txt.Text        = tend.DiferenciaTexto;
         }
 
-        // ── Heatmap — tema oscuro ─────────────────────────────────────────────────
+        // ── Heatmap — theme-aware ────────────────────────────────────────────────
+        private Color WpfColor(string key, byte r, byte g, byte b)
+        {
+            if (TryFindResource(key) is SolidColorBrush brush) return brush.Color;
+            return Color.FromRgb(r, g, b);
+        }
+
         private void ConfigurarHeatmap(List<HeatmapDiaDto> datos, int totalEmpleados)
         {
             icHeatmap.Items.Clear();
+
+            // Resolve colors from current theme
+            var badgeRedBg    = WpfColor("BadgeRedBg",    0x3D, 0x1F, 0x28);
+            var badgeOrangeBg = WpfColor("BadgeOrangeBg", 0x2D, 0x25, 0x18);
+            var badgeGreenBg  = WpfColor("BadgeGreenBg",  0x1A, 0x35, 0x25);
+            var cardAltBg     = WpfColor("CardAltBg",     0x1E, 0x27, 0x38);
+            var accentBlue    = WpfColor("AccentBlue",    0x7E, 0xB8, 0xDA);
+            var textPrimary   = WpfColor("TextPrimary",   0xE8, 0xEE, 0xF2);
+            var textDim       = WpfColor("TextDim",       0x3A, 0x4A, 0x58);
 
             foreach (var dia in datos)
             {
@@ -148,23 +192,17 @@ namespace AttendanceSystem.App.Views.Admin
 
                 if (dia.Asistencias == 0 && totalEmpleados > 0)
                 {
-                    bgColor = Color.FromRgb(0x3D, 0x1F, 0x28); // rosa oscuro
+                    bgColor = badgeRedBg;
                     tooltip = $"{dia.Fecha:dd/MM}: Sin asistencias";
                 }
                 else if (dia.Tardanzas > 0)
                 {
-                    double ratio = (double)dia.Tardanzas / Math.Max(1, dia.Asistencias);
-                    bgColor = ratio > 0.3
-                        ? Color.FromRgb(0x3D, 0x30, 0x1A) // amarillo oscuro fuerte
-                        : Color.FromRgb(0x2D, 0x28, 0x1A); // amarillo oscuro suave
+                    bgColor = badgeOrangeBg;
                     tooltip = $"{dia.Fecha:dd/MM}: {dia.Asistencias} asist, {dia.Tardanzas} tard";
                 }
                 else
                 {
-                    double ratio = totalEmpleados > 0 ? (double)dia.Asistencias / totalEmpleados : 1;
-                    bgColor = ratio > 0.8
-                        ? Color.FromRgb(0x1A, 0x35, 0x25) // verde oscuro fuerte
-                        : Color.FromRgb(0x1A, 0x2D, 0x22); // verde oscuro suave
+                    bgColor = badgeGreenBg;
                     tooltip = $"{dia.Fecha:dd/MM}: {dia.Asistencias} asistencias";
                 }
 
@@ -178,9 +216,9 @@ namespace AttendanceSystem.App.Views.Admin
                     CornerRadius = new CornerRadius(6),
                     Margin       = new Thickness(2),
                     Background   = esFinde
-                        ? new SolidColorBrush(Color.FromRgb(0x16, 0x1C, 0x24))
+                        ? new SolidColorBrush(cardAltBg)
                         : new SolidColorBrush(bgColor),
-                    BorderBrush     = esHoy ? new SolidColorBrush(Color.FromRgb(0x7E, 0xB8, 0xDA)) : null,
+                    BorderBrush     = esHoy ? new SolidColorBrush(accentBlue) : null,
                     BorderThickness = esHoy ? new Thickness(2) : new Thickness(0),
                     ToolTip         = esFinde ? $"{dia.Fecha:dd/MM}: Fin de semana" : tooltip,
                     Child = new TextBlock
@@ -189,8 +227,8 @@ namespace AttendanceSystem.App.Views.Admin
                         FontSize            = 10,
                         FontWeight          = esHoy ? FontWeights.Bold : FontWeights.Normal,
                         Foreground          = esFinde
-                            ? new SolidColorBrush(Color.FromRgb(0x3A, 0x4A, 0x58))
-                            : new SolidColorBrush(Color.FromRgb(0x8E, 0xAE, 0xC4)),
+                            ? new SolidColorBrush(textDim)
+                            : new SolidColorBrush(textPrimary),
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment   = VerticalAlignment.Center
                     }

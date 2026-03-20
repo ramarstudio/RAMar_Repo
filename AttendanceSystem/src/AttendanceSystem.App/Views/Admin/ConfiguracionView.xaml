@@ -58,37 +58,18 @@
                     <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
                 </Border.Effect>
                 <DataGrid x:Name="dgConfig"
-                          AutoGenerateColumns="False" IsReadOnly="True"
-                          CanUserSortColumns="True" HeadersVisibility="Column"
-                          GridLinesVisibility="Horizontal" BorderThickness="0"
-                          Background="{DynamicResource CardBg}" RowBackground="{DynamicResource GridRowBg}"
                           Foreground="{DynamicResource TextPrimary}"
+                          Background="{DynamicResource CardBg}"
+                          RowBackground="{DynamicResource GridRowBg}"
                           AlternatingRowBackground="{DynamicResource GridRowAltBg}"
+                          HorizontalGridLinesBrush="{DynamicResource BorderSubtle}"
+                          BorderThickness="0"
+                          AutoGenerateColumns="True" IsReadOnly="True"
+                          CanUserSortColumns="True" HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal"
                           MaxHeight="400" FontSize="12"
-                          SelectionChanged="DgConfig_SelectionChanged">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Clave" Binding="{Binding Clave}" Width="200">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource WarningIcon}"/>
-                                    <Setter Property="FontFamily" Value="Consolas"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Valor" Binding="{Binding Valor}" Width="200"/>
-                        <DataGridTextColumn Header="Tipo" Binding="{Binding TipoDato}" Width="80"/>
-                        <DataGridTextColumn Header="Descripción" Binding="{Binding Descripcion}" Width="*">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
-                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                    <Setter Property="ToolTip" Value="{Binding Descripcion}"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                          SelectionChanged="DgConfig_SelectionChanged"
+                          AutoGeneratingColumn="DgConfig_AutoGeneratingColumn"/>
             </Border>
 
             <!-- PANEL EDITAR VALOR -->

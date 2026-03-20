@@ -98,8 +98,27 @@
     <SolidColorBrush x:Key="ExportCsvHover"    Color="#224035"/>
     <SolidColorBrush x:Key="GenerateBtnHover"  Color="#254A6F"/>
 
+    <!-- ── DataGrid themed style ─────────────────────────────────────────── -->
+    <SolidColorBrush x:Key="HeatmapWarning"    Color="#F4D97D"/>
+    <SolidColorBrush x:Key="GridLineBrush"     Color="#2A3746"/>
+    <SolidColorBrush x:Key="GridSelectedBg"    Color="#1E3A5F"/>
+
+    <Style x:Key="ThemedDataGrid" TargetType="DataGrid" BasedOn="{StaticResource MaterialDesignDataGrid}">
+        <Setter Property="Background"              Value="{DynamicResource CardBg}"/>
+        <Setter Property="RowBackground"            Value="{DynamicResource GridRowBg}"/>
+        <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridRowAltBg}"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource BorderSubtle}"/>
+        <Setter Property="BorderThickness"          Value="0"/>
+    </Style>
+
     <!-- ── Camera / MarcajeView ────────────────────────────────────────────── -->
-    <SolidColorBrush x:Key="CameraBg"       Color="#111827"/>
-    <SolidColorBrush x:Key="MarcajeHeaderFg" Color="#1A237E"/>
+    <SolidColorBrush x:Key="CameraBg"        Color="#111827"/>
+    <SolidColorBrush x:Key="MarcajeHeaderFg"  Color="#7EB8DA"/>
+    <SolidColorBrush x:Key="BtnEntradaBg"     Color="#2E7D32"/>
+    <SolidColorBrush x:Key="BtnSalidaBg"      Color="#C62828"/>
+    <SolidColorBrush x:Key="BtnBreakBg"       Color="#E65100"/>
+    <SolidColorBrush x:Key="CameraLedColor"   Color="#4CAF50"/>
+    <SolidColorBrush x:Key="OverlayBg"        Color="#60000000"/>
+    <SolidColorBrush x:Key="OverlayBottomBg"  Color="#80000000"/>
 
 </ResourceDictionary>

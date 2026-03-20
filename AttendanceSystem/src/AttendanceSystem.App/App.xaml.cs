@@ -38,7 +38,7 @@ namespace AttendanceSystem.App
             LiveCharts.Configure(config => config
                 .AddSkiaSharp()
                 .AddDefaultMappers()
-                .AddLightTheme());
+                .AddDarkTheme());
 
             // Compatibilidad Npgsql: permite DateTime(Kind=UTC) en timestamp without time zone
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

@@ -90,39 +90,19 @@
                     <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08" Color="#1A237E"/>
                 </Border.Effect>
                 <DataGrid x:Name="dgAudit"
-                          AutoGenerateColumns="False" IsReadOnly="True"
+                          Foreground="{DynamicResource TextPrimary}"
+                          Background="{DynamicResource CardBg}"
+                          RowBackground="{DynamicResource GridRowBg}"
+                          AlternatingRowBackground="{DynamicResource GridRowAltBg}"
+                          HorizontalGridLinesBrush="{DynamicResource BorderSubtle}"
+                          BorderThickness="0"
+                          AutoGenerateColumns="True" IsReadOnly="True"
                           CanUserSortColumns="True" CanUserResizeColumns="True"
                           HeadersVisibility="Column"
                           GridLinesVisibility="Horizontal"
-                          BorderThickness="0"
-                          Background="{DynamicResource CardBg}"
-                          Foreground="{DynamicResource TextPrimary}"
-                          RowBackground="{DynamicResource GridRowBg}"
-                          AlternatingRowBackground="{DynamicResource GridRowAltBg}"
                           MaxHeight="500"
-                          FontSize="12">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="130"/>
-                        <DataGridTextColumn Header="Usuario" Binding="{Binding Usuario}" Width="120"/>
-                        <DataGridTextColumn Header="Acción" Binding="{Binding Accion}" Width="110">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource AccentBlue}"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Entidad" Binding="{Binding Entidad}" Width="110"/>
-                        <DataGridTextColumn Header="Motivo" Binding="{Binding Motivo}" Width="*">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                    <Setter Property="ToolTip" Value="{Binding Motivo}"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                          FontSize="12"
+                          AutoGeneratingColumn="DgAudit_AutoGeneratingColumn"/>
             </Border>
 
             <!-- MENSAJE VACÍO -->
