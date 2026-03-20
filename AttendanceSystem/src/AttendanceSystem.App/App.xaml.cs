@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 using AttendanceSystem.Core.Interfaces;
 using AttendanceSystem.Core.Enums;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using AttendanceSystem.Core.Options;
 using AttendanceSystem.Services;
 using AttendanceSystem.Security;
@@ -30,11 +32,17 @@ namespace AttendanceSystem.App
         {
             base.OnStartup(e);
 
+            // LiveCharts2: inicializar antes de mostrar cualquier ventana
+            LiveCharts.Configure(config => config
+                .AddSkiaSharp()
+                .AddDefaultMappers()
+                .AddLightTheme());
+
             // Compatibilidad Npgsql: permite DateTime(Kind=UTC) en timestamp without time zone
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             _configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddUserSecrets<App>(optional: true)
                 .Build();

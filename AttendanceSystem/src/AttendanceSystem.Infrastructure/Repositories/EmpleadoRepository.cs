@@ -24,6 +24,20 @@ public class EmpleadoRepository : RepositoryBase<Empleado>, IEmpleadoRepository
                 EF.Property<string>(e, "codigo") == codigo &&
                 EF.Property<bool>(e, "activo") == true);
 
+    public async Task<Empleado> GetByUsuarioIdAsync(int usuarioId)
+        => await _context.Empleados
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => EF.Property<int>(e, "usuarioId") == usuarioId);
+
+    public async Task<List<Empleado>> GetByIdsAsync(IEnumerable<int> ids, CancellationToken ct = default)
+    {
+        var idList = ids as List<int> ?? ids.ToList();
+        return await _context.Empleados
+            .AsNoTracking()
+            .Where(e => idList.Contains(EF.Property<int>(e, "id")))
+            .ToListAsync(ct);
+    }
+
     public async Task<IEnumerable<Empleado>> GetAllActivosAsync()
         => await _context.Empleados
             .Where(e => EF.Property<bool>(e, "activo") == true)

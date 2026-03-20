@@ -9,13 +9,18 @@ namespace AttendanceSystem.App.Controllers
 {
     public class HistorialController
     {
-        private readonly IMarcajeService _marcajeService;
-        private readonly ISessionManager _sessionManager;
+        private readonly IMarcajeService    _marcajeService;
+        private readonly ISessionManager    _sessionManager;
+        private readonly IEmpleadoRepository _empleadoRepo;
 
-        public HistorialController(IMarcajeService marcajeService, ISessionManager sessionManager)
+        public HistorialController(
+            IMarcajeService     marcajeService,
+            ISessionManager     sessionManager,
+            IEmpleadoRepository empleadoRepo)
         {
             _marcajeService = marcajeService;
             _sessionManager = sessionManager;
+            _empleadoRepo   = empleadoRepo;
         }
 
         public async Task<List<MarcajeFilaDto>> CargarHistorialAsync(DateTime mes)
@@ -25,7 +30,11 @@ namespace AttendanceSystem.App.Controllers
             var usuario = _sessionManager.ObtenerUsuarioActual();
             if (usuario == null) return new List<MarcajeFilaDto>();
 
-            var marcajes = await _marcajeService.ObtenerHistorialEmpleadoAsync(usuario.GetId(), mes);
+            // Buscar el empleado por usuarioId para obtener el EmpleadoId correcto
+            var empleado = await _empleadoRepo.GetByUsuarioIdAsync(usuario.GetId());
+            if (empleado == null) return new List<MarcajeFilaDto>();
+
+            var marcajes = await _marcajeService.ObtenerHistorialEmpleadoAsync(empleado.GetId(), mes);
             return MapearFilas(marcajes);
         }
 

@@ -4,7 +4,8 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="900"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             mc:Ignorable="d" d:DesignHeight="900" d:DesignWidth="1100"
              Loaded="DashboardView_Loaded"
              Background="#F0F2F5"
              FontFamily="{DynamicResource MaterialDesignFont}">
@@ -18,7 +19,6 @@
             <md:Card UniformCornerRadius="12" Margin="0,0,0,20"
                      md:ElevationAssist.Elevation="Dp2">
                 <Grid>
-                    <!-- Fondo con gradiente -->
                     <Border CornerRadius="12">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -28,44 +28,30 @@
                             </LinearGradientBrush>
                         </Border.Background>
                     </Border>
-
-                    <!-- Círculo decorativo de fondo -->
                     <Ellipse Width="220" Height="220"
                              HorizontalAlignment="Right" VerticalAlignment="Top"
                              Margin="0,-60,-60,0" Opacity="0.08">
-                        <Ellipse.Fill>
-                            <SolidColorBrush Color="White"/>
-                        </Ellipse.Fill>
+                        <Ellipse.Fill><SolidColorBrush Color="White"/></Ellipse.Fill>
                     </Ellipse>
                     <Ellipse Width="140" Height="140"
                              HorizontalAlignment="Right" VerticalAlignment="Bottom"
                              Margin="0,0,60,-40" Opacity="0.06">
-                        <Ellipse.Fill>
-                            <SolidColorBrush Color="White"/>
-                        </Ellipse.Fill>
+                        <Ellipse.Fill><SolidColorBrush Color="White"/></Ellipse.Fill>
                     </Ellipse>
-
-                    <!-- Contenido -->
                     <Grid Margin="28,22,28,22">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-
                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock x:Name="txtSaludo"
-                                       Text="Buenos días"
+                            <TextBlock x:Name="txtSaludo" Text="Buenos días,"
                                        FontSize="13" FontWeight="Medium"
                                        Foreground="#90CAF9" Margin="0,0,0,4"/>
-                            <TextBlock x:Name="txtNombreAdmin"
-                                       Text="Administrador"
-                                       FontSize="26" FontWeight="Bold"
-                                       Foreground="White"/>
+                            <TextBlock x:Name="txtNombreAdmin" Text="Administrador"
+                                       FontSize="26" FontWeight="Bold" Foreground="White"/>
                             <TextBlock x:Name="txtFechaHoy"
-                                       FontSize="12" Foreground="#90CAF9"
-                                       Margin="0,6,0,0"/>
+                                       FontSize="12" Foreground="#90CAF9" Margin="0,6,0,0"/>
                         </StackPanel>
-
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <Button Click="BtnRefresh_Click"
                                     Style="{DynamicResource MaterialDesignOutlinedButton}"
@@ -82,7 +68,7 @@
             </md:Card>
 
             <!-- ═══════════════════════════════════════════════ -->
-            <!-- SECCIÓN: KPI TITLE                              -->
+            <!-- KPI SECTION TITLE                               -->
             <!-- ═══════════════════════════════════════════════ -->
             <StackPanel Orientation="Horizontal" Margin="2,0,0,12">
                 <md:PackIcon Kind="ChartLine" Width="18" Height="18"
@@ -93,13 +79,12 @@
             </StackPanel>
 
             <!-- ═══════════════════════════════════════════════ -->
-            <!-- KPI CARDS — 4 columnas                          -->
+            <!-- KPI CARDS — 2 filas × 3 columnas               -->
             <!-- ═══════════════════════════════════════════════ -->
-            <UniformGrid Rows="1" Columns="4" Margin="0,0,0,20">
+            <UniformGrid Rows="2" Columns="3" Margin="0,0,0,20">
 
                 <!-- Empleados Activos -->
-                <md:Card Margin="0,0,8,0" UniformCornerRadius="12"
-                         md:ElevationAssist.Elevation="Dp2">
+                <md:Card Margin="0,0,8,8" UniformCornerRadius="12" md:ElevationAssist.Elevation="Dp2">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5"/>
@@ -122,8 +107,7 @@
                 </md:Card>
 
                 <!-- Asistencias Hoy -->
-                <md:Card Margin="4,0" UniformCornerRadius="12"
-                         md:ElevationAssist.Elevation="Dp2">
+                <md:Card Margin="4,0,4,8" UniformCornerRadius="12" md:ElevationAssist.Elevation="Dp2">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5"/>
@@ -145,9 +129,8 @@
                     </Grid>
                 </md:Card>
 
-                <!-- Tardanzas -->
-                <md:Card Margin="4,0" UniformCornerRadius="12"
-                         md:ElevationAssist.Elevation="Dp2">
+                <!-- Tardanzas Hoy -->
+                <md:Card Margin="8,0,0,8" UniformCornerRadius="12" md:ElevationAssist.Elevation="Dp2">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5"/>
@@ -169,9 +152,31 @@
                     </Grid>
                 </md:Card>
 
+                <!-- Ausencias Hoy -->
+                <md:Card Margin="0,0,8,0" UniformCornerRadius="12" md:ElevationAssist.Elevation="Dp2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" Background="#AD1457" CornerRadius="12,12,0,0"/>
+                        <StackPanel Grid.Row="1" Margin="20,16,20,20">
+                            <Border Background="#FCE4EC" CornerRadius="8"
+                                    Width="44" Height="44" HorizontalAlignment="Left" Margin="0,0,0,12">
+                                <md:PackIcon Kind="AccountOff" Width="24" Height="24"
+                                             Foreground="#AD1457"
+                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock x:Name="txtAusenciasHoy" Text="—"
+                                       FontSize="38" FontWeight="Bold" Foreground="#AD1457" LineHeight="40"/>
+                            <TextBlock Text="Ausencias Hoy"
+                                       FontSize="11" Foreground="#78909C" Margin="0,4,0,0" FontWeight="Medium"/>
+                        </StackPanel>
+                    </Grid>
+                </md:Card>
+
                 <!-- Tasa de Asistencia -->
-                <md:Card Margin="8,0,0,0" UniformCornerRadius="12"
-                         md:ElevationAssist.Elevation="Dp2">
+                <md:Card Margin="4,0,4,0" UniformCornerRadius="12" md:ElevationAssist.Elevation="Dp2">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5"/>
@@ -192,7 +197,122 @@
                         </StackPanel>
                     </Grid>
                 </md:Card>
+
+                <!-- Marcajes últimos 7 días -->
+                <md:Card Margin="8,0,0,0" UniformCornerRadius="12" md:ElevationAssist.Elevation="Dp2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" Background="#00695C" CornerRadius="12,12,0,0"/>
+                        <StackPanel Grid.Row="1" Margin="20,16,20,20">
+                            <Border Background="#E0F2F1" CornerRadius="8"
+                                    Width="44" Height="44" HorizontalAlignment="Left" Margin="0,0,0,12">
+                                <md:PackIcon Kind="CalendarWeek" Width="24" Height="24"
+                                             Foreground="#00695C"
+                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock x:Name="txtMarcajes7Dias" Text="—"
+                                       FontSize="38" FontWeight="Bold" Foreground="#00695C" LineHeight="40"/>
+                            <TextBlock Text="Marcajes (7 días)"
+                                       FontSize="11" Foreground="#78909C" Margin="0,4,0,0" FontWeight="Medium"/>
+                        </StackPanel>
+                    </Grid>
+                </md:Card>
+
             </UniformGrid>
+
+            <!-- ═══════════════════════════════════════════════ -->
+            <!-- FILA DE GRÁFICOS: LÍNEAS + DONUT               -->
+            <!-- ═══════════════════════════════════════════════ -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Gráfico de líneas — tendencia 14 días -->
+                <md:Card Grid.Column="0" UniformCornerRadius="12" md:ElevationAssist.Elevation="Dp2" Padding="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="220"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" CornerRadius="12,12,0,0" Padding="20,14">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#E8EAF6" Offset="0"/>
+                                    <GradientStop Color="#EDE7F6" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="TrendingUp" Width="16" Height="16"
+                                             Foreground="#3949AB" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="Tendencia de Asistencias — Últimos 14 días"
+                                           FontSize="13" FontWeight="Medium" Foreground="#3949AB"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <lvc:CartesianChart Grid.Row="1" x:Name="chartLinea" Margin="8,4,8,8"/>
+                    </Grid>
+                </md:Card>
+
+                <!-- Gráfico donut — distribución hoy -->
+                <md:Card Grid.Column="2" UniformCornerRadius="12" md:ElevationAssist.Elevation="Dp2" Padding="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="220"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" CornerRadius="12,12,0,0" Padding="20,14">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#E8EAF6" Offset="0"/>
+                                    <GradientStop Color="#EDE7F6" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="ChartDonut" Width="16" Height="16"
+                                             Foreground="#3949AB" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="Distribución Hoy"
+                                           FontSize="13" FontWeight="Medium" Foreground="#3949AB"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <lvc:PieChart Grid.Row="1" x:Name="chartDonut" Margin="8,4,8,8"/>
+                    </Grid>
+                </md:Card>
+            </Grid>
+
+            <!-- ═══════════════════════════════════════════════ -->
+            <!-- GRÁFICO DE BARRAS — TOP 5 TARDANZAS             -->
+            <!-- ═══════════════════════════════════════════════ -->
+            <md:Card UniformCornerRadius="12" md:ElevationAssist.Elevation="Dp2" Padding="0" Margin="0,0,0,20">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="200"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" CornerRadius="12,12,0,0" Padding="20,14">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#E8EAF6" Offset="0"/>
+                                <GradientStop Color="#EDE7F6" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="ChartBar" Width="16" Height="16"
+                                         Foreground="#3949AB" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="Top 5 Empleados con Más Tardanzas — Últimos 30 días"
+                                       FontSize="13" FontWeight="Medium" Foreground="#3949AB"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <lvc:CartesianChart Grid.Row="1" x:Name="chartBarras" Margin="8,4,8,8"/>
+                </Grid>
+            </md:Card>
 
             <!-- ═══════════════════════════════════════════════ -->
             <!-- ACTIVIDAD RECIENTE                              -->
@@ -211,8 +331,6 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="280"/>
                     </Grid.RowDefinitions>
-
-                    <!-- Table header bar -->
                     <Border Grid.Row="0" CornerRadius="12,12,0,0" Padding="20,12">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
@@ -235,7 +353,6 @@
                         </Grid>
                     </Border>
 
-                    <!-- DataGrid -->
                     <DataGrid Grid.Row="1" x:Name="dgReciente"
                               AutoGenerateColumns="False" IsReadOnly="True"
                               GridLinesVisibility="Horizontal"
@@ -247,7 +364,7 @@
                               AlternatingRowBackground="#FAFBFF"
                               Style="{DynamicResource MaterialDesignDataGrid}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Empleado ID" Binding="{Binding EmpleadoId}" Width="110">
+                            <DataGridTextColumn Header="Empleado" Binding="{Binding NombreEmpleado}" Width="140">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontWeight" Value="SemiBold"/>

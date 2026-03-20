@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using AttendanceSystem.App.Controllers;
+using AttendanceSystem.Core.DTOs;
 
 namespace AttendanceSystem.App.Views
 {

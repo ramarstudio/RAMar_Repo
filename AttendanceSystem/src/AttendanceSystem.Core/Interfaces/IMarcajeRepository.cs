@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AttendanceSystem.Core.DTOs;
 
 namespace AttendanceSystem.Core.Interfaces
 {
@@ -12,8 +13,12 @@ namespace AttendanceSystem.Core.Interfaces
         Task<Marcaje>              GetUltimoMarcajeDelDiaAsync(int empleadoId, DateTime fecha);
 
         // Consultas optimizadas para Dashboard — solo COUNT o proyecciones mínimas
-        Task<int>          CountByFechaRangoAsync(DateTime desde, DateTime hasta, CancellationToken ct = default);
+        Task<int>           CountByFechaRangoAsync(DateTime desde, DateTime hasta, CancellationToken ct = default);
         Task<List<Marcaje>> GetUltimosAsync(int cantidad, CancellationToken ct = default);
         Task<List<Marcaje>> GetByFechaAsync(DateTime desde, DateTime hasta, CancellationToken ct = default);
+
+        // Consultas analíticas para gráficos del dashboard
+        Task<List<AsistenciaDiariaDto>>  GetAsistenciasDiariasAsync(int dias, CancellationToken ct = default);
+        Task<List<TardanzaEmpleadoDto>>  GetTopTardanzasAsync(int topN, int dias, CancellationToken ct = default);
     }
 }

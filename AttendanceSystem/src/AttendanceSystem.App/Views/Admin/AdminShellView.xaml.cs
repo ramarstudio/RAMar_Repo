@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using AttendanceSystem.App.Controllers;
 using AttendanceSystem.App.Controllers.Admin;
-using AttendanceSystem.Security;
+using AttendanceSystem.Core.Interfaces;
 
 namespace AttendanceSystem.App.Views.Admin
 {
@@ -16,8 +16,8 @@ namespace AttendanceSystem.App.Views.Admin
         private readonly MarcajesAdminView _marcajesView;
         private readonly ReportesView      _reportesView;
 
-        private readonly AuthController _authCtrl;
-        private readonly SessionManager _session;
+        private readonly AuthController  _authCtrl;
+        private readonly ISessionManager _session;
 
         // Referencia al botón activo para aplicar/quitar highlight
         private Button _activeBtn;
@@ -33,7 +33,7 @@ namespace AttendanceSystem.App.Views.Admin
             MarcajesAdminController marcajesCtrl,
             ReportesController      reportesCtrl,
             AuthController          authCtrl,
-            SessionManager          session)
+            ISessionManager         session)
         {
             InitializeComponent();
 

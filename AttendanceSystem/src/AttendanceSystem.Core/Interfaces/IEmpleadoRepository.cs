@@ -7,6 +7,8 @@ namespace AttendanceSystem.Core.Interfaces
     {
         Task<Empleado>              GetByIdAsync(int id);
         Task<Empleado>              GetByCodigoAsync(string codigo);
+        Task<Empleado>              GetByUsuarioIdAsync(int usuarioId);
+        Task<List<Empleado>>        GetByIdsAsync(IEnumerable<int> ids, CancellationToken ct = default);
         Task<IEnumerable<Empleado>> GetAllActivosAsync();
     }
 }
