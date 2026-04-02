@@ -1,41 +1,73 @@
-# 📚 Centro de Especificaciones y Casos de Uso (Área de Planning)
+# 📚 Planeamiento, Casos de Uso y Arquitectura (Projects)
 
-Bienvenido al directorio de **Planificación e Investigación** de RAMar Software Studio. Toda gran aplicación comienza con un planeamiento estricto.
-
-Este directorio no contiene código fuente. Este es el espacio de **Ingeniería de Requisitos, Análisis Funcional y Arquitectura de Sistemas**. Aquí se almacena toda la estructuración teórica, modelado de procesos e investigación de producto que sostienen nuestros sistemas mucho antes de escribir la primera línea de código.
-
----
-
-## ⚙️ Metodología de Desarrollo Institucional (SDLC)
-
-En RAMar Studio aplicamos un ciclo de vida de desarrollo de software riguroso para asegurar la máxima calidad de entrega empresarial:
-
-1. **Identificación de Casos de Uso:** Traducimos el problema del cliente en historias de usuario técnicas y medibles.
-2. **Matriz MoSCoW estricta:** Priorizamos el alcance dividiendo los módulos en *Must* (Obligatorio), *Should* (Recomendado), *Could* (Opcional) y *Won't* (Descartado para el MVP). Esto previene sobrecostos y retrasos.
-3. **Decisión de Arquitectura Transaccional:** Se evalúan las tecnologías (Web, Móvil, Cloud, Escritorio) y se escoge y justifica por escrito el ecosistema técnico que brinde mayor "Rendimiento vs Seguridad".
-4. **Diseño UML y UX:** Se trazan los diagramas de interacción y bocetos.
+Bienvenido al espacio de **Investigación y Diseño** de RAMar Software Studio. 
+Aquí guardamos los planos estructurales, diagramas y reglas del negocio que sostienen nuestros sistemas antes de empezar a programarlos. Presentamos a continuación toda la ingeniería detrás del Sistema de Control de Asistencia Biométrico.
 
 ---
 
-## 📸 Caso de Estudio: Control de Asistencia Biométrico (Attendance System)
+## ⚙️ Nuestra Metodología (¿Cómo diseñamos?)
 
-### El Planteamiento del Problema
-Desarrollar una infraestructura de auditoría de personal capaz de procesar **reconocimiento facial de alta precisión totalmente offline** para entornos corporativos rigurosos. El reto radicaba en erradicar métodos de suplantación de identidad sin violar políticas modernas de retención visual y lograrlo consumiendo la mínima fracción de CPU en las computadoras estándar de Recursos Humanos.
-
-### Biblioteca de Documentación Aprobada:
-
-#### 📄 A. Ingeniería de Requisitos y Limitaciones (Scope)
-El documento funcional donde se plasmaron las reglas físicas y lógicas del producto final. Aquí se documentó explícitamente la necesidad atómica de transitar hacia un "Padrón Biométrico Encriptado", descartando módulos innecesarios como el pago de nóminas o geolocalizaciones complejas a favor de la pura eficiencia biométrica y la velocidad transaccional dentro de red local.
-👉 **[LEER DOCUMENTO: Requisitos de Ingeniería y Tablas de Alcance (MoSCoW)](./Employee_Attendance_Tracker/requirements/requirements.md)**
-
-#### 🏗️ B. Arquitectura Oficial e Infraestructura (ADR)
-Memoria técnica que relata el ensayo y pivotaje clave que dio vida al proyecto. Este texto analiza la competencia técnica entre construir un servidor "Web clásico" versus construir un "Microservicio Híbrido C#+Python (WPF Nativo)". Detallando finalmente la aplastante victoria del modelo de escritorio nativo debido al nulo Overhead de Red HTTP en procesos de inyectado fotograma a fotograma (Live Feed Camera).
-👉 **[LEER DOCUMENTO: Sustentación Final de Arquitectura (Web vs WPF)](./Employee_Attendance_Tracker/architecture/proposal.md)**
-
-#### 🖼️ C. Diagramas Topológicos y UML Vectorial
-Depósito visual que alberga la fundamentación humana y gráfica del negocio. Contiene mapas estructurales de interacción orientada a usuarios, definiendo los privilegios exclusivos para el **Administrador/RRHH** frente a la interfaz quiosquera e involuntaria a la que se expone el sujeto base: el **Empleado**.
-👉 **[EXPLORAR CARPETA: Diagramas Arquitectónicos Auxiliares y Casos de Uso (UML)](./Employee_Attendance_Tracker/architecture/)**
+Aplicamos un flujo de trabajo ágil y estricto para asegurar un desarrollo perfecto:
+1. **Casos de Uso:** Traducimos las necesidades de la empresa en historias exactas y medibles.
+2. **Filtro MoSCoW:** Definimos qué funciones son *Obligatorias (Must)* y cuáles descartamos *(Won't)* para evitar que el cliente pierda tiempo en extras innecesarios.
+3. **Decisiones de Arquitectura:** Justificamos formalmente qué tecnología es la más rápida para el negocio.
 
 ---
 
-*⚠️ La información contenida en estos documentos refleja el "Plano de Construcción" (Blueprint) intelectual oficial de RAMar Studio.*
+## 📸 Caso de Estudio: Control de Asistencia Biométrico
+
+**El Reto:** Crear un sistema de marcaje de personal con reconocimiento facial súper rápido y 100% sin internet para corporativos. Frenar las suplantaciones de identidad protegiendo legalmente la privacidad (sin robar fotos) y consumiendo muy pocos recursos informáticos.
+
+A continuación, desplegamos los documentos robústos clave de este proyecto:
+
+### 📄 A. Definición de la Aquitectura (Por qué lo hicimos así)
+En lugar de depender de una conexión HTTP inestable, decidimos migrar a C# Nativo para ganar acceso puro al hardware.
+
+> **Respuesta Técnica Oficial:**
+> Este proyecto presenta una arquitectura del Sistema de Control de Asistencia con reconocimiento facial diseñado para operar exclusivamente en una **red local**, con una **base de datos centralizada (PostgreSQL)** y procesamiento biométrico distribuido mediante un **Microservicio en Python**, orquestado nativamente a través de una **Aplicación de Escritorio WPF (.NET 8)**.
+> 
+> Durante el análisis **se determinó abandonar la arquitectura web en red local (intranet)** a favor de una arquitectura de aplicación local nativa. Este pivote técnico garantiza control absoluto sobre el hardware (cámaras DShow con OpenCV), suprime la latencia generada por el protocolo HTTP en transmisiones de video en vivo, alivia la presión del navegador web localizando el consumo de RAM/CPU predecible y optimiza radicalmente la persistencia de datos mediante Entity Framework Core Code-First.
+
+---
+
+### 🖼️ B. Diagrama Visual de Casos de Uso (UML)
+Antes de tocar el código, mapeamos cómo los actores humanos de la empresa iban a interactuar con el kiosko y los límites administrativos.
+
+![Diagrama de Casos de Uso](./Employee_Attendance_Tracker/architecture/diagram.jpeg)
+
+---
+
+### 📋 C. Ingeniería de Requisitos (Filtro MoSCoW)
+Este es el "Contrato Funcional". Define qué obligaciones cumple el código al 100% (Must) limitando el alcance hacia un MVP corporativo sumamente enfocado y eficiente.
+
+| ID  | Requisito | Descripción clara | MoSCoW |
+| --- | --------- | ----------------- | :----: |
+| RF01 | Marcado de entrada | Registrar el ingreso del empleado al inicio de su jornada laboral | Must |
+| RF02 | Marcado de salida | Registrar la salida del empleado al finalizar su jornada | Must |
+| RF03 | Marcado de breaks | Registrar inicio y fin de pausas durante la jornada | Must |
+| RF04 | Múltiples marcajes | Permitir registrar varios eventos de asistencia por día | Must |
+| RF05 | Límite de marcaje | Restringir a un único marcaje principal de entrada diario | Must |
+| RF06 | Registro fuera de horario | Permitir marcajes fuera del horario asignado | Must |
+| RF07 | Etiqueta tardanza | Identificar automáticamente marcajes tardíos | Must |
+| RF08 | Tolerancia configurable | Configurar minutos de tolerancia según políticas empresariales | Must |
+| RF09 | Sistema local | Operar únicamente dentro de la red local corporativa | Must |
+| RF10 | Sincronización inmediata | Guardar marcajes de forma inmediata en el servidor local | Must |
+| RF11 | Persistencia local | Almacenar marcajes temporalmente ante fallos del servidor | Must |
+| RF12 | Reconocimiento facial | Validar identidad mediante cámara web local | Must |
+| RF13 | No hardware externo | Excluir el uso de lectores biométricos dedicados | Must |
+| RF14 | App de Escritorio | Permitir uso mediante un ejecutable nativo WPF con UI moderno | Must |
+| RF15 | Tiempo de marcado | Completar el marcaje en menos de 30 segundos | Must |
+| RF18 | Almacenamiento biométrico | Guardar datos biométricos en infraestructura local | Must |
+| RF19 | Cifrado de datos | Proteger datos biométricos en tránsito y reposo (AES) | Must |
+| RF21 | Cumplimiento normativo | Cumplir regulaciones de protección de datos personales | Must |
+| RF22 | Rol empleado | Restringir al empleado a funciones de marcaje | Must |
+| RF23 | Rol administrador | Permitir al administrador gestionar usuarios y marcajes | Must |
+| RF36 | No trabajo remoto | Bloquear marcajes fuera del entorno local | Must |
+| RF37 | Geolocalización | Implementar validación por ubicación | Won’t |
+| RF38 | Roles intermedios | Incorporar roles adicionales o sub-managers | Won’t |
+| RF39 | Gestión de pagos | Calcular pagos o planillas financieras | Won’t |
+
+**Restricciones Clave Acatadas en el Desarrollo:**
+- Sistema confinado estrictamente a la red corporativa de la MYPE.
+- **No** recabar fotos. Tratar variables geométricas exclusivamente.
+- Respuestas biométricas en menos de 1 segundo de latencia.

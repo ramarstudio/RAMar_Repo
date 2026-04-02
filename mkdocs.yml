@@ -1,0 +1,65 @@
+site_name: RAMar Software Studio
+site_description: Documentación oficial, arquitectura y manuales operativos.
+site_author: RAMar Studio
+repo_url: https://github.com/ramarstudio/RAMar_Repo
+repo_name: ramarstudio/RAMar_Repo
+
+theme:
+  name: material
+  language: es
+  logo: material/robot-outline
+  favicon: material/book-open-page-variant
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - toc.integrate
+  palette:
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Cambiar a modo claro
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Cambiar a modo oscuro
+
+nav:
+  - 🏠 Inicio (RAMar Studio): index.md
+  - 📸 Inteligencia Biométrica:
+      - 🎯 Solución Comercial: biometrico/solucion.md
+      - ⚙️ Manual Técnico (Devs): biometrico/tecnico.md
+  - 📚 Ingeniería y Planeamiento:
+      - Metodología SDLC: planeamiento/metodologia.md
+      - Requisitos (MoSCoW): planeamiento/requisitos.md
+      - Decisión de Arquitectura: planeamiento/arquitectura_adr.md
+  - 🖼️ Recursos Visuales: recursos/diagramas.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - tables
