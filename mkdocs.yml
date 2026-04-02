@@ -17,23 +17,23 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
-    - navigation.expand
     - navigation.top
     - navigation.footer
+    - navigation.path
     - search.suggest
     - search.highlight
     - content.code.copy
     - toc.follow
   palette:
     - scheme: slate
-      primary: teal
-      accent: teal
+      primary: green
+      accent: green
       toggle:
         icon: material/brightness-7
         name: Cambiar a modo claro
     - scheme: default
-      primary: teal
-      accent: teal
+      primary: white
+      accent: green
       toggle:
         icon: material/brightness-4
         name: Cambiar a modo oscuro
@@ -53,7 +53,7 @@ nav:
       - WPF vs Web: arquitectura/adr-wpf.md
       - Motor biometrico: arquitectura/motor-biometrico.md
   - Ingenieria:
-      - Metodologia: ingenieria/index.md
+      - Proceso: ingenieria/index.md
       - SDLC: ingenieria/metodologia.md
       - Requisitos MoSCoW: ingenieria/requisitos.md
       - Diagramas: ingenieria/diagramas.md
@@ -78,10 +78,14 @@ markdown_extensions:
       custom_checkbox: true
   - toc:
       permalink: true
+      toc_depth: 3
 
 plugins:
   - search:
       lang: es
+
+extra_css:
+  - assets/custom.css
 
 extra:
   social:
