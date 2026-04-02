@@ -31,20 +31,20 @@ Las empresas modernas pierden dinero por marcajes fraudulentos (robo de tiempo) 
 Hemos desarrollado desde cero una **Plataforma de Control de Asistencia Segura e Independiente**, donde las empresas utilizan webcams convencionales acopladas con un fortísimo motor de Inteligencia Artificial Matemática.
 
 *   **Identidad Matemática, no Fotográfica:** No guardamos rostros. Convertimos tu cara en un mapa vectorizado inquebrantable de 512 puntos, encriptado simétricamente con AES. Si alguien hackeara nuestra base de datos, solo vería algoritmos.
-*   **0% Dependencia e Instantaneidad:** Machine Learning puro operando a latencia local cero (sin necesidad de llamadas HTTP costosas) gracias al control nativo del Hardware en C#.
-*   **Gestión Transparente:** La administración central revisa roles, historiales, asistencias y tardanzas desde un panel administrativo intuitivo, limpio y auditable.
+*   **Cero Latencia de Red:** La detección ocurre nativamente controlando el hardware (DirectShow C#) e invocando al microservicio en memoria, omitiendo el overhead del protocolo HTTP de las alternativas web.
+*   **Gestión Centralizada:** Panel administrativo responsivo y auditable, utilizando Entity Framework Core para la integridad relacional de marcajes e historiales.
 
-🔹 **Ecosistema Tecnológico:** `.NET 8 WPF (UX/UI)` + `Python / InsightFace (IA)` + `PostgreSQL / EF Core (Persistencia)`.
+🔹 **Stack Tecnológico:** `.NET 8 WPF` + `Python / FastAPI (InsightFace)` + `PostgreSQL`.
 
-👉 **[📖 LEER LA MAGIA TÉCNICA: Abre el Manual Detallado de Arquitectura y Rendimiento AQUÍ](./AttendanceSystem/README.md)**
+🔗 **[Ver Documentación Técnica y Arquitectura del Sistema](./AttendanceSystem/README.md)**
 
 ---
 
-## 📚 2. Investigación, Documentación y UX (Projects)
+## 📚 2. Especificaciones y Casos de Uso (Projects)
 
-Detrás de todo el código de alto nivel hay una etapa de bocetación y arquitectura base. Si deseas explorar cómo las ideas llegan al teclado, o leer las planificaciones originales, prototipos (Mockups) y Casos de Uso del negocio:
+El repositorio incluye el análisis de requerimientos que fundamentan la ingeniería del software. Contiene análisis funcionales (Matriz MoSCoW), diagramas de arquitectura inicial y propuestas formales de diseño.
 
-👉 **[🧠 EXPLORAR LA FASE DE DISEÑO: Ingresa a la Carpeta de Planning e Investigación AQUÍ](./Projects/)**
+🔗 **[Acceder a la Documentación de Planificación y Requisitos](./Projects/)**
 
 ---
 
