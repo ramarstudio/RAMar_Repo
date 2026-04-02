@@ -1,5 +1,5 @@
-site_name: RAMar Studio — Documentación
-site_description: Documentación oficial del Sistema de Control de Asistencia Biométrico
+site_name: RAMar Studio
+site_description: Sistema de Control de Asistencia con Reconocimiento Facial
 site_author: RAMar Studio
 site_url: https://ramarstudio.github.io/RAMar_Repo/
 repo_url: https://github.com/ramarstudio/RAMar_Repo
@@ -7,15 +7,24 @@ repo_name: ramarstudio/RAMar_Repo
 
 theme:
   name: material
+  custom_dir: docs/overrides
   language: es
   icon:
     logo: material/shield-check
+    admonition:
+      note: material/pencil-circle
+      tip: material/lightbulb-on
+      warning: material/alert
+      danger: material/shield-alert
+      success: material/check-circle
+      info: material/information
   favicon: material/shield-check
   font:
     text: Inter
     code: JetBrains Mono
   features:
     - navigation.instant
+    - navigation.instant.progress
     - navigation.tracking
     - navigation.tabs
     - navigation.tabs.sticky
@@ -23,23 +32,26 @@ theme:
     - navigation.expand
     - navigation.top
     - navigation.indexes
+    - navigation.footer
     - search.suggest
     - search.highlight
     - search.share
     - content.tabs.link
     - content.code.copy
+    - content.code.annotate
     - toc.follow
+    - header.autohide
   palette:
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: indigo
+      primary: custom
       accent: cyan
       toggle:
         icon: material/brightness-7
         name: Cambiar a modo claro
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
+      primary: custom
       accent: cyan
       toggle:
         icon: material/brightness-4
@@ -57,7 +69,7 @@ nav:
       - Guia paso a paso: instalacion/guia.md
   - Arquitectura:
       - arquitectura/index.md
-      - ADR — Por que WPF: arquitectura/adr-wpf.md
+      - ADR — WPF vs Web: arquitectura/adr-wpf.md
       - Motor biometrico: arquitectura/motor-biometrico.md
   - Ingenieria:
       - ingenieria/index.md
@@ -84,11 +96,19 @@ markdown_extensions:
   - tables
   - attr_list
   - md_in_html
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - toc:
       permalink: true
+      toc_depth: 3
+
+plugins:
+  - search:
+      lang: es
 
 extra_css:
   - assets/custom.css
@@ -97,3 +117,5 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/ramarstudio
+      name: RAMar en GitHub
+  generator: false

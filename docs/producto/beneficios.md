@@ -1,46 +1,97 @@
+---
+icon: material/star
+---
+
 # Beneficios
 
 ## Velocidad sin friccion
 
-El marcaje biometrico se completa en menos de **1 segundo**. El empleado se acerca a la camara y el sistema responde inmediatamente. No hay filas, no hay contacto fisico, no hay tarjetas que olvidar.
+El marcaje biometrico se completa en menos de **1 segundo**. El empleado se acerca a la camara y el sistema responde inmediatamente.
+
+<ul class="step-list">
+<li>El empleado se posiciona frente a la camara</li>
+<li>El sistema detecta y reconoce su rostro automaticamente</li>
+<li>Se registra la entrada o salida con timestamp exacto</li>
+<li>Pantalla de confirmacion inmediata</li>
+</ul>
+
+---
 
 ## Privacidad y cumplimiento legal
 
 El sistema esta disenado con el principio de **privacidad por diseno**:
 
-- **Cero fotografias almacenadas.** El rostro se convierte en un vector matematico de 512 dimensiones.
-- **Cifrado AES-256** para todos los datos biometricos en reposo.
-- **Datos irreversibles.** Un vector robado no puede reconstruir un rostro humano.
-- **Cumplimiento normativo** con regulaciones de proteccion de datos personales.
+- [x] Cero fotografias almacenadas
+- [x] Rostros convertidos en vectores matematicos de 512 dimensiones
+- [x] Cifrado AES-256 para todos los datos biometricos en reposo
+- [x] Vectores irreversibles — no se puede reconstruir un rostro
+- [x] Cumplimiento con regulaciones de proteccion de datos personales
 
-## Operacion 100% local
+---
+
+## Comparativa: local vs cloud
 
 | Caracteristica | Este sistema | Soluciones cloud |
 |---|---|---|
-| Dependencia de internet | No | Si |
-| Costos recurrentes | No | Suscripcion mensual |
-| Datos enviados a terceros | No | Si |
-| Funciona sin conexion | Si | No |
-| Latencia | < 1s | Variable |
+| Dependencia de internet | :material-close: No | :material-check: Si |
+| Costos recurrentes | :material-close: No | :material-check: Suscripcion mensual |
+| Datos a terceros | :material-close: No | :material-check: Si |
+| Funciona sin conexion | :material-check: Si | :material-close: No |
+| Latencia | **< 1 segundo** | Variable |
+| Control de datos | **Total** | Parcial |
 
-## Panel administrativo completo
+---
 
-Recursos Humanos dispone de un panel con:
+## Panel administrativo
 
-- **Dashboard** con metricas del dia, tendencias de 14 dias y top tardanzas
-- **Gestion de empleados** y usuarios con roles diferenciados
-- **Control de horarios** con vigencias configurables
-- **Registro de marcajes** con filtros y busqueda
-- **Historial individual** por empleado
-- **Reportes** exportables
-- **Auditoria** completa de todas las operaciones
-- **Configuracion** del sistema con parametros ajustables
+<div class="feature-grid" markdown>
 
-## Ahorro de costos
+<div class="feature-card">
+<span class="card-icon">:material-view-dashboard:</span>
 
-Al ejecutarse de manera autonoma en las computadoras de la empresa:
+### Dashboard
 
-- No existen suscripciones ni licencias recurrentes
-- No requiere hardware especializado (solo una webcam estandar)
-- No necesita soporte de infraestructura cloud
-- Mantenimiento minimo por parte de TI
+Metricas del dia, tendencias de 14 dias, heatmap de asistencia y top tardanzas.
+</div>
+
+<div class="feature-card">
+<span class="card-icon">:material-account-multiple:</span>
+
+### Empleados y usuarios
+
+Alta, baja y modificacion con roles diferenciados: empleado, admin, superadmin.
+</div>
+
+<div class="feature-card">
+<span class="card-icon">:material-clock-outline:</span>
+
+### Horarios
+
+Configuracion de jornadas con vigencias, tolerancias y breaks.
+</div>
+
+<div class="feature-card">
+<span class="card-icon">:material-file-chart:</span>
+
+### Reportes
+
+Exportacion de datos, filtros avanzados e historial completo por empleado.
+</div>
+
+<div class="feature-card">
+<span class="card-icon">:material-history:</span>
+
+### Auditoria
+
+Registro de todas las operaciones con usuario, fecha, accion y entidad afectada.
+</div>
+
+<div class="feature-card">
+<span class="card-icon">:material-cog:</span>
+
+### Configuracion
+
+Parametros del sistema con presets intuitivos. Solo accesible para superadministradores.
+</div>
+
+</div>

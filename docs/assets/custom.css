@@ -1,49 +1,436 @@
-/* Hero section */
-.hero {
-  text-align: center;
-  padding: 2rem 0;
+/* ============================================
+   RAMar Studio — Custom Theme
+   ============================================ */
+
+/* ---------- Custom primary color ---------- */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #1a1a2e;
+  --md-primary-fg-color--light: #16213e;
+  --md-primary-fg-color--dark: #0f0f23;
+  --md-accent-fg-color: #00d2ff;
+  --rm-gradient-start: #0f0f23;
+  --rm-gradient-end: #1a1a2e;
+  --rm-card-bg: #16213e;
+  --rm-card-border: rgba(0, 210, 255, 0.15);
+  --rm-card-hover: rgba(0, 210, 255, 0.25);
+  --rm-text-muted: #8892b0;
+  --rm-badge-bg: rgba(0, 210, 255, 0.12);
+  --rm-badge-text: #00d2ff;
+  --rm-hero-bg: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  --rm-section-bg: rgba(22, 33, 62, 0.5);
 }
-.hero h1 {
-  font-size: 2.8rem;
+
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #1a1a2e;
+  --md-primary-fg-color--light: #2d3561;
+  --md-primary-fg-color--dark: #0f0f23;
+  --md-accent-fg-color: #0066cc;
+  --rm-gradient-start: #f8f9fc;
+  --rm-gradient-end: #eef1f8;
+  --rm-card-bg: #ffffff;
+  --rm-card-border: rgba(0, 102, 204, 0.12);
+  --rm-card-hover: rgba(0, 102, 204, 0.2);
+  --rm-text-muted: #5a6270;
+  --rm-badge-bg: rgba(0, 102, 204, 0.08);
+  --rm-badge-text: #0066cc;
+  --rm-hero-bg: linear-gradient(135deg, #f8f9fc 0%, #eef1f8 50%, #e8ecf4 100%);
+  --rm-section-bg: rgba(238, 241, 248, 0.6);
+}
+
+/* ---------- Header / Nav bar ---------- */
+.md-header {
+  background: var(--rm-gradient-start) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
+}
+
+.md-tabs {
+  background: var(--rm-gradient-start) !important;
+  border-bottom: 1px solid var(--rm-card-border);
+}
+
+.md-tabs__link {
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  opacity: 0.7;
+  transition: all 0.25s ease;
+}
+
+.md-tabs__link--active,
+.md-tabs__link:hover {
+  opacity: 1;
+}
+
+/* ---------- Sidebar ---------- */
+.md-sidebar {
+  scrollbar-width: thin;
+}
+
+.md-nav__title {
+  font-size: 0.65rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-.hero p:first-of-type {
-  font-size: 1.15rem;
-  opacity: 0.85;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rm-text-muted);
+  padding: 0.8rem 0.6rem 0.3rem;
 }
 
-/* Center text utility */
-.center-text {
+.md-nav__item .md-nav__link {
+  font-size: 0.82rem;
+  border-radius: 6px;
+  margin: 1px 4px;
+  padding: 0.45rem 0.7rem;
+  transition: all 0.2s ease;
+}
+
+.md-nav__item .md-nav__link:hover {
+  background: var(--rm-section-bg);
+}
+
+.md-nav__item .md-nav__link--active {
+  background: var(--rm-badge-bg);
+  color: var(--rm-badge-text);
+  font-weight: 600;
+}
+
+/* ---------- Hero Section ---------- */
+.hero-section {
+  background: var(--rm-hero-bg);
+  border-radius: 16px;
+  padding: 3.5rem 2.5rem;
+  margin: -0.5rem -0.5rem 2.5rem;
   text-align: center;
-}
-
-/* Card grid spacing */
-.md-typeset .grid.cards > ul > li {
-  border-radius: 8px;
-}
-
-/* Smoother transitions */
-.md-tabs__link, .md-nav__link {
-  transition: color 0.2s ease, opacity 0.2s ease;
-}
-
-/* Better code block styling */
-.md-typeset code {
-  border-radius: 4px;
-}
-
-/* Mermaid diagram centering */
-.mermaid {
-  text-align: center;
-}
-
-/* Table styling */
-.md-typeset table:not([class]) {
-  border-radius: 8px;
+  border: 1px solid var(--rm-card-border);
+  position: relative;
   overflow: hidden;
 }
 
-.md-typeset table:not([class]) th {
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(0, 210, 255, 0.06) 0%, transparent 50%),
+              radial-gradient(circle at 70% 60%, rgba(0, 102, 204, 0.04) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero-section h1 {
+  font-size: 2.6rem !important;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  position: relative;
+}
+
+.hero-section .hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--rm-text-muted);
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* ---------- Badges ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--rm-badge-bg);
+  color: var(--rm-badge-text);
+  padding: 0.3rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0.2rem;
+}
+
+/* ---------- Feature Cards ---------- */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin: 2rem 0;
+}
+
+.feature-card {
+  background: var(--rm-card-bg);
+  border: 1px solid var(--rm-card-border);
+  border-radius: 12px;
+  padding: 1.8rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card:hover {
+  border-color: var(--rm-card-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.feature-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--md-accent-fg-color), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.feature-card:hover::after {
+  opacity: 1;
+}
+
+.feature-card .card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+  display: block;
+}
+
+.feature-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.feature-card p {
+  font-size: 0.88rem;
+  color: var(--rm-text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ---------- Stat Cards ---------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.stat-card {
+  background: var(--rm-card-bg);
+  border: 1px solid var(--rm-card-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.stat-card .stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--md-accent-fg-color);
+  line-height: 1;
+}
+
+.stat-card .stat-label {
+  font-size: 0.78rem;
+  color: var(--rm-text-muted);
+  margin-top: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* ---------- Section Dividers ---------- */
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--md-accent-fg-color);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* ---------- Architecture Diagram Box ---------- */
+.diagram-box {
+  background: var(--rm-card-bg);
+  border: 1px solid var(--rm-card-border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+/* ---------- CTA Buttons ---------- */
+.md-typeset .md-button {
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.7rem 1.8rem;
+  transition: all 0.25s ease;
+  letter-spacing: 0.01em;
+}
+
+.md-typeset .md-button--primary {
+  background: linear-gradient(135deg, #0066cc, #00d2ff);
+  border: none;
+  color: #fff !important;
+  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+}
+
+.md-typeset .md-button--primary:hover {
+  box-shadow: 0 6px 25px rgba(0, 102, 204, 0.45);
+  transform: translateY(-1px);
+}
+
+.md-typeset .md-button:not(.md-button--primary) {
+  border: 1.5px solid var(--rm-card-border);
+}
+
+.md-typeset .md-button:not(.md-button--primary):hover {
+  border-color: var(--md-accent-fg-color);
+  color: var(--md-accent-fg-color);
+}
+
+/* ---------- Tables ---------- */
+.md-typeset table:not([class]) {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--rm-card-border);
+  font-size: 0.85rem;
+}
+
+.md-typeset table:not([class]) th {
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: var(--rm-section-bg);
+}
+
+.md-typeset table:not([class]) td,
+.md-typeset table:not([class]) th {
+  padding: 0.75rem 1rem;
+}
+
+/* ---------- Admonitions ---------- */
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 10px;
+  border-width: 0 0 0 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* ---------- Code Blocks ---------- */
+.md-typeset pre > code {
+  border-radius: 10px;
+}
+
+.md-typeset .highlight {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ---------- Mermaid Diagrams ---------- */
+.mermaid {
+  margin: 1.5rem 0;
+}
+
+.diagram-box .mermaid {
+  margin: 0;
+}
+
+/* ---------- Content width ---------- */
+.md-content__inner {
+  max-width: 52rem;
+}
+
+/* ---------- Footer ---------- */
+.md-footer {
+  border-top: 1px solid var(--rm-card-border);
+}
+
+/* ---------- Smooth scrolling ---------- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ---------- Step list ---------- */
+.step-list {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+}
+
+.step-list li {
+  counter-increment: step;
+  padding: 1.2rem 1.2rem 1.2rem 3.5rem;
+  margin-bottom: 0.8rem;
+  background: var(--rm-card-bg);
+  border: 1px solid var(--rm-card-border);
+  border-radius: 10px;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.step-list li::before {
+  content: counter(step);
+  position: absolute;
+  left: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.6rem;
+  height: 1.6rem;
+  background: var(--md-accent-fg-color);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+/* ---------- Tech stack pills ---------- */
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.tech-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--rm-card-bg);
+  border: 1px solid var(--rm-card-border);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.tech-pill:hover {
+  border-color: var(--md-accent-fg-color);
+  transform: translateY(-1px);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 2rem 1.5rem;
+  }
+  .hero-section h1 {
+    font-size: 1.8rem !important;
+  }
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

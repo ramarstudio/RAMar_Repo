@@ -1,27 +1,62 @@
-# Guia de instalacion
+---
+icon: material/download
+---
 
-Esta seccion describe como preparar el entorno y poner en marcha el sistema de asistencia biometrico.
+# Instalacion
+
+<span class="section-label">Puesta en marcha</span>
+
+Esta seccion cubre todo lo necesario para desplegar el sistema de asistencia biometrico en una maquina Windows.
+
+<div class="feature-grid" markdown>
+
+<div class="feature-card">
+<span class="card-icon">:material-clipboard-check:</span>
+
+### Requisitos previos
+
+Software, hardware y puertos necesarios antes de comenzar.
+
+[Ver requisitos](requisitos.md){ .md-button }
+</div>
+
+<div class="feature-card">
+<span class="card-icon">:material-rocket-launch:</span>
+
+### Guia paso a paso
+
+Desde clonar el repositorio hasta el primer marcaje biometrico.
+
+[Comenzar instalacion](guia.md){ .md-button .md-button--primary }
+</div>
+
+</div>
 
 ---
 
-## Vista rapida
+<span class="section-label">Vista rapida</span>
+
+## Proceso de instalacion
+
+<div class="diagram-box">
 
 ```mermaid
-graph TD
-    A[Instalar requisitos] --> B[Configurar PostgreSQL]
-    B --> C[Configurar variables de entorno]
-    C --> D[Instalar dependencias Python]
-    D --> E[Compilar aplicacion WPF]
+graph LR
+    A[Requisitos] --> B[PostgreSQL]
+    B --> C[Variables .env]
+    C --> D[Dependencias Python]
+    D --> E[Compilar WPF]
     E --> F[Ejecutar]
+
+    style F fill:#0f3460,stroke:#00d2ff,color:#fff
 ```
+
+</div>
 
 | Paso | Tiempo estimado |
 |---|---|
-| Requisitos previos | 10 min |
-| Configuracion de base de datos | 5 min |
-| Instalacion de dependencias | 5 min |
-| Primera ejecucion | 2 min |
-
----
-
-Comienza con [Requisitos previos](requisitos.md) y luego sigue la [Guia paso a paso](guia.md).
+| Instalar requisitos previos | ~10 min |
+| Configurar base de datos | ~5 min |
+| Instalar dependencias Python | ~5 min |
+| Primera ejecucion | ~2 min |
+| **Total** | **~22 min** |

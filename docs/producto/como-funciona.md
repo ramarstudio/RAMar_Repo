@@ -1,6 +1,14 @@
+---
+icon: material/cog
+---
+
 # Como funciona
 
-## Flujo de marcaje
+<span class="section-label">Flujo principal</span>
+
+## Marcaje de asistencia
+
+<div class="diagram-box">
 
 ```mermaid
 sequenceDiagram
@@ -16,52 +24,72 @@ sequenceDiagram
     P->>P: Detecta rostro + genera embedding
     P->>W: Retorna vector 512-d
     W->>D: Busca embedding mas similar
-    D->>W: Match encontrado (o no)
-    W->>E: Pantalla verde (aprobado) o roja (denegado)
-    W->>D: Registra marcaje con timestamp
+    D->>W: Match encontrado
+    W->>E: Pantalla de confirmacion
+    W->>D: Registra marcaje
 ```
 
-El proceso completo toma menos de **1 segundo**.
+</div>
+
+!!! tip "Rendimiento"
+    El proceso completo — desde la captura del frame hasta la confirmacion en pantalla — toma menos de **1 segundo**.
 
 ---
 
+<span class="section-label">Proceso inicial</span>
+
 ## Registro de empleados
 
-Antes de que un empleado pueda marcar asistencia, un administrador debe registrar su rostro:
+Antes de marcar asistencia, un administrador registra el rostro de cada empleado:
 
-1. El admin selecciona al empleado desde el panel
-2. Se activa la camara en vivo
-3. El empleado se posiciona frente a la camara
-4. El admin captura el rostro
-5. El sistema genera un embedding biometrico y lo almacena cifrado
+<ul class="step-list">
+<li>El admin selecciona al empleado desde el panel</li>
+<li>Se activa la camara en vivo</li>
+<li>El empleado se posiciona frente a la camara</li>
+<li>El admin hace clic en <strong>Capturar rostro</strong></li>
+<li>El sistema genera un embedding y lo almacena cifrado</li>
+</ul>
 
 A partir de ese momento, el empleado puede marcar asistencia con su rostro.
 
 ---
 
+<span class="section-label">Eventos</span>
+
 ## Tipos de marcaje
 
-| Tipo | Descripcion |
-|---|---|
-| **Entrada** | Registro de ingreso al inicio de la jornada |
-| **Salida** | Registro de salida al finalizar la jornada |
-| **Break inicio** | Inicio de una pausa o receso |
-| **Break fin** | Fin de la pausa |
+| Tipo | Descripcion | Icono |
+|---|---|---|
+| **Entrada** | Ingreso al inicio de la jornada | :material-login: |
+| **Salida** | Salida al finalizar la jornada | :material-logout: |
+| **Break inicio** | Inicio de una pausa o receso | :material-coffee: |
+| **Break fin** | Fin de la pausa | :material-coffee-off: |
 
-El sistema detecta automaticamente **tardanzas** comparando la hora de marcaje con el horario asignado al empleado, aplicando los minutos de tolerancia configurados.
+El sistema detecta automaticamente **tardanzas** comparando la hora de marcaje contra el horario asignado, aplicando los minutos de tolerancia configurados por el admin.
 
 ---
 
+<span class="section-label">Eficiencia</span>
+
 ## Gestion de recursos
 
-El motor de inteligencia artificial (Python) **no esta siempre activo**. La aplicacion WPF lo inicia automaticamente cuando se necesita y lo detiene cuando no hay actividad, liberando RAM y CPU.
+El motor de inteligencia artificial **no esta siempre activo**. Se inicia automaticamente cuando se necesita y se detiene tras un periodo de inactividad.
+
+<div class="diagram-box">
 
 ```mermaid
 stateDiagram-v2
     [*] --> Dormido
-    Dormido --> Iniciando: Usuario abre modulo biometrico
-    Iniciando --> Activo: Modelos cargados
+    Dormido --> Iniciando: Modulo biometrico requerido
+    Iniciando --> Activo: Modelos cargados en RAM
     Activo --> Dormido: Sin actividad (timeout)
     Activo --> Activo: Verificando rostros
     Dormido --> [*]: App se cierra
 ```
+
+</div>
+
+| Estado | RAM consumida | CPU |
+|---|---|---|
+| **Dormido** | 0 MB | 0% |
+| **Activo** | ~300-500 MB | < 5% por verificacion |

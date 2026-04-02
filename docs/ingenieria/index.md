@@ -1,28 +1,65 @@
-# Ingenieria de software
-
-En esta seccion se documentan los procesos de ingenieria que preceden y acompanan al desarrollo del sistema.
-
+---
+icon: material/book-open-variant
 ---
 
-## Proceso de desarrollo
+# Ingenieria de software
+
+<span class="section-label">Proceso de desarrollo</span>
+
+Cada paso del desarrollo queda documentado formalmente antes de escribir codigo. Este enfoque previene desviaciones de alcance, sobrecostos y deuda tecnica.
+
+<div class="diagram-box">
 
 ```mermaid
 graph LR
-    A[Casos de uso] --> B[Priorizacion MoSCoW]
-    B --> C[Decision de arquitectura]
+    A[Casos de uso] --> B[MoSCoW]
+    B --> C[ADR]
     C --> D[Diseno UX/UML]
-    D --> E[Desarrollo iterativo]
-    E --> F[Pruebas y validacion]
+    D --> E[Desarrollo]
+    E --> F[Validacion]
+
+    style A fill:#1a1a2e,stroke:#00d2ff,color:#fff
+    style F fill:#0f3460,stroke:#00d2ff,color:#fff
 ```
 
-Cada paso queda documentado formalmente antes de escribir una sola linea de codigo. Este enfoque previene desviaciones de alcance, sobrecostos y la acumulacion de deuda tecnica.
+</div>
 
 ---
 
+<span class="section-label">Documentacion</span>
+
 ## Contenido de esta seccion
 
-| Documento | Descripcion |
-|---|---|
-| [Metodologia SDLC](metodologia.md) | Ciclo de vida y fases de produccion |
-| [Requisitos MoSCoW](requisitos.md) | Matriz de priorizacion de funcionalidades |
-| [Diagramas UML](diagramas.md) | Diagramas de casos de uso y relaciones |
+<div class="feature-grid" markdown>
+
+<div class="feature-card">
+<span class="card-icon">:material-reload:</span>
+
+### Metodologia SDLC
+
+Ciclo de vida y fases de produccion que garantizan calidad antes de codificar.
+
+[Ver metodologia](metodologia.md){ .md-button }
+</div>
+
+<div class="feature-card">
+<span class="card-icon">:material-filter:</span>
+
+### Requisitos MoSCoW
+
+Matriz de priorizacion: que se construye, que se descarta, y por que.
+
+[Ver requisitos](requisitos.md){ .md-button }
+</div>
+
+<div class="feature-card">
+<span class="card-icon">:material-vector-polyline:</span>
+
+### Diagramas UML
+
+Casos de uso, arquitectura y flujos de marcaje documentados visualmente.
+
+[Ver diagramas](diagramas.md){ .md-button }
+</div>
+
+</div>
