@@ -1,6 +1,7 @@
 site_name: RAMar Software Studio
 site_description: Documentación oficial, arquitectura y manuales operativos.
 site_author: RAMar Studio
+site_url: https://ramarstudio.github.io/RAMar_Repo/
 repo_url: https://github.com/ramarstudio/RAMar_Repo
 repo_name: ramarstudio/RAMar_Repo
 
