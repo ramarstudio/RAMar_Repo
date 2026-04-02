@@ -86,9 +86,9 @@
 
 .md-nav__item .md-nav__link {
   font-size: 0.85rem;
-  padding: 0.35rem 0.6rem;
-  border-radius: 4px;
-  transition: background 0.15s ease;
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  transition: all 0.15s ease;
 }
 
 .md-nav__item .md-nav__link:hover {
@@ -99,23 +99,56 @@
   background: rgba(0, 0, 0, 0.04);
 }
 
+/* Secciones del sidebar como recuadros */
+.md-nav--primary > .md-nav__list > .md-nav__item--nested {
+  margin: 0.4rem 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.3rem;
+}
+
+[data-md-color-scheme="default"] .md-nav--primary > .md-nav__list > .md-nav__item--nested {
+  border-color: #e5e7eb;
+}
+
+/* Título de la sección dentro del recuadro */
+.md-nav--primary > .md-nav__list > .md-nav__item--nested > .md-nav__link {
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  padding: 0.4rem 0.7rem 0.2rem;
+}
+
+/* Sub-items indentados dentro del recuadro */
+.md-nav--primary > .md-nav__list > .md-nav__item--nested .md-nav__item {
+  margin-left: 0.2rem;
+}
+
 /* Página activa — resaltado fuerte */
 .md-nav__item .md-nav__link--active {
   font-weight: 600;
-  color: #fff;
-  background: #2e7d32;
+  color: #fff !important;
+  background: #2e7d32 !important;
   border-radius: 6px;
-}
-
-[data-md-color-scheme="default"] .md-nav__item .md-nav__link--active {
-  color: #fff;
-  background: #2e7d32;
 }
 
 /* Sección activa en el sidebar */
 .md-nav__item--active > .md-nav__link {
   font-weight: 600;
   color: var(--md-accent-fg-color);
+}
+
+/* Recuadro de la sección activa */
+.md-nav--primary > .md-nav__list > .md-nav__item--nested.md-nav__item--active {
+  border-color: #2e7d3280;
+  background: rgba(46, 125, 50, 0.05);
+}
+
+[data-md-color-scheme="default"] .md-nav--primary > .md-nav__list > .md-nav__item--nested.md-nav__item--active {
+  border-color: #2e7d3240;
+  background: rgba(46, 125, 50, 0.04);
 }
 
 /* --- Tables --- */

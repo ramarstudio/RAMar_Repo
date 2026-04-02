@@ -15,7 +15,6 @@ theme:
     - navigation.instant
     - navigation.tracking
     - navigation.sections
-    - navigation.expand
     - navigation.top
     - navigation.path
     - navigation.indexes
