@@ -7,52 +7,33 @@ repo_name: ramarstudio/RAMar_Repo
 
 theme:
   name: material
-  custom_dir: docs/overrides
   language: es
-  icon:
-    logo: material/shield-check
-    admonition:
-      note: material/pencil-circle
-      tip: material/lightbulb-on
-      warning: material/alert
-      danger: material/shield-alert
-      success: material/check-circle
-      info: material/information
-  favicon: material/shield-check
   font:
     text: Inter
     code: JetBrains Mono
   features:
     - navigation.instant
-    - navigation.instant.progress
     - navigation.tracking
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
     - navigation.expand
     - navigation.top
-    - navigation.indexes
     - navigation.footer
     - search.suggest
     - search.highlight
-    - search.share
-    - content.tabs.link
     - content.code.copy
-    - content.code.annotate
     - toc.follow
-    - header.autohide
   palette:
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: custom
-      accent: cyan
+    - scheme: slate
+      primary: teal
+      accent: teal
       toggle:
         icon: material/brightness-7
         name: Cambiar a modo claro
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: custom
-      accent: cyan
+    - scheme: default
+      primary: teal
+      accent: teal
       toggle:
         icon: material/brightness-4
         name: Cambiar a modo oscuro
@@ -60,22 +41,22 @@ theme:
 nav:
   - Inicio: index.md
   - Producto:
-      - producto/index.md
+      - Que es: producto/index.md
       - Beneficios: producto/beneficios.md
       - Como funciona: producto/como-funciona.md
   - Instalacion:
-      - instalacion/index.md
+      - Introduccion: instalacion/index.md
       - Requisitos previos: instalacion/requisitos.md
       - Guia paso a paso: instalacion/guia.md
   - Arquitectura:
-      - arquitectura/index.md
-      - ADR — WPF vs Web: arquitectura/adr-wpf.md
+      - Vista general: arquitectura/index.md
+      - WPF vs Web: arquitectura/adr-wpf.md
       - Motor biometrico: arquitectura/motor-biometrico.md
   - Ingenieria:
-      - ingenieria/index.md
-      - Metodologia SDLC: ingenieria/metodologia.md
+      - Metodologia: ingenieria/index.md
+      - SDLC: ingenieria/metodologia.md
       - Requisitos MoSCoW: ingenieria/requisitos.md
-      - Diagramas UML: ingenieria/diagramas.md
+      - Diagramas: ingenieria/diagramas.md
 
 markdown_extensions:
   - admonition
@@ -89,33 +70,21 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.highlight:
       anchor_linenums: true
-      line_spans: __span
-      pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
   - tables
   - attr_list
-  - md_in_html
   - def_list
   - pymdownx.tasklist:
       custom_checkbox: true
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - toc:
       permalink: true
-      toc_depth: 3
 
 plugins:
   - search:
       lang: es
 
-extra_css:
-  - assets/custom.css
-
 extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/ramarstudio
-      name: RAMar en GitHub
   generator: false

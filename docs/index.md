@@ -1,148 +1,63 @@
----
-hide:
-  - navigation
-  - toc
----
+# Control de Asistencia Biometrico
 
-<div class="hero-section">
-  <div class="badge-row">
-    <span class="badge">v1.0 — Produccion</span>
-    <span class="badge">100% Offline</span>
-    <span class="badge">C# .NET 8</span>
-    <span class="badge">Python + IA</span>
-  </div>
-  <h1>Control de Asistencia Biometrico</h1>
-  <p class="subtitle">
-    Reconocimiento facial en tiempo real, sin internet, sin fotografias almacenadas, con tiempos de respuesta menores a un segundo.
-  </p>
-  <a href="producto/" class="md-button md-button--primary">Conocer el producto</a>
-  <a href="instalacion/" class="md-button">Guia de instalacion</a>
-</div>
-
-<div class="stat-grid">
-  <div class="stat-card">
-    <div class="stat-value">&lt; 1s</div>
-    <div class="stat-label">Tiempo de marcaje</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">512-d</div>
-    <div class="stat-label">Vector facial</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">AES-256</div>
-    <div class="stat-label">Cifrado biometrico</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">0</div>
-    <div class="stat-label">Fotos almacenadas</div>
-  </div>
-</div>
+El **Control de Asistencia Biometrico** es un sistema de escritorio que registra la entrada y salida del personal mediante reconocimiento facial. Opera 100% en la red local, sin internet y sin almacenar fotografias.
 
 ---
 
-<span class="section-label">Caracteristicas principales</span>
+## Caracteristicas
 
-## Por que este sistema
-
-<div class="grid cards" markdown>
-
--   :material-lightning-bolt:{ .lg .middle } **Respuesta instantanea**
-
-    ---
-
-    El empleado se acerca a la camara y el sistema responde en milisegundos. Sin filas, sin contacto fisico, sin tarjetas.
-
--   :material-shield-lock:{ .lg .middle } **Privacidad por diseno**
-
-    ---
-
-    Nunca se almacenan fotografias. Los rostros se transforman en vectores matematicos cifrados con AES-256, completamente irreversibles.
-
--   :material-server-off:{ .lg .middle } **Sin dependencias externas**
-
-    ---
-
-    Opera en la red local. Sin internet, sin suscripciones cloud, sin enviar datos biometricos a terceros.
-
--   :material-monitor-dashboard:{ .lg .middle } **Panel de administracion**
-
-    ---
-
-    Dashboard con metricas en tiempo real, gestion de empleados, horarios, tardanzas, reportes y auditoria completa.
-
--   :material-brain:{ .lg .middle } **IA de alto rendimiento**
-
-    ---
-
-    Motor InsightFace (ArcFace) con 99.8% de precision. Se activa bajo demanda y libera RAM cuando no se usa.
-
--   :material-cog-outline:{ .lg .middle } **Configurable**
-
-    ---
-
-    Tolerancia de tardanzas, horarios por empleado, roles diferenciados y parametros del sistema ajustables por el admin.
-
-</div>
+| Caracteristica | Detalle |
+|---|---|
+| **Reconocimiento facial** | Identificacion en menos de 1 segundo con InsightFace (ArcFace) |
+| **Privacidad** | Cero fotos almacenadas — solo vectores matematicos cifrados con AES-256 |
+| **Sin internet** | Funciona completamente offline en la red local de la empresa |
+| **Panel admin** | Dashboard, empleados, horarios, marcajes, reportes, auditoria |
+| **Roles** | Empleado, Administrador, SuperAdministrador |
+| **Configurable** | Tolerancia de tardanzas, horarios, parametros del sistema |
 
 ---
 
-<span class="section-label">Arquitectura</span>
+## Stack tecnologico
 
-## Como esta construido
+| Componente | Tecnologia |
+|---|---|
+| Aplicacion de escritorio | C# .NET 8 (WPF) |
+| Motor de reconocimiento facial | Python 3.13 + FastAPI + InsightFace |
+| Base de datos | PostgreSQL + Entity Framework Core |
+| Cifrado biometrico | AES-256 |
+| Comunicacion interna | HTTP localhost:8000 |
 
-<div class="tech-stack">
-  <span class="tech-pill">C# .NET 8</span>
-  <span class="tech-pill">Python 3.13</span>
-  <span class="tech-pill">PostgreSQL</span>
-  <span class="tech-pill">FastAPI</span>
-  <span class="tech-pill">InsightFace</span>
-  <span class="tech-pill">AES-256</span>
-  <span class="tech-pill">Entity Framework Core</span>
-</div>
+---
 
-<div class="diagram-box">
+## Arquitectura
 
 ```mermaid
 graph LR
-    A[Empleado] -->|Se acerca| B[Camara web]
-    B -->|Frame| C[App WPF — C# .NET 8]
-    C -->|HTTP localhost| D[Motor IA — Python]
-    D -->|Embedding 512-d| C
-    C -->|Query| E[(PostgreSQL)]
-    E -->|Match| C
-    C -->|Resultado| F[Aprobado / Denegado]
+    A[Empleado] --> B[Camara]
+    B --> C[App WPF - C#]
+    C -->|HTTP local| D[Motor IA - Python]
+    D -->|Embedding 512d| C
+    C --> E[(PostgreSQL)]
+    C --> F[Resultado en pantalla]
 ```
 
-</div>
+**Flujo de marcaje:**
 
-<div class="grid cards" markdown>
-
--   :material-desktop-classic:{ .lg .middle } **Frontend nativo (WPF)**
-
-    ---
-
-    Aplicacion de escritorio con acceso directo al hardware via DirectShow. CPU inferior al 1%.
-
--   :material-robot:{ .lg .middle } **Motor biometrico (Python)**
-
-    ---
-
-    Microservicio FastAPI con InsightFace. Embeddings de 512 dimensiones. Inicio bajo demanda.
-
--   :material-database-lock:{ .lg .middle } **Base de datos (PostgreSQL)**
-
-    ---
-
-    Embeddings cifrados, auditoria completa, integridad referencial via Entity Framework Core.
-
-</div>
+1. El empleado se acerca a la camara
+2. La app WPF captura el frame y lo envia al motor Python
+3. Python genera un embedding facial de 512 dimensiones
+4. La app compara el embedding contra los registrados en PostgreSQL
+5. Se muestra el resultado (aprobado/denegado) y se registra el marcaje
 
 ---
 
-<div style="text-align: center; padding: 1.5rem 0;" markdown>
+## Comenzar
 
-**RAMar Software Studio** — Innovacion, privacidad computacional y soluciones corporativas.
+- **[Que es este producto](producto/index.md)** — vision general, para quien es, diferenciadores
+- **[Guia de instalacion](instalacion/index.md)** — requisitos y pasos para desplegar
+- **[Arquitectura tecnica](arquitectura/index.md)** — como esta construido internamente
+- **[Ingenieria](ingenieria/index.md)** — metodologia, requisitos y diagramas
 
-[:fontawesome-brands-github: Ver repositorio](https://github.com/ramarstudio/RAMar_Repo){ .md-button }
+---
 
-</div>
+> **RAMar Software Studio** — Innovacion, privacidad computacional y soluciones corporativas.

@@ -1,85 +1,49 @@
----
-icon: material/star
----
-
 # Beneficios
 
-## Velocidad sin friccion
+## Velocidad
 
-El marcaje biometrico se completa en menos de **1 segundo**:
+El marcaje se completa en menos de **1 segundo**. El empleado se acerca a la camara y el sistema responde inmediatamente.
 
-<ul class="step-list">
-<li>El empleado se posiciona frente a la camara</li>
-<li>El sistema detecta y reconoce su rostro automaticamente</li>
-<li>Se registra la entrada o salida con timestamp exacto</li>
-<li>Pantalla de confirmacion inmediata</li>
-</ul>
+1. El empleado se posiciona frente a la camara
+2. El sistema detecta y reconoce su rostro
+3. Se registra la entrada/salida con timestamp exacto
+4. Pantalla de confirmacion inmediata
 
 ---
 
 ## Privacidad y cumplimiento legal
 
-El sistema esta disenado con el principio de **privacidad por diseno**:
-
 - [x] Cero fotografias almacenadas
-- [x] Rostros convertidos en vectores matematicos de 512 dimensiones
-- [x] Cifrado AES-256 para todos los datos biometricos en reposo
+- [x] Rostros convertidos en vectores de 512 dimensiones
+- [x] Cifrado AES-256 para datos biometricos en reposo
 - [x] Vectores irreversibles — no se puede reconstruir un rostro
-- [x] Cumplimiento con regulaciones de proteccion de datos personales
+- [x] Cumplimiento con regulaciones de proteccion de datos
 
 ---
 
-## Comparativa: local vs cloud
+## Local vs Cloud
 
 | Caracteristica | Este sistema | Soluciones cloud |
 |---|---|---|
-| Dependencia de internet | :material-close: No | :material-check: Si |
-| Costos recurrentes | :material-close: No | :material-check: Suscripcion |
-| Datos a terceros | :material-close: No | :material-check: Si |
-| Funciona sin conexion | :material-check: Si | :material-close: No |
-| Latencia | **< 1 segundo** | Variable |
-| Control de datos | **Total** | Parcial |
+| Requiere internet | No | Si |
+| Costos recurrentes | No | Suscripcion mensual |
+| Datos a terceros | No | Si |
+| Funciona sin conexion | Si | No |
+| Latencia | < 1 segundo | Variable |
+| Control de datos | Total | Parcial |
 
 ---
 
 ## Panel administrativo
 
-<div class="grid cards" markdown>
+El sistema incluye un panel completo para Recursos Humanos:
 
--   :material-view-dashboard:{ .lg .middle } **Dashboard**
-
-    ---
-
-    Metricas del dia, tendencias de 14 dias, heatmap de asistencia y ranking de tardanzas.
-
--   :material-account-multiple:{ .lg .middle } **Empleados y usuarios**
-
-    ---
-
-    Alta, baja y modificacion con roles diferenciados: empleado, admin, superadmin.
-
--   :material-clock-outline:{ .lg .middle } **Horarios**
-
-    ---
-
-    Configuracion de jornadas con vigencias, tolerancias y breaks.
-
--   :material-file-chart:{ .lg .middle } **Reportes**
-
-    ---
-
-    Exportacion de datos, filtros avanzados e historial completo por empleado.
-
--   :material-history:{ .lg .middle } **Auditoria**
-
-    ---
-
-    Registro de todas las operaciones con usuario, fecha, accion y entidad afectada.
-
--   :material-cog:{ .lg .middle } **Configuracion**
-
-    ---
-
-    Parametros del sistema con presets intuitivos. Solo accesible para superadministradores.
-
-</div>
+| Modulo | Funcion |
+|---|---|
+| **Dashboard** | Metricas del dia, tendencias 14 dias, heatmap, top tardanzas |
+| **Empleados** | Alta, baja, modificacion con roles diferenciados |
+| **Horarios** | Jornadas con vigencias, tolerancias y breaks |
+| **Marcajes** | Historial completo con filtros y busqueda |
+| **Reportes** | Exportacion de datos e historial por empleado |
+| **Auditoria** | Registro de todas las operaciones del sistema |
+| **Configuracion** | Parametros del sistema (solo superadmin) |
