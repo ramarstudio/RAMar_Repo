@@ -1,6 +1,6 @@
 # Cronograma del Proyecto — MVP
 
-Este documento presenta el cronograma de trabajo correspondiente al desarrollo del MVP del sistema web local de control de asistencia. El cronograma detalla las actividades, duraciones, dependencias y fechas estimadas, sirviendo como base de planificación, seguimiento y control del proyecto.
+Este documento presenta el cronograma de trabajo correspondiente al desarrollo del MVP de la aplicación nativa de control de asistencia. El cronograma detalla las actividades, duraciones, dependencias y fechas estimadas, sirviendo como base de planificación, seguimiento y control del proyecto.
 
 ---
 

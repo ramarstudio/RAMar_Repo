@@ -1,8 +1,8 @@
 # Introducción
 
-Este documento describe el plan del proyecto para el desarrollo de un **sistema web local orientado a la gestión de asistencia y control operativo**, diseñado como parte del portafolio de **RAMar Software Studio** y con potencial de implementación comercial en **micro y pequeñas empresas (MYPES)**.
+Este documento describe el plan del proyecto para el desarrollo de una **aplicación de escritorio nativa instalable orientada a la gestión de asistencia y control operativo biométrico**, diseñada como parte del portafolio de **RAMar Software Studio** y con potencial de implementación comercial en computadoras de **micro y pequeñas empresas (MYPES)**.
 
-El objetivo principal del proyecto es ofrecer una **solución web eficiente, accesible y de bajo costo**, que funcione dentro de la red local de la empresa y permita registrar, administrar y supervisar información operativa sin depender de servicios externos ni infraestructura especializada.
+El objetivo principal del proyecto es ofrecer una **solución de escritorio eficiente, de alto rendimiento y segura off-line**, que funcione como quiosco local sin depender de servicios externos web, asegurando latencia nula en interacción por cámara.
 
 El sistema está pensado para cubrir necesidades reales de las MYPES, priorizando **simplicidad, rapidez de operación y control administrativo**, aspectos clave en entornos con recursos limitados y procesos manuales.
 
@@ -12,7 +12,7 @@ El desarrollo se centrará en la construcción de un **Producto Mínimo Viable (
 
 ## Objetivos del Proyecto
 
-- Diseñar y desarrollar un sistema web local aplicable a entornos reales de MYPES.
+- Diseñar y desarrollar un sistema de escritorio WPF nativo aplicable a entornos reales de MYPES con hardware fotográfico estándar.
 - Reducir la dependencia de procesos manuales mediante automatización básica y control centralizado.
 - Ofrecer una solución que no requiera conexión a internet ni hardware especializado.
 - Presentar un producto sólido y documentado como parte del portafolio de RAMar Software Studio.
@@ -24,7 +24,7 @@ El desarrollo se centrará en la construcción de un **Producto Mínimo Viable (
 
 El sistema se desarrolla bajo un enfoque **práctico y orientado al negocio**, priorizando:
 - Implementación local dentro de la infraestructura existente del cliente.
-- Acceso mediante navegadores web estándar.
+- Acceso mediante clientes pesados (.exe interactivo rápido).
 - Facilidad de instalación, uso y mantenimiento.
 - Costos de adopción bajos para micro y pequeñas empresas.
 
