@@ -1,8 +1,4 @@
----
-icon: material/rocket-launch
----
-
-# Guia paso a paso
+# Guía paso a paso
 
 ## 1. Clonar el repositorio
 
@@ -38,7 +34,7 @@ DB_PASSWORD=tu_password_seguro
 ```
 
 !!! danger "Seguridad"
-    Nunca subas el archivo `.env` al repositorio. Ya esta incluido en `.gitignore`.
+    Nunca subas el archivo `.env` al repositorio. Ya está incluido en `.gitignore`.
 
 ---
 
@@ -49,12 +45,12 @@ cd AttendanceSystem/src/FaceService
 pip install -r requirements.txt
 ```
 
-!!! info "Primera ejecucion"
-    La primera vez se descargan automaticamente los modelos de InsightFace (~200 MB). Esto ocurre **una sola vez**.
+!!! info "Primera ejecución"
+    La primera vez se descargan automáticamente los modelos de InsightFace (~200 MB). Esto ocurre **una sola vez**.
 
 ---
 
-## 5. Compilar la aplicacion
+## 5. Compilar la aplicación
 
 ```bash
 cd AttendanceSystem
@@ -69,19 +65,17 @@ dotnet build
 dotnet run --project src/AttendanceSystem.App
 ```
 
-La aplicacion WPF se abrira. El motor de reconocimiento facial se iniciara **automaticamente** cuando se necesite — no es necesario ejecutar Python manualmente.
+La aplicación WPF se abrirá. El motor de reconocimiento facial se iniciará **automáticamente** cuando se necesite — no es necesario ejecutar Python manualmente.
 
 ---
 
 ## Primer uso
 
-<ul class="step-list">
-<li>Inicia sesion con las credenciales de administrador por defecto</li>
-<li>Cambia la contrasena inmediatamente desde el panel</li>
-<li>Registra los empleados desde <strong>Usuarios</strong></li>
-<li>Captura el rostro de cada empleado desde <strong>Registro Facial</strong></li>
-<li>Los empleados ya pueden marcar asistencia con su rostro</li>
-</ul>
+1. Inicia sesión con las credenciales de administrador por defecto
+2. Cambia la contraseña inmediatamente desde el panel
+3. Registra los empleados desde **Usuarios**
+4. Captura el rostro de cada empleado desde **Registro Facial**
+5. Los empleados ya pueden marcar asistencia con su rostro
 
 !!! tip "Credenciales iniciales"
-    El sistema crea un usuario `admin` con rol SuperAdmin en la primera ejecucion. Consulta la documentacion interna para la contrasena inicial.
+    El sistema crea un usuario `admin` con rol SuperAdmin en la primera ejecución. Consulta la documentación interna para la contraseña inicial.

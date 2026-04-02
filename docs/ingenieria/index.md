@@ -1,22 +1,22 @@
-# Ingenieria de software
+# Ingeniería de software
 
-Cada paso del desarrollo queda documentado antes de escribir codigo.
+Cada paso del desarrollo queda documentado antes de escribir código.
 
 ```mermaid
 graph LR
     A[Casos de uso] --> B[MoSCoW]
     B --> C[ADR]
-    C --> D[Diseno UX/UML]
+    C --> D[Diseño UX/UML]
     D --> E[Desarrollo]
-    E --> F[Validacion]
+    E --> F[Validación]
 ```
 
 ---
 
 ## Documentos
 
-| Documento | Descripcion |
+| Documento | Descripción |
 |---|---|
-| [Metodologia SDLC](metodologia.md) | Ciclo de vida y fases de produccion |
-| [Requisitos MoSCoW](requisitos.md) | Matriz de priorizacion de funcionalidades |
+| [Metodología SDLC](metodologia.md) | Ciclo de vida y fases de producción |
+| [Requisitos MoSCoW](requisitos.md) | Matriz de priorización de funcionalidades |
 | [Diagramas](diagramas.md) | Casos de uso, arquitectura y flujos |

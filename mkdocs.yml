@@ -19,6 +19,7 @@ theme:
     - navigation.top
     - navigation.footer
     - navigation.path
+    - navigation.indexes
     - search.suggest
     - search.highlight
     - content.code.copy
@@ -40,19 +41,19 @@ theme:
 nav:
   - Inicio: index.md
   - Producto:
-      - Que es: producto/index.md
+      - producto/index.md
       - Beneficios: producto/beneficios.md
-      - Como funciona: producto/como-funciona.md
-  - Instalacion:
-      - Introduccion: instalacion/index.md
+      - Cómo funciona: producto/como-funciona.md
+  - Instalación:
+      - instalacion/index.md
       - Requisitos previos: instalacion/requisitos.md
-      - Guia paso a paso: instalacion/guia.md
+      - Guía paso a paso: instalacion/guia.md
   - Arquitectura:
-      - Vista general: arquitectura/index.md
+      - arquitectura/index.md
       - WPF vs Web: arquitectura/adr-wpf.md
-      - Motor biometrico: arquitectura/motor-biometrico.md
-  - Ingenieria:
-      - Proceso: ingenieria/index.md
+      - Motor biométrico: arquitectura/motor-biometrico.md
+  - Ingeniería:
+      - ingenieria/index.md
       - SDLC: ingenieria/metodologia.md
       - Requisitos MoSCoW: ingenieria/requisitos.md
       - Diagramas: ingenieria/diagramas.md

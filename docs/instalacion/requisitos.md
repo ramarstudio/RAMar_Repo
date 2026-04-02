@@ -1,7 +1,3 @@
----
-icon: material/clipboard-check
----
-
 # Requisitos previos
 
 ## Sistema operativo
@@ -12,18 +8,11 @@ icon: material/clipboard-check
 
 ## Software requerido
 
-| Componente | Version minima | Funcion |
+| Componente | Versión mínima | Función |
 |---|---|---|
-| .NET 8 Desktop Runtime | 8.0+ | Ejecutar la aplicacion WPF |
+| .NET 8 Desktop Runtime | 8.0+ | Ejecutar la aplicación WPF |
 | Python | 3.10+ | Motor de reconocimiento facial |
 | PostgreSQL | 15+ | Base de datos |
-
-<div class="tech-stack">
-<span class="tech-pill">:material-microsoft-windows: Windows 10/11</span>
-<span class="tech-pill">:material-language-csharp: .NET 8</span>
-<span class="tech-pill">:material-language-python: Python 3.10+</span>
-<span class="tech-pill">:material-database: PostgreSQL 15+</span>
-</div>
 
 ---
 
@@ -31,13 +20,13 @@ icon: material/clipboard-check
 
 | Componente | Requisito |
 |---|---|
-| **Camara web** | Cualquier webcam USB o integrada (DirectShow) |
-| **RAM** | 4 GB minimo — 8 GB recomendado |
+| **Cámara web** | Cualquier webcam USB o integrada (DirectShow) |
+| **RAM** | 4 GB mínimo — 8 GB recomendado |
 | **CPU** | x64 con soporte SSE2 |
-| **Disco** | ~500 MB (modelos IA + aplicacion) |
+| **Disco** | ~500 MB (modelos IA + aplicación) |
 
 !!! info "Sobre la memoria RAM"
-    El motor de reconocimiento facial consume ~300-500 MB de RAM **solo cuando esta activo**. La aplicacion lo inicia automaticamente cuando se necesita y lo detiene tras un periodo de inactividad, liberando la memoria.
+    El motor de reconocimiento facial consume ~300-500 MB de RAM **solo cuando está activo**. La aplicación lo inicia automáticamente cuando se necesita y lo detiene tras un periodo de inactividad, liberando la memoria.
 
 ---
 
@@ -49,4 +38,4 @@ icon: material/clipboard-check
 | `8000` | Motor facial | Solo localhost |
 
 !!! warning "Firewall"
-    El puerto `8000` escucha exclusivamente en `127.0.0.1`. No es necesario abrirlo en el firewall — la comunicacion es interna al equipo.
+    El puerto `8000` escucha exclusivamente en `127.0.0.1`. No es necesario abrirlo en el firewall — la comunicación es interna al equipo.

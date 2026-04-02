@@ -1,17 +1,17 @@
-# Arquitectura tecnica
+# Arquitectura técnica
 
-El sistema usa una **arquitectura hibrida de dos procesos** que separa la interfaz grafica de la inteligencia biometrica.
+El sistema usa una **arquitectura híbrida de dos procesos** que separa la interfaz gráfica de la inteligencia biométrica.
 
 ```mermaid
 graph TB
     subgraph WPF["App WPF — C# .NET 8"]
-        UI[Interfaz grafica]
+        UI[Interfaz gráfica]
         CAM[Captura DirectShow]
-        BL[Logica de negocio]
+        BL[Lógica de negocio]
         EF[Entity Framework Core]
     end
 
-    subgraph PY["Motor biometrico — Python"]
+    subgraph PY["Motor biométrico — Python"]
         API[FastAPI :8000]
         IF[InsightFace / ArcFace]
     end
@@ -28,34 +28,30 @@ graph TB
 
 ---
 
-## Capas de la aplicacion WPF
+## Capas de la aplicación WPF
 
 | Proyecto | Responsabilidad |
 |---|---|
-| `AttendanceSystem.App` | Interfaz grafica, vistas XAML |
+| `AttendanceSystem.App` | Interfaz gráfica, vistas XAML |
 | `AttendanceSystem.Core` | DTOs, interfaces, enums |
-| `AttendanceSystem.Services` | Logica de negocio |
+| `AttendanceSystem.Services` | Lógica de negocio |
 | `AttendanceSystem.Infrastructure` | Acceso a datos, EF Core |
-| `AttendanceSystem.Security` | Autenticacion, cifrado AES, sesiones |
+| `AttendanceSystem.Security` | Autenticación, cifrado AES, sesiones |
 
-## Motor biometrico (Python)
+## Motor biométrico (Python)
 
-| Modulo | Responsabilidad |
+| Módulo | Responsabilidad |
 |---|---|
 | `api/` | Endpoints REST (FastAPI) |
 | `core/` | Interfaces abstractas |
-| `adapters/` | Implementacion InsightFace |
-| `services/` | Pipeline biometrico |
+| `adapters/` | Implementación InsightFace |
+| `services/` | Pipeline biométrico |
 
 ---
 
-## Principios de diseno
+## Principios de diseño
 
-- **Abstraccion** — Interfaces intercambiables para detector y reconocedor
+- **Abstracción** — Interfaces intercambiables para detector y reconocedor
 - **Eficiencia** — Motor IA bajo demanda, se detiene por inactividad
 - **Seguridad** — Embeddings cifrados AES-256, solo localhost
-- **Separacion** — Cada capa tiene una unica responsabilidad
-
----
-
-**Ver tambien:** [WPF vs Web (ADR)](adr-wpf.md) | [Motor biometrico](motor-biometrico.md)
+- **Separación** — Cada capa tiene una única responsabilidad
