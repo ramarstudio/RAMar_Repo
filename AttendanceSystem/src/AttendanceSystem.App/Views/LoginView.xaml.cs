@@ -19,6 +19,15 @@ namespace AttendanceSystem.App.Views
             if (e.Key == System.Windows.Input.Key.Enter) txtPassword.Focus();
         }
 
+        private void TxtPassword_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter && btnLogin.IsEnabled)
+            {
+                // Dispara el evento del botón como si el usuario le hubiera dado clic
+                BtnLogin_Click(sender, new RoutedEventArgs());
+            }
+        }
+
         private async void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
             // Ocultamos errores previos y deshabilitamos el botón para evitar doble envío

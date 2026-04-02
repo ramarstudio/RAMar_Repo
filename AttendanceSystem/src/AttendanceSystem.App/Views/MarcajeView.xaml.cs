@@ -14,6 +14,7 @@ namespace AttendanceSystem.App.Views
     {
         private readonly MarcajeController      _marcajeController;
         private readonly IBiometricoController  _biometricoController;
+        private readonly AuthController         _authController;
 
         // Brushes estáticos y congelados: creados una sola vez, reutilizados en cada evento.
         // Freeze() permite usarlos desde cualquier hilo sin InvalidOperationException.
@@ -29,21 +30,24 @@ namespace AttendanceSystem.App.Views
             return brush;
         }
 
-        public MarcajeView(MarcajeController marcajeController, IBiometricoController biometricoController)
+        public MarcajeView(MarcajeController marcajeController, 
+                           IBiometricoController biometricoController, 
+                           AuthController authController)
         {
             InitializeComponent();
             _marcajeController    = marcajeController;
             _biometricoController = biometricoController;
+            _authController       = authController;
         }
 
         // ── Carga: encender cámara ─────────────────────────────────────────────
-        private void MarcajeView_Loaded(object sender, RoutedEventArgs e)
+        private async void MarcajeView_Loaded(object sender, RoutedEventArgs e)
         {
             txtFechaHora.Text = DateTime.Now.ToString("dddd, dd 'de' MMMM - HH:mm",
                 new System.Globalization.CultureInfo("es-ES"));
             try
             {
-                _biometricoController.IniciarCamara(OnFrameArrived);
+                await _biometricoController.IniciarCamaraAsync(OnFrameArrived);
                 txtEstadoCamara.Text       = "Cámara activa. Posiciónese frente a la cámara.";
                 txtEstadoCamara.Foreground = BrushVerde;
             }
@@ -75,6 +79,11 @@ namespace AttendanceSystem.App.Views
 
         private async void BtnBreak_Click(object sender, RoutedEventArgs e)
             => await ProcesarMarcaje(TipoMarcaje.BreakInicio);
+
+        private void BtnCerrarSesion_Click(object sender, RoutedEventArgs e)
+        {
+            _authController.Logout();
+        }
 
         // ── Lógica compartida ──────────────────────────────────────────────────
         private async System.Threading.Tasks.Task ProcesarMarcaje(TipoMarcaje tipo)

@@ -30,11 +30,13 @@ namespace AttendanceSystem.App.Helpers
             catch { return false; }
         }
 
-        public void IniciarCamara(int index = 0)
+        public async System.Threading.Tasks.Task IniciarCamaraAsync(int index = 0)
         {
             DetenerCamara();
 
-            var cap = new VideoCapture(index);
+            // Mover la inicialización de hardware (DShow) a un hilo secundario.
+            // Esto previene los 5 segundos de congelamiento de la ventana de WPF.
+            var cap = await System.Threading.Tasks.Task.Run(() => new VideoCapture(index));
             if (!cap.IsOpened())
             {
                 cap.Dispose();
@@ -117,14 +119,29 @@ namespace AttendanceSystem.App.Helpers
 
         private static BitmapSource MatToBitmapSource(Mat mat)
         {
-            Cv2.ImEncode(".bmp", mat, out var buf);
-            using var ms = new MemoryStream(buf);
-            var bmp = new BitmapImage();
-            bmp.BeginInit();
-            bmp.StreamSource  = ms;
-            bmp.CacheOption   = BitmapCacheOption.OnLoad;
-            bmp.EndInit();
-            bmp.Freeze(); // Freeze permite usar el objeto desde cualquier hilo
+            // [Optimización Extrema de Memoria y CPU]
+            // Leemos los bytes directamente desde la memoria no administrada de OpenCV (puntero IntPtr).
+            // Esto evita la recodificación a .bmp (Cv2.ImEncode) que consume muchísima CPU.
+            // Además, evita instanciar arreglos de bytes y MemoryStreams 30 veces por segundo,
+            // aliviando drásticamente el Garbage Collector (Gen 0) y eliminando futuros stutters.
+            
+            int width = mat.Width;
+            int height = mat.Height;
+            int stride = (int)mat.Step(); // Bytes por fila
+            int bufferSize = height * stride;
+
+            var bmp = BitmapSource.Create(
+                width,
+                height,
+                96, // DPI X estándar
+                96, // DPI Y estándar
+                System.Windows.Media.PixelFormats.Bgr24, // Las webcams con OpenCV usan 24-bits (BGR)
+                null,
+                mat.Data,
+                bufferSize,
+                stride);
+
+            bmp.Freeze(); // Sigue siendo obligatorio congelar para usar cross-thread
             return bmp;
         }
 

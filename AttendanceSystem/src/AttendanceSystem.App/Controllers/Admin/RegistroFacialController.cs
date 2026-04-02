@@ -122,10 +122,10 @@ namespace AttendanceSystem.App.Controllers.Admin
         }
 
         // ── Cámara ───────────────────────────────────────────────────────────
-        public void IniciarCamara(EventHandler<BitmapSource> callback)
+        public async Task IniciarCamaraAsync(EventHandler<BitmapSource> callback)
         {
             _cameraHelper.OnFrameArrived += callback;
-            _cameraHelper.IniciarCamara(0);
+            await _cameraHelper.IniciarCamaraAsync(0);
         }
 
         public void ApagarCamara(EventHandler<BitmapSource> callback)

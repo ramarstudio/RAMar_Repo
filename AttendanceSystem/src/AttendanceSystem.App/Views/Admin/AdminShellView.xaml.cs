@@ -137,7 +137,7 @@ namespace AttendanceSystem.App.Views.Admin
         /// </summary>
         private MarcajeView ObtenerMiAsistenciaView()
         {
-            _miAsistenciaView ??= new MarcajeView(_marcajeCtrl, _biometricoCtrl);
+            _miAsistenciaView ??= new MarcajeView(_marcajeCtrl, _biometricoCtrl, _authCtrl);
             return _miAsistenciaView;
         }
 

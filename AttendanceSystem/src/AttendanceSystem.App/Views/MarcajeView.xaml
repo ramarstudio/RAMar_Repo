@@ -96,12 +96,29 @@
                                 materialDesign:ButtonAssist.CornerRadius="10"
                                 Background="{DynamicResource BtnBreakBg}" Foreground="White"
                                 BorderThickness="0" Height="56" FontSize="15" FontWeight="Bold"
-                                Cursor="Hand"
+                                Cursor="Hand" Margin="0,0,0,24"
                                 Click="BtnBreak_Click">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="PauseCircle" Width="22" Height="22"
                                                          VerticalAlignment="Center" Margin="0,0,8,0"/>
                                 <TextBlock Text="BREAK" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,16"/>
+
+                        <!-- CERRAR SESIÓN -->
+                        <Button x:Name="btnCerrarSesion"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="10"
+                                BorderBrush="{DynamicResource ErrorText}" Foreground="{DynamicResource ErrorText}"
+                                Height="50" FontSize="15" FontWeight="Bold"
+                                Cursor="Hand"
+                                Click="BtnCerrarSesion_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Logout" Width="22" Height="22"
+                                                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="CERRAR SESIÓN" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>

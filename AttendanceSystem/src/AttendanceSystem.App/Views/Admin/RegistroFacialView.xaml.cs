@@ -52,7 +52,7 @@ namespace AttendanceSystem.App.Views.Admin
         }
 
         // ── Seleccionar empleado ─────────────────────────────────────────────
-        private void BtnSeleccionarEmpleado_Click(object sender, RoutedEventArgs e)
+        private async void BtnSeleccionarEmpleado_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn || btn.Tag is not EmpleadoBiometricoDto emp) return;
 
@@ -89,17 +89,17 @@ namespace AttendanceSystem.App.Views.Admin
             pnlAcciones.Visibility = Visibility.Visible;
 
             // Iniciar cámara
-            IniciarCamara();
+            await IniciarCamaraAsync();
         }
 
         // ── Cámara ───────────────────────────────────────────────────────────
-        private void IniciarCamara()
+        private async System.Threading.Tasks.Task IniciarCamaraAsync()
         {
             if (_camaraActiva) return;
 
             try
             {
-                _controller.IniciarCamara(OnFrameArrived);
+                await _controller.IniciarCamaraAsync(OnFrameArrived);
                 _camaraActiva = true;
                 pnlPlaceholder.Visibility = Visibility.Collapsed;
             }
