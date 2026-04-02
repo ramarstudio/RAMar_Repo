@@ -1,60 +1,100 @@
-⚠️ **Confidential & Sensitive Content**  
-Este repositorio contiene material confidencial exclusivo correspondiente a los procesos de desarrollo y arquitecturas de **RAMar Software Studio**. 
+<div align="center">
+
+# RAMar Software Studio
+
+**Innovación, Privacidad Computacional y Soluciones Corporativas**
+
+[![Documentación](https://img.shields.io/badge/Documentaci%C3%B3n-Ver%20portal-2e7d32?style=for-the-badge)](https://ramarstudio.github.io/RAMar_Repo/)
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![License](https://img.shields.io/badge/Licencia-Propietaria-red?style=flat-square)](./LICENSE)
+
+</div>
 
 ---
 
-> 🔥 **PORTAL DE DOCUMENTACIÓN INTERACTIVA**  
-> Te invitamos a leer toda la Ingeniería de este código de forma estructurada, con barra de navegación y sin perderte entre los archivos.  
-> 👉 **[ENTRAR AL PORTAL WEB DE DOCUMENTACIÓN](https://ramarstudio.github.io/RAMar_Repo/)**
+## Sistema de Control de Asistencia Biométrico
+
+Aplicación de escritorio que registra la asistencia del personal mediante **reconocimiento facial** en tiempo real. Opera 100% en la red local, sin internet, sin almacenar fotografías, con respuestas menores a un segundo.
+
+### Características
+
+| | Detalle |
+|---|---|
+| **Reconocimiento facial** | Identificación en < 1 segundo con InsightFace (ArcFace) |
+| **Privacidad** | Cero fotos — solo vectores matemáticos cifrados con AES-256 |
+| **Offline** | Funciona sin internet, sin suscripciones, sin datos en la nube |
+| **Panel admin** | Dashboard, empleados, horarios, marcajes, reportes, auditoría |
+| **Roles** | Empleado · Administrador · SuperAdministrador |
+
+### Arquitectura
+
+```
+┌──────────────────────────────┐     HTTP localhost     ┌─────────────────────────┐
+│   App WPF — C# .NET 8       │ ◄────────────────────► │  Motor IA — Python      │
+│                              │                        │                         │
+│   · Interfaz gráfica         │                        │  · FastAPI              │
+│   · Captura de cámara        │                        │  · InsightFace/ArcFace  │
+│   · Lógica de negocio        │                        │  · Embedding 512-d      │
+│   · Entity Framework Core    │                        │  · Inicio bajo demanda  │
+└──────────────┬───────────────┘                        └─────────────────────────┘
+               │
+               ▼
+      ┌─────────────────┐
+      │   PostgreSQL     │
+      │                  │
+      │  · Empleados     │
+      │  · Marcajes      │
+      │  · Embeddings    │
+      │  · Auditoría     │
+      └─────────────────┘
+```
+
+### Estructura del repositorio
+
+```
+RAMar_Repo/
+├── AttendanceSystem/
+│   └── src/
+│       ├── AttendanceSystem.App/            # Interfaz WPF
+│       ├── AttendanceSystem.Core/           # DTOs, interfaces, enums
+│       ├── AttendanceSystem.Services/       # Lógica de negocio
+│       ├── AttendanceSystem.Infrastructure/ # Acceso a datos (EF Core)
+│       ├── AttendanceSystem.Security/       # Autenticación, cifrado AES
+│       └── FaceService/                     # Motor biométrico (Python)
+├── Projects/                                # Planeamiento e ingeniería
+├── docs/                                    # Código fuente de la documentación
+└── mkdocs.yml                               # Configuración del portal web
+```
+
+### Inicio rápido
+
+```bash
+# 1. Clonar
+git clone https://github.com/ramarstudio/RAMar_Repo.git
+
+# 2. Configurar la base de datos PostgreSQL y el archivo .env
+
+# 3. Instalar dependencias de Python
+cd AttendanceSystem/src/FaceService && pip install -r requirements.txt
+
+# 4. Compilar y ejecutar
+cd AttendanceSystem && dotnet run --project src/AttendanceSystem.App
+```
+
+Para la guía completa de instalación, consulta la **[documentación](https://ramarstudio.github.io/RAMar_Repo/instalacion/guia/)**.
 
 ---
 
 <div align="center">
-  <h1>🚀 RAMar Software Studio</h1>
-  <p><em>Innovación, Privacidad Computacional y Construcción de Soluciones Corporativas</em></p>
+
+**[Documentación completa](https://ramarstudio.github.io/RAMar_Repo/)** · **[Producto](https://ramarstudio.github.io/RAMar_Repo/producto/)** · **[Arquitectura](https://ramarstudio.github.io/RAMar_Repo/arquitectura/)** · **[Ingeniería](https://ramarstudio.github.io/RAMar_Repo/ingenieria/)**
+
 </div>
-  <p><em>Innovación, Privacidad Computacional y Construcción de Soluciones Corporativas</em></p>
-</div>
 
 ---
 
-## 🏢 ¿Quiénes Somos?
-Somos un estudio de Ingeniería de Software dedicado a construir y orquestar herramientas digitales corporativas. Analizamos cada requerimiento operativo y de negocio a profundidad para entregar plataformas diseñadas inteligentemente desde sus cimientos. Codificamos ecosistemas sólidos, ágiles y altamente funcionales adaptados a las exigencias corporativas reales, generando tecnología que permite a las empresas y MYPES escalar con total control y seguridad.
-
-## ⚙️ ¿Cómo Trabajamos?
-Nuestro modelo de desarrollo se rige por la integridad profesional, el conocimiento técnico y la transparencia total:
-1. **Resolución Directa y Honesta:** No sobredimensionamos herramientas ni vendemos tecnologías innecesarias. Evaluamos el problema real de cada empresa y estructuramos la tecnología precisa que resuelve esa fricción de manera eficiente.
-2. **Ingeniería Antes de Codificar:** No trabajamos a ciegas ni improvisamos. Trazamos los requerimientos, diseñamos la experiencia visual (UX) y validamos las reglas del negocio en conjunto con el cliente antes de que los desarrolladores pasen a producción.
-3. **Desarrollo Íntegro y Seguro:** Adoptamos la protección de datos como una norma ética inquebrantable. Cuidamos cada bloque de código y base de datos para asegurar que la información de las empresas esté operando sobre un piso sólido y seguro.
-
-## 💡 ¿Qué Proponemos?
-Proponemos un abanico de soluciones de software altamente auditables para modernizar negocios de manera eficiente. Nuestra meta es optimizar y automatizar departamentos enteros —como el control de recursos y tiempos— garantizando flujos de trabajo inteligentes, interfaces amigables al usuario y arquitecturas limpias y mantenibles.
-
----
-
-## 📸 Proyecto Central: Sistema de Control de Asistencia Biométrico
-
-Hemos desarrollado desde cero una aplicación de escritorio diseñada para registrar y gestionar la asistencia del personal de manera automática. Este sistema reconoce los rostros de los trabajadores al instante, frenando la falsificación de identidades (el clásico "marcar por un amigo") y protegiendo totalmente la privacidad corporativa.
-
-### 🎯 Lo que resuelve este sistema (Perfil Comercial / Negocios)
-Esta sección expone cómo el proyecto impacta positivamente en tu empresa, en un lenguaje sencillo y directo:
-* **Velocidad 100% Sin Internet:** El sistema no se "cuelga" ni falla si el internet de la oficina se corta, porque opera localmente en la propia computadora.
-* **Reportes y Administración Fácil:** Recursos Humanos cuenta con un panel sumamente intuitivo donde, a simple vista, sabe a qué hora entró el personal, visualiza retardos y maneja altas de empleados.
-* **Privacidad y Cero Fotografías:** Protegemos legalmente a la empresa. Nunca guardamos fotos del personal; el sistema transforma el rostro humano en un código matemático que, si un hacker se robara, no le serviría de nada.
-👉 **[VER CÓMO FUNCIONA ESTE NEGOCIO: Entra aquí para leer los Planos y Reglas de la Solución](./Projects/README.md)**
-
-### ⚙️ Cómo está construido (Perfil Ingeniería / Desarrollador)
-Esta sección expone el "Bajo el capó" de la aplicación. Es decir, con qué herramientas especializadas logramos construir un software tan rápido y seguro:
-* **El Orquestador (Aplicación Visual):** Escrito en **C# .NET 8 (WPF)** con el Patrón MVVM. Al ser nativo de Windows, logra atrapar el video de la cámara usando directamente el hardware, casi sin consumir el procesador (CPU).
-* **El Motor de Reconocimiento:** Un microservicio local encapsulado en **Python (FastAPI)** que utiliza potentes modelos matemáticos de Inteligencia Artificial para extraer los vectores del rostro.
-* **La Bóveda de Datos:** Una base estricta y blindada orquestada mediante **PostgreSQL** y *Entity Framework Core*, asegurando que el registro de entradas y salidas sea inalterable.
-👉 **[VER CÓDIGO Y ARQUITECTURA: Entra aquí para explorar el Software y sus Lenguajes](./AttendanceSystem/README.md)**
-
----
-
-<br>
-
-> **Legal & Copyright:**  
-> This repository is intended **exclusively for storage, administration, and management purposes**.  
-> It is **not meant for public distribution, reuse, or external reference**. Unauthorized access, disclosure, or use of the information contained in this repository is strictly prohibited.  
-> © RAMar Software Studio. All rights reserved.
+> Este repositorio es de uso exclusivo para almacenamiento, administración y gestión interna.
+> No está destinado a distribución pública, reutilización ni referencia externa.
+> © RAMar Software Studio. Todos los derechos reservados.
