@@ -6,7 +6,7 @@ icon: material/star
 
 ## Velocidad sin friccion
 
-El marcaje biometrico se completa en menos de **1 segundo**. El empleado se acerca a la camara y el sistema responde inmediatamente.
+El marcaje biometrico se completa en menos de **1 segundo**:
 
 <ul class="step-list">
 <li>El empleado se posiciona frente a la camara</li>
@@ -34,7 +34,7 @@ El sistema esta disenado con el principio de **privacidad por diseno**:
 | Caracteristica | Este sistema | Soluciones cloud |
 |---|---|---|
 | Dependencia de internet | :material-close: No | :material-check: Si |
-| Costos recurrentes | :material-close: No | :material-check: Suscripcion mensual |
+| Costos recurrentes | :material-close: No | :material-check: Suscripcion |
 | Datos a terceros | :material-close: No | :material-check: Si |
 | Funciona sin conexion | :material-check: Si | :material-close: No |
 | Latencia | **< 1 segundo** | Variable |
@@ -44,54 +44,42 @@ El sistema esta disenado con el principio de **privacidad por diseno**:
 
 ## Panel administrativo
 
-<div class="feature-grid" markdown>
+<div class="grid cards" markdown>
 
-<div class="feature-card">
-<span class="card-icon">:material-view-dashboard:</span>
+-   :material-view-dashboard:{ .lg .middle } **Dashboard**
 
-### Dashboard
+    ---
 
-Metricas del dia, tendencias de 14 dias, heatmap de asistencia y top tardanzas.
-</div>
+    Metricas del dia, tendencias de 14 dias, heatmap de asistencia y ranking de tardanzas.
 
-<div class="feature-card">
-<span class="card-icon">:material-account-multiple:</span>
+-   :material-account-multiple:{ .lg .middle } **Empleados y usuarios**
 
-### Empleados y usuarios
+    ---
 
-Alta, baja y modificacion con roles diferenciados: empleado, admin, superadmin.
-</div>
+    Alta, baja y modificacion con roles diferenciados: empleado, admin, superadmin.
 
-<div class="feature-card">
-<span class="card-icon">:material-clock-outline:</span>
+-   :material-clock-outline:{ .lg .middle } **Horarios**
 
-### Horarios
+    ---
 
-Configuracion de jornadas con vigencias, tolerancias y breaks.
-</div>
+    Configuracion de jornadas con vigencias, tolerancias y breaks.
 
-<div class="feature-card">
-<span class="card-icon">:material-file-chart:</span>
+-   :material-file-chart:{ .lg .middle } **Reportes**
 
-### Reportes
+    ---
 
-Exportacion de datos, filtros avanzados e historial completo por empleado.
-</div>
+    Exportacion de datos, filtros avanzados e historial completo por empleado.
 
-<div class="feature-card">
-<span class="card-icon">:material-history:</span>
+-   :material-history:{ .lg .middle } **Auditoria**
 
-### Auditoria
+    ---
 
-Registro de todas las operaciones con usuario, fecha, accion y entidad afectada.
-</div>
+    Registro de todas las operaciones con usuario, fecha, accion y entidad afectada.
 
-<div class="feature-card">
-<span class="card-icon">:material-cog:</span>
+-   :material-cog:{ .lg .middle } **Configuracion**
 
-### Configuracion
+    ---
 
-Parametros del sistema con presets intuitivos. Solo accesible para superadministradores.
-</div>
+    Parametros del sistema con presets intuitivos. Solo accesible para superadministradores.
 
 </div>

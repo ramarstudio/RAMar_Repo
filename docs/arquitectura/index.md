@@ -45,10 +45,10 @@ graph TB
 | Proyecto | Responsabilidad |
 |---|---|
 | `AttendanceSystem.App` | Interfaz grafica, vistas XAML, code-behind |
-| `AttendanceSystem.Core` | DTOs, interfaces, enums (capa 0 — sin dependencias) |
+| `AttendanceSystem.Core` | DTOs, interfaces, enums — capa sin dependencias |
 | `AttendanceSystem.Services` | Logica de negocio, reglas de marcaje |
 | `AttendanceSystem.Infrastructure` | Acceso a datos, repositorios, EF Core |
-| `AttendanceSystem.Security` | Autenticacion, cifrado AES, gestion de sesiones |
+| `AttendanceSystem.Security` | Autenticacion, cifrado AES, sesiones |
 
 ## Motor biometrico (Python)
 
@@ -65,27 +65,23 @@ graph TB
 
 ## Documentos de arquitectura
 
-<div class="feature-grid" markdown>
+<div class="grid cards" markdown>
 
-<div class="feature-card">
-<span class="card-icon">:material-scale-balance:</span>
+-   :material-scale-balance:{ .lg .middle } **ADR: WPF vs Web**
 
-### ADR: WPF vs Web
+    ---
 
-Por que se descarto React a favor de una app nativa de escritorio.
+    Por que se descarto React a favor de una app nativa de escritorio.
 
-[Leer decision](adr-wpf.md){ .md-button }
-</div>
+    [:octicons-arrow-right-24: Leer decision](adr-wpf.md)
 
-<div class="feature-card">
-<span class="card-icon">:material-face-recognition:</span>
+-   :material-face-recognition:{ .lg .middle } **Motor biometrico**
 
-### Motor biometrico
+    ---
 
-InsightFace, ArcFace, cifrado y gestion de recursos del servicio Python.
+    InsightFace, ArcFace, cifrado y gestion de recursos del servicio Python.
 
-[Ver detalles](motor-biometrico.md){ .md-button }
-</div>
+    [:octicons-arrow-right-24: Ver detalles](motor-biometrico.md)
 
 </div>
 
@@ -95,8 +91,8 @@ InsightFace, ArcFace, cifrado y gestion de recursos del servicio Python.
 
 ## Principios de diseno
 
-- **Abstraccion** — Interfaces para detector y reconocedor facial (intercambiables sin tocar el resto)
+- **Abstraccion** — Interfaces para detector y reconocedor facial (intercambiables)
 - **Eficiencia** — Motor IA bajo demanda, se detiene por inactividad
-- **Seguridad** — Embeddings cifrados AES-256, comunicacion solo por localhost
+- **Seguridad** — Embeddings cifrados AES-256, comunicacion solo localhost
 - **Separacion** — Cada capa tiene una unica responsabilidad
-- **Flexibilidad** — Cambiar de InsightFace a otro modelo solo requiere un nuevo adapter
+- **Flexibilidad** — Cambiar de modelo solo requiere un nuevo adapter

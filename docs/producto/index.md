@@ -8,28 +8,23 @@ icon: material/package-variant
 
 El **Control de Asistencia Biometrico** reemplaza los metodos tradicionales de registro de personal — huelleros, tarjetas, firmas — por **reconocimiento facial automatico** en tiempo real.
 
-<div class="stat-grid" markdown>
-
-<div class="stat-card">
-<div class="stat-value">:material-camera:</div>
-<div class="stat-label">Sin contacto</div>
-</div>
-
-<div class="stat-card">
-<div class="stat-value">:material-clock-fast:</div>
-<div class="stat-label">Menos de 1 segundo</div>
-</div>
-
-<div class="stat-card">
-<div class="stat-value">:material-wifi-off:</div>
-<div class="stat-label">Sin internet</div>
-</div>
-
-<div class="stat-card">
-<div class="stat-value">:material-shield-lock:</div>
-<div class="stat-label">Cero fotos</div>
-</div>
-
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-value">&lt; 1s</div>
+    <div class="stat-label">Sin contacto</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">Local</div>
+    <div class="stat-label">Sin internet</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">0</div>
+    <div class="stat-label">Fotos guardadas</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">AES</div>
+    <div class="stat-label">Cifrado total</div>
+  </div>
 </div>
 
 ---
@@ -38,39 +33,31 @@ El **Control de Asistencia Biometrico** reemplaza los metodos tradicionales de r
 
 ## Para quien es
 
-<div class="feature-grid" markdown>
+<div class="grid cards" markdown>
 
-<div class="feature-card">
-<span class="card-icon">:material-office-building:</span>
+-   :material-office-building:{ .lg .middle } **Gerencia / Direccion**
 
-### Gerencia / Direccion
+    ---
 
-Visibilidad total sobre puntualidad, ausencias y tendencias del personal con dashboard en tiempo real.
-</div>
+    Visibilidad total sobre puntualidad, ausencias y tendencias del personal con dashboard en tiempo real.
 
-<div class="feature-card">
-<span class="card-icon">:material-account-group:</span>
+-   :material-account-group:{ .lg .middle } **Recursos Humanos**
 
-### Recursos Humanos
+    ---
 
-Panel completo para gestionar empleados, horarios, tardanzas, reportes y auditoria de operaciones.
-</div>
+    Panel completo para gestionar empleados, horarios, tardanzas, reportes y auditoria de operaciones.
 
-<div class="feature-card">
-<span class="card-icon">:material-server-network:</span>
+-   :material-server-network:{ .lg .middle } **TI / Sistemas**
 
-### TI / Sistemas
+    ---
 
-Solucion local sin dependencias cloud. Arquitectura limpia, facil de mantener y desplegar.
-</div>
+    Solucion local sin dependencias cloud. Arquitectura limpia, facil de mantener y desplegar.
 
-<div class="feature-card">
-<span class="card-icon">:material-account:</span>
+-   :material-account:{ .lg .middle } **Empleados**
 
-### Empleados
+    ---
 
-Marcaje rapido frente a la camara. Sin dispositivos externos, sin contacto fisico, sin friccion.
-</div>
+    Marcaje rapido frente a la camara. Sin dispositivos externos, sin contacto fisico, sin friccion.
 
 </div>
 
@@ -87,13 +74,13 @@ Marcaje rapido frente a la camara. Sin dispositivos externos, sin contacto fisic
     Todo opera dentro de la red local de la empresa. No hay costos recurrentes, no se envian datos a terceros, no hay puntos de fallo externos.
 
 !!! success "Rendimiento nativo"
-    Al ser una aplicacion de escritorio Windows (no web), accede directamente al hardware de la camara con un consumo de CPU menor al 1%. Sin las capas de abstraccion del navegador.
+    Al ser una aplicacion de escritorio Windows (no web), accede directamente al hardware de la camara con un consumo de CPU menor al 1%.
 
 ---
 
 <div style="text-align: center" markdown>
 
 [Ver beneficios en detalle](beneficios.md){ .md-button .md-button--primary }
-[Como funciona tecnicamente](como-funciona.md){ .md-button }
+[Como funciona](como-funciona.md){ .md-button }
 
 </div>

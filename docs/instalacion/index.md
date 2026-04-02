@@ -6,29 +6,25 @@ icon: material/download
 
 <span class="section-label">Puesta en marcha</span>
 
-Esta seccion cubre todo lo necesario para desplegar el sistema de asistencia biometrico en una maquina Windows.
+Todo lo necesario para desplegar el sistema de asistencia biometrico en una maquina Windows.
 
-<div class="feature-grid" markdown>
+<div class="grid cards" markdown>
 
-<div class="feature-card">
-<span class="card-icon">:material-clipboard-check:</span>
+-   :material-clipboard-check:{ .lg .middle } **Requisitos previos**
 
-### Requisitos previos
+    ---
 
-Software, hardware y puertos necesarios antes de comenzar.
+    Software, hardware y puertos necesarios antes de comenzar.
 
-[Ver requisitos](requisitos.md){ .md-button }
-</div>
+    [:octicons-arrow-right-24: Ver requisitos](requisitos.md)
 
-<div class="feature-card">
-<span class="card-icon">:material-rocket-launch:</span>
+-   :material-rocket-launch:{ .lg .middle } **Guia paso a paso**
 
-### Guia paso a paso
+    ---
 
-Desde clonar el repositorio hasta el primer marcaje biometrico.
+    Desde clonar el repositorio hasta el primer marcaje biometrico.
 
-[Comenzar instalacion](guia.md){ .md-button .md-button--primary }
-</div>
+    [:octicons-arrow-right-24: Comenzar instalacion](guia.md)
 
 </div>
 
@@ -47,8 +43,6 @@ graph LR
     C --> D[Dependencias Python]
     D --> E[Compilar WPF]
     E --> F[Ejecutar]
-
-    style F fill:#0f3460,stroke:#00d2ff,color:#fff
 ```
 
 </div>

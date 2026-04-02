@@ -6,7 +6,7 @@ icon: material/book-open-variant
 
 <span class="section-label">Proceso de desarrollo</span>
 
-Cada paso del desarrollo queda documentado formalmente antes de escribir codigo. Este enfoque previene desviaciones de alcance, sobrecostos y deuda tecnica.
+Cada paso queda documentado formalmente antes de escribir codigo. Este enfoque previene desviaciones de alcance, sobrecostos y deuda tecnica.
 
 <div class="diagram-box">
 
@@ -17,9 +17,6 @@ graph LR
     C --> D[Diseno UX/UML]
     D --> E[Desarrollo]
     E --> F[Validacion]
-
-    style A fill:#1a1a2e,stroke:#00d2ff,color:#fff
-    style F fill:#0f3460,stroke:#00d2ff,color:#fff
 ```
 
 </div>
@@ -30,36 +27,30 @@ graph LR
 
 ## Contenido de esta seccion
 
-<div class="feature-grid" markdown>
+<div class="grid cards" markdown>
 
-<div class="feature-card">
-<span class="card-icon">:material-reload:</span>
+-   :material-reload:{ .lg .middle } **Metodologia SDLC**
 
-### Metodologia SDLC
+    ---
 
-Ciclo de vida y fases de produccion que garantizan calidad antes de codificar.
+    Ciclo de vida y fases de produccion que garantizan calidad antes de codificar.
 
-[Ver metodologia](metodologia.md){ .md-button }
-</div>
+    [:octicons-arrow-right-24: Ver metodologia](metodologia.md)
 
-<div class="feature-card">
-<span class="card-icon">:material-filter:</span>
+-   :material-filter:{ .lg .middle } **Requisitos MoSCoW**
 
-### Requisitos MoSCoW
+    ---
 
-Matriz de priorizacion: que se construye, que se descarta, y por que.
+    Matriz de priorizacion: que se construye, que se descarta, y por que.
 
-[Ver requisitos](requisitos.md){ .md-button }
-</div>
+    [:octicons-arrow-right-24: Ver requisitos](requisitos.md)
 
-<div class="feature-card">
-<span class="card-icon">:material-vector-polyline:</span>
+-   :material-vector-polyline:{ .lg .middle } **Diagramas UML**
 
-### Diagramas UML
+    ---
 
-Casos de uso, arquitectura y flujos de marcaje documentados visualmente.
+    Casos de uso, arquitectura y flujos de marcaje documentados visualmente.
 
-[Ver diagramas](diagramas.md){ .md-button }
-</div>
+    [:octicons-arrow-right-24: Ver diagramas](diagramas.md)
 
 </div>
