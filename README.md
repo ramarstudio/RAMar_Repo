@@ -3,14 +3,9 @@ Este repositorio contiene material confidencial exclusivo correspondiente a los 
 
 ---
 
-> 🔥 **¡NUEVO PORTAL LIBRERÍA DE DOCUMENTACIÓN! (Tipo .io)**  
-> Te invitamos a leer toda la Ingeniería de este código sin saltar de README en README. Hemos implementado un sitio web interactivo con barras laterales, indexación y barra de búsqueda interna (Desplegable y alojable en formato `tu-usuario.github.io`).
-> 
-> **Cómo iniciar tu libro interactivo (Local):**
-> 1. Abre tu terminal.
-> 2. Asegura tener instalado el constructor visual: `pip install mkdocs-material`
-> 3. Ejecuta en esta misma carpeta: `mkdocs serve`
-> 4. Entra al link que aparece en consola (generalmente `http://localhost:8000`) y enamórate de la documentación.
+> 🔥 **PORTAL DE DOCUMENTACIÓN INTERACTIVA**  
+> Te invitamos a leer toda la Ingeniería de este código de forma estructurada, con barra de navegación y sin perderte entre los archivos.  
+> 👉 **[ENTRAR AL PORTAL WEB DE DOCUMENTACIÓN](https://ramarstudio.github.io/RAMar_Repo/)**
 
 ---
 
