@@ -6,7 +6,7 @@
 ## 1. Introducción
 
 ### 1.1 Propósito
-Este documento define formalmente los requisitos funcionales del sistema de control de asistencia basado en una plataforma web local, orientado a empresas que requieren registrar asistencia diaria sin utilizar hardware biométrico externo.
+Este documento define formalmente los requisitos funcionales del sistema de control de asistencia basado en una aplicación nativa de escritorio (C# WPF), orientado a empresas que requieren registrar asistencia diaria sin utilizar hardware biométrico externo corporativo.
 
 ### 1.2 Alcance
 El sistema permitirá registrar asistencia mediante computadoras locales dentro de la red corporativa, priorizando rapidez operativa, facilidad de uso y control administrativo, con reconocimiento facial como mejora futura.
@@ -16,7 +16,7 @@ El sistema permitirá registrar asistencia mediante computadoras locales dentro 
 ## 2. Descripción General
 
 ### 2.1 Perspectiva del producto
-El sistema es una aplicación web local diseñada para operar sin conexión a internet y sin dispositivos biométricos dedicados.
+El sistema es una aplicación nativa de Windows diseñada para operar sobre una red local en sincronía con una base de datos relacional (PostgreSQL) y un script-microservicio (FastAPI/Python), optimizando el rendimiento frente a la cámara local sin latencias de red.
 
 ### 2.2 Clases de usuarios
 - **Empleado**: Usuario autorizado para realizar marcajes de asistencia.
@@ -90,7 +90,7 @@ Las siguientes funcionalidades han sido identificadas explícitamente como fuera
 | RF11 | Persistencia local | Almacenar marcajes temporalmente ante fallos del servidor | Must |
 | RF12 | Reconocimiento facial | Validar identidad mediante cámara web local | Must |
 | RF13 | No hardware externo | Excluir el uso de lectores biométricos dedicados | Must |
-| RF14 | Acceso por navegador | Permitir uso desde navegadores web compatibles | Must |
+| RF14 | App de Escritorio | Permitir uso mediante un ejecutable nativo WPF con UI moderno | Must |
 | RF15 | Tiempo de marcado | Completar el marcaje en menos de 30 segundos | Must |
 | RF16 | Concurrencia mínima | Soportar múltiples usuarios simultáneos | Must |
 | RF17 | Límite de intentos | Gestionar intentos consecutivos de marcaje | Should |
