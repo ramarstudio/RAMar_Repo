@@ -1,39 +1,50 @@
-name: Deploy Docs to GitHub Pages (.io)
+name: Deploy docs to GitHub Pages .io
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
+# Permisos ultra-explícitos nativos de GitHub Actions
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
-      - name: Configurar Git Credentials
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          
-      - uses: actions/setup-python@v5
+      - name: Instalar Python
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
           
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-      
-      - uses: actions/cache@v4
-        with:
-          key: mkdocs-material-${{ env.cache_id }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
-            
-      - name: Instalar MkDocs Material
+      - name: Instalar Constructor MkDocs
         run: pip install mkdocs-material
         
-      - name: Construir y Empujar Pagina Github IO
-        run: mkdocs gh-deploy --force
+      - name: Compilar HTML Nativo
+        run: mkdocs build
+        
+      - name: Empaquetar Pagina (Nativo)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Desplegar Directamente a Nube
+        id: deployment
+        uses: actions/deploy-pages@v4
