@@ -1,5 +1,5 @@
 /* ============================================
-   RAMar Studio — GitBook-inspired clean theme
+   RAMar Studio — GitBook-style sidebar theme
    ============================================ */
 
 /* --- Dark mode --- */
@@ -16,7 +16,7 @@
   background: #1e1e1e;
 }
 
-[data-md-color-scheme="slate"] .md-tabs {
+[data-md-color-scheme="slate"] .md-sidebar {
   background: #1e1e1e;
 }
 
@@ -37,15 +37,14 @@
   color: #1f2937;
 }
 
-[data-md-color-scheme="default"] .md-tabs {
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-  color: #4b5563;
+[data-md-color-scheme="default"] .md-sidebar {
+  background: #f9fafb;
+  border-right: 1px solid #e5e7eb;
 }
 
 /* --- Typography --- */
 .md-typeset {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   line-height: 1.75;
 }
 
@@ -57,9 +56,8 @@
 }
 
 .md-typeset h2 {
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
   margin-top: 2.5rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--md-default-fg-color--lightest);
@@ -71,27 +69,44 @@
   margin-top: 1.8rem;
 }
 
-/* --- Content width --- */
+/* --- Content area --- */
 .md-content__inner {
   max-width: 48rem;
-  padding-top: 1.5rem;
+  padding-top: 1.2rem;
 }
 
-/* --- Sidebar --- */
-.md-nav__title {
-  font-size: 0.65rem;
+/* --- Sidebar navigation --- */
+.md-nav--primary .md-nav__title {
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  padding: 0.6rem 0.6rem 0.2rem;
 }
 
 .md-nav__item .md-nav__link {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.md-nav__item .md-nav__link:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-md-color-scheme="default"] .md-nav__item .md-nav__link:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.md-nav__item .md-nav__link--active {
+  font-weight: 600;
+  color: var(--md-accent-fg-color);
 }
 
 /* --- Tables --- */
 .md-typeset table:not([class]) {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   border: 1px solid var(--md-default-fg-color--lightest);
   border-radius: 8px;
   overflow: hidden;
@@ -99,14 +114,13 @@
 
 .md-typeset table:not([class]) th {
   font-weight: 600;
-  font-size: 0.75rem;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
 }
 
-/* --- Code blocks --- */
+/* --- Code --- */
 .md-typeset code {
-  font-size: 0.82em;
+  font-size: 0.85em;
   border-radius: 4px;
 }
 
@@ -118,11 +132,11 @@
 .md-typeset .admonition,
 .md-typeset details {
   border-radius: 8px;
-  font-size: 0.84rem;
+  font-size: 0.87rem;
   border-width: 0 0 0 4px;
 }
 
-/* --- Horizontal rules --- */
+/* --- HR --- */
 .md-typeset hr {
   border-color: var(--md-default-fg-color--lightest);
   margin: 2rem 0;
@@ -139,7 +153,6 @@
   border-top: 1px solid var(--md-default-fg-color--lightest);
 }
 
-/* --- Smooth scroll --- */
 html {
   scroll-behavior: smooth;
 }

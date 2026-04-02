@@ -9,14 +9,13 @@ theme:
   name: material
   language: es
   font:
-    text: Inter
-    code: JetBrains Mono
+    text: Source Sans Pro
+    code: Source Code Pro
   features:
     - navigation.instant
     - navigation.tracking
-    - navigation.tabs
-    - navigation.tabs.sticky
     - navigation.sections
+    - navigation.expand
     - navigation.top
     - navigation.footer
     - navigation.path
