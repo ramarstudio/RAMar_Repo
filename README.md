@@ -1,57 +1,46 @@
 ⚠️ **Confidential & Sensitive Content**  
-This repository contains **sensitive and explicit** materials related to the internal development processes of projects carried out by **RAMar Software Studio**. El siguiente documento sirve como portal principal para los proyectos desarrollados y almacenados internamente.
+Este repositorio contiene material confidencial exclusivo correspondiente a los procesos de desarrollo y arquitecturas de **RAMar Software Studio**. 
 
 ---
 
 <div align="center">
   <h1>🚀 RAMar Software Studio</h1>
-  <p><em>Innovación, Privacidad y Rendimiento Extremo en Arquitecturas Corporativas</em></p>
+  <p><em>Innovación, Privacidad Computacional y Construcción de Soluciones Corporativas</em></p>
 </div>
 
 ---
 
-## 🎯 Nuestra Visión: ¿A qué queremos llegar?
+## 🏢 ¿Quiénes Somos?
+Somos un estudio de Ingeniería de Software dedicado a construir y orquestar herramientas digitales corporativas. Nos alejamos de las plantillas genéricas y evitamos depender de monopolios de Nube (Cloud) que expongan los datos sensibles de nuestros clientes. Redactamos desde cero ecosistemas sólidos, increíblemente ágiles y altamente funcionales adaptados a las exigencias operativas reales del mercado (Especialmente las MYPEs).
 
-En **RAMar Software Studio** no escribimos simple código; diseñamos ecosistemas digitales para resolver cuellos de botella empresariales críticos. Nuestro enfoque se centra en **tres pilares fundamentales**:
+## ⚙️ ¿Cómo Trabajamos?
+Cultivamos nuestro código bajo tres principios de hierro que marcan la diferencia:
+1. **Rendimiento Nativista (Off-Line):** Optimizamos nuestras aplicaciones para correr rapidísimo aprovechando los procesadores locales de las oficinas. Al no forzar salidas lentas al internet, cancelamos de raíz los cuellos de botella.
+2. **Defensa de la Privacidad (Seguridad):** Nunca traficamos datos vivos. Elementos hiper-sensibles, como la biometría humana, se transforman localmente en fórmulas matemáticas puras. Si un ladrón cibernético entra a los servidores de nuestros clientes, solo encontrará números indescifrables en lugar de fotografías.
+3. **Ingeniería Antes Que Escritura:** No programamos a ciegas. Diseñamos prototipos visuales (UX) e investigamos a profundidad los casos de fallo del modelo del negocio antes de pasar a la etapa de Producción.
 
-1. ⚡ **Rendimiento:** Eliminar dependencias lentas de la nube (Cloud/Web), exprimiendo el 100% del hardware local de las empresas.
-2. 🔒 **Privacidad Total de Datos:** La información confidencial (como la biometría humana) no sale a internet; vive protegida y encriptada en la red local.
-3. 🏢 **Experiencia de Usuario Premium:** Interfaces modernas, intuitivas y fluidas (MVVM) que le facilitan la vida a trabajadores y administradores.
-
-A continuación, presentamos las soluciones alojadas en este repositorio base:
-
----
-
-## 📸 1. Attendance System (Control de Asistencia Biométrico)
-
-### ❌ El Problema (Lo que combatimos)
-Las empresas modernas pierden dinero por marcajes fraudulentos (robo de tiempo) y sistemas de huella digital obsoletos, poco higiénicos o caros por el uso de hardwares chinos estancados. Además, las soluciones en la "Nube" actuales suelen subir las fotos privadas de la cara de los empleados a servidores externos, rompiendo gravemente las leyes de privacidad y extorsionando mediante tarifas mensuales de suscripción.
-
-### ✅ La Solución Estelar 
-Hemos desarrollado desde cero una **Plataforma de Control de Asistencia Segura e Independiente**, donde las empresas utilizan webcams convencionales acopladas con un fortísimo motor de Inteligencia Artificial Matemática.
-
-*   **Identidad Matemática, no Fotográfica:** No guardamos rostros. Convertimos tu cara en un mapa vectorizado inquebrantable de 512 puntos, encriptado simétricamente con AES. Si alguien hackeara nuestra base de datos, solo vería algoritmos.
-*   **Cero Latencia de Red:** La detección ocurre nativamente controlando el hardware (DirectShow C#) e invocando al microservicio en memoria, omitiendo el overhead del protocolo HTTP de las alternativas web.
-*   **Gestión Centralizada:** Panel administrativo responsivo y auditable, utilizando Entity Framework Core para la integridad relacional de marcajes e historiales.
-
-🔹 **Stack Tecnológico:** `.NET 8 WPF` + `Python / FastAPI (InsightFace)` + `PostgreSQL`.
-
-🔗 **[Ver Documentación Técnica y Arquitectura del Sistema](./AttendanceSystem/README.md)**
+## 💡 ¿Qué Proponemos?
+Proponemos un ecosistema de herramientas autosuficientes para modernizar negocios sin exprimir sus billeteras con tarifas de servicio estafadoras y suscripciones infinitas. Nuestra meta es automatizar departamentos enteros —como Recursos Humanos— garantizando auditorías precisas mediante software inteligente, puro y transparente, desplazando los hardwares de la "vieja escuela".
 
 ---
 
-## 📚 2. Especificaciones y Casos de Uso (Projects)
+## 🗂️ Nuestro Portafolio y Conocimiento
 
-El repositorio incluye el análisis de requerimientos que fundamentan la ingeniería del software. Contiene análisis funcionales (Matriz MoSCoW), diagramas de arquitectura inicial y propuestas formales de diseño.
+Si eres inversionista, nuevo desarrollador integrante, o sencillamente deseas ir "Más Allá" para conocer a un nivel muy detallado nuestra arquitectura, haz clic en las áreas correspondientes. Cada nivel abrirá un documento profundo exclusivo del tema analizado:
 
-🔗 **[Acceder a la Documentación de Planificación y Requisitos](./Projects/)**
+### 1. 📸 Attendance System (Nuestra Aplicación Estable)
+Nuestro sistema nativo de asistencia biométrico asistido por Inteligencia Artificial de Reconocimiento Facial. Una aplicación ágil para Windows que audita al personal evadiendo latencias, mensualidades Cloud y suplantación de identidades.
+👉 **[QUIERO VER DETALLES: Leer Manual Técnico, Lenguajes de Programación y Construcción del Sistema](./AttendanceSystem/README.md)**
+
+### 2. 🧠 Modelado de Negocios y Planeamiento (Nuestros Planos)
+La fundación de nuestro éxito institucional. Si deseas saber cómo diagramamos nuestras ideas, por qué descartamos rutas, y acceder a las maquetas visuales (Diagramas UML) donde estudiamos la Psicología del Usuario Final antes de vender nuestro software.
+👉 **[QUIERO VER DETALLES: Entrar a nuestra Biblioteca de Planificación y Diagramas](./Projects/README.md)**
 
 ---
 
 <br>
 
-> **Nota de Privacidad Legal y Copyright:**  
+> **Legal & Copyright:**  
 > This repository is intended **exclusively for storage, administration, and management purposes**.  
-> It is **not meant for public distribution, reuse, or external reference**.
-> Unauthorized access, disclosure, or use of the information contained in this repository is strictly prohibited.  
+> It is **not meant for public distribution, reuse, or external reference**. Unauthorized access, disclosure, or use of the information contained in this repository is strictly prohibited.  
 > © RAMar Software Studio. All rights reserved.
