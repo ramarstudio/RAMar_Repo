@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AttendanceSystem.Core.Interfaces;
@@ -23,6 +24,15 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 
     public virtual async Task UpdateAsync(T entity, CancellationToken ct = default)
     {
+        // Desadjuntar cualquier instancia previamente trackeada con el mismo Id
+        // para evitar: "cannot be tracked because another instance with the same key value"
+        var entry = _context.ChangeTracker.Entries<T>()
+            .FirstOrDefault(e => e.Entity != entity &&
+                _context.Entry(e.Entity).Property("id").CurrentValue.Equals(
+                    _context.Entry(entity).Property("id").CurrentValue));
+        if (entry != null)
+            entry.State = EntityState.Detached;
+
         _context.Set<T>().Update(entity);
         await _context.SaveChangesAsync(ct);
     }

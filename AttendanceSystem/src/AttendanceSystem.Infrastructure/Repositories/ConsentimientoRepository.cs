@@ -8,5 +8,5 @@ public class ConsentimientoRepository : RepositoryBase<Consentimiento>, IConsent
 
     public async Task<Consentimiento> GetByEmpleadoIdAsync(int empleadoId)
         => await _context.Consentimientos
-            .FirstOrDefaultAsync(c => c.GetEmpleadoId() == empleadoId);
+            .FirstOrDefaultAsync(c => EF.Property<int>(c, "empleadoId") == empleadoId);
 }

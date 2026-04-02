@@ -150,6 +150,16 @@
                             </Grid>
                         </Button>
 
+                        <Button x:Name="btnNavBiometria" Tag="biometria"
+                                Style="{StaticResource NavBtnStyle}" Click="NavBtn_Click"
+                                ToolTip="Biometría — Registro facial de empleados">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="FaceRecognition" Width="20" Height="20"
+                                                         VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                <TextBlock Text="Biometría" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
                         <Button x:Name="btnNavHorarios" Tag="horarios"
                                 Style="{StaticResource NavBtnStyle}" Click="NavBtn_Click"
                                 ToolTip="Horarios — Asignación de turnos por empleado">
@@ -189,6 +199,28 @@
                                 <materialDesign:PackIcon Kind="ShieldSearch" Width="20" Height="20"
                                                          VerticalAlignment="Center" Margin="0,0,12,0"/>
                                 <TextBlock Text="Auditoría" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Separator -->
+                        <Border Height="1" Margin="20,8">
+                            <Border.Background>
+                                <SolidColorBrush Color="White" Opacity="0.05"/>
+                            </Border.Background>
+                        </Border>
+
+                        <!-- MI CUENTA -->
+                        <TextBlock Text="MI CUENTA"
+                                   Foreground="{DynamicResource SidebarSectionLabel}" FontSize="9" FontWeight="Bold"
+                                   Margin="20,0,0,6"/>
+
+                        <Button x:Name="btnNavMiAsistencia" Tag="miasistencia"
+                                Style="{StaticResource NavBtnStyle}" Click="NavBtn_Click"
+                                ToolTip="Mi Asistencia — Registrar mi entrada/salida del día">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="AccountClock" Width="20" Height="20"
+                                                         VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                <TextBlock Text="Mi Asistencia" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 

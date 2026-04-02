@@ -6,6 +6,7 @@ namespace AttendanceSystem.Core.Enums
     /// </summary>
     public enum RolUsuario
     {
+        SuperAdmin = 0,
         Admin = 1,
         RRHH = 2,
         Empleado = 3

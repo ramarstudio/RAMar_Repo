@@ -18,6 +18,7 @@ namespace AttendanceSystem.Services
         private readonly IEncryptionService          _encryptionService;
         private readonly FacialServiceOptions        _options;
         private readonly ILogger<BiometricoService>  _logger;
+        private readonly IFaceServiceLifecycle       _faceServiceLifecycle;
 
         public BiometricoService(
             HttpClient                 httpClient,
@@ -25,7 +26,8 @@ namespace AttendanceSystem.Services
             IEmpleadoRepository        empleadoRepository,
             IEncryptionService         encryptionService,
             FacialServiceOptions       options,
-            ILogger<BiometricoService> logger)
+            ILogger<BiometricoService> logger,
+            IFaceServiceLifecycle      faceServiceLifecycle = null)
         {
             _httpClient               = httpClient;
             _consentimientoRepository = consentimientoRepository;
@@ -33,12 +35,16 @@ namespace AttendanceSystem.Services
             _encryptionService        = encryptionService;
             _options                  = options ?? throw new ArgumentNullException(nameof(options));
             _logger                   = logger;
+            _faceServiceLifecycle     = faceServiceLifecycle;
         }
 
         public async Task<bool> VerificarIdentidadAsync(string base64Image, string codigoEmpleado)
         {
             var empleado = await _empleadoRepository.GetByCodigoAsync(codigoEmpleado);
-            if (empleado == null || !empleado.TieneEmbedding()) return false;
+            if (empleado == null)
+                throw new InvalidOperationException($"Empleado '{codigoEmpleado}' no encontrado.");
+            if (!empleado.TieneEmbedding())
+                throw new InvalidOperationException($"El empleado '{codigoEmpleado}' no tiene un rostro registrado. Pida al administrador que registre su biometría.");
 
             var embeddingFacial = empleado.GetEmbeddingFacial();
 
@@ -48,32 +54,42 @@ namespace AttendanceSystem.Services
                 var encryptedStr = Encoding.UTF8.GetString(embeddingFacial.GetVectorCifrado());
                 var vectorJson   = _encryptionService.Decrypt(encryptedStr);
                 vectorConocido   = JsonSerializer.Deserialize<float[]>(vectorJson);
-                if (vectorConocido == null) return false;
+                if (vectorConocido == null)
+                    throw new InvalidOperationException("El vector facial almacenado está corrupto.");
             }
+            catch (InvalidOperationException) { throw; }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al descifrar embedding de {Codigo}.", codigoEmpleado);
-                return false;
+                throw new InvalidOperationException($"Error al descifrar datos biométricos: {ex.Message}");
             }
 
             var requestPayload = new { image_base64 = base64Image, known_embedding = vectorConocido };
 
+            // Arrancar FaceService bajo demanda si no está activo
+            if (!await EnsureFaceServiceAsync())
+                throw new InvalidOperationException("No se pudo iniciar el servicio facial.");
+
             HttpResponseMessage response;
             try
             {
-                // Usa la BaseAddress del HttpClient + ruta relativa desde appsettings
                 response = await _httpClient.PostAsJsonAsync(_options.VerifyPath, requestPayload);
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
                 _logger.LogWarning(ex, "Microservicio Python no disponible en {Path}.", _options.VerifyPath);
-                return false;
+                throw new InvalidOperationException($"Servicio facial no disponible: {ex.Message}");
+            }
+            catch (TaskCanceledException)
+            {
+                throw new InvalidOperationException("Tiempo de espera agotado al conectar con el servicio facial.");
             }
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning("Verificación devolvió {Status}.", response.StatusCode);
-                return false;
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("Verificación devolvió {Status}: {Body}", response.StatusCode, errorBody);
+                throw new InvalidOperationException($"Servicio facial respondió con error ({response.StatusCode}): {errorBody}");
             }
 
             PythonMatchResponse matchResult;
@@ -84,14 +100,15 @@ namespace AttendanceSystem.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al deserializar respuesta de verificación.");
-                return false;
+                throw new InvalidOperationException($"Error al procesar respuesta del servicio: {ex.Message}");
             }
 
-            if (matchResult == null) return false;
+            if (matchResult == null)
+                throw new InvalidOperationException("El servicio facial devolvió una respuesta vacía.");
 
             decimal umbral = embeddingFacial.GetUmbral();
             bool reconocido = matchResult.Match && matchResult.Confidence >= umbral;
-            _logger.LogDebug("Verificación {Codigo}: match={M}, confidence={C}, umbral={U}.",
+            _logger.LogInformation("Verificación {Codigo}: match={M}, confidence={C}, umbral={U}.",
                 codigoEmpleado, matchResult.Match, matchResult.Confidence, umbral);
             return reconocido;
         }
@@ -109,18 +126,35 @@ namespace AttendanceSystem.Services
 
             var requestPayload = new { image_base64 = base64Image };
 
+            // Arrancar FaceService bajo demanda si no está activo
+            if (!await EnsureFaceServiceAsync())
+                throw new InvalidOperationException(
+                    "No se pudo iniciar el servicio facial. Verifique que Python esté instalado y que la carpeta FaceService exista.");
+
             HttpResponseMessage response;
             try
             {
                 response = await _httpClient.PostAsJsonAsync(_options.EncodePath, requestPayload);
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
                 _logger.LogWarning(ex, "Microservicio Python no disponible en {Path}.", _options.EncodePath);
-                return false;
+                throw new InvalidOperationException(
+                    $"No se pudo conectar al servicio facial en {_options.EncodePath}. Error: {ex.Message}");
+            }
+            catch (TaskCanceledException)
+            {
+                throw new InvalidOperationException(
+                    "Tiempo de espera agotado al conectar con el servicio facial. El servicio puede estar iniciándose.");
             }
 
-            if (!response.IsSuccessStatusCode) return false;
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("FaceService respondió {Code}: {Body}", response.StatusCode, errorBody);
+                throw new InvalidOperationException(
+                    $"El servicio facial respondió con error ({response.StatusCode}): {errorBody}");
+            }
 
             PythonEncodeResponse encodeResult;
             try
@@ -130,10 +164,12 @@ namespace AttendanceSystem.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al deserializar respuesta de encode.");
-                return false;
+                throw new InvalidOperationException($"Error al procesar la respuesta del servicio facial: {ex.Message}");
             }
 
-            if (encodeResult?.Embedding == null) return false;
+            if (encodeResult?.Embedding == null)
+                throw new InvalidOperationException(
+                    "El servicio facial no detectó un rostro en la imagen. Asegúrese de estar frente a la cámara.");
 
             var vectorJson    = JsonSerializer.Serialize(encodeResult.Embedding);
             var vectorCifrado = Encoding.UTF8.GetBytes(_encryptionService.Encrypt(vectorJson));
@@ -150,6 +186,37 @@ namespace AttendanceSystem.Services
             await _empleadoRepository.UpdateAsync(empleado);
 
             _logger.LogInformation("Embedding registrado para empleado {Codigo}.", codigoEmpleado);
+            return true;
+        }
+
+
+        /// <summary>
+        /// Arranca el FaceService Python si no está activo.
+        /// Devuelve true si está listo, false si no se pudo arrancar.
+        /// </summary>
+        private async Task<bool> EnsureFaceServiceAsync()
+        {
+            if (_faceServiceLifecycle == null)
+            {
+                // Sin lifecycle manager (tests o desarrollo sin Python) → asumir que está corriendo
+                return true;
+            }
+
+            _faceServiceLifecycle.Touch();
+
+            if (_faceServiceLifecycle.IsRunning)
+                return true;
+
+            _logger.LogInformation("FaceService no está activo. Iniciando bajo demanda...");
+
+            bool ready = await _faceServiceLifecycle.EnsureRunningAsync();
+            if (!ready)
+            {
+                _logger.LogError("No se pudo iniciar el FaceService. Verifique que Python esté instalado.");
+                return false;
+            }
+
+            _logger.LogInformation("FaceService iniciado correctamente.");
             return true;
         }
 

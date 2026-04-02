@@ -112,10 +112,17 @@ namespace AttendanceSystem.Security
             return session != null && session.IsActive;
         }
 
+        public bool EsSuperAdmin()
+        {
+            var session = GetSession(_currentSessionToken);
+            return session != null && session.Role == nameof(RolUsuario.SuperAdmin);
+        }
+
         public bool EsAdministrador()
         {
             var session = GetSession(_currentSessionToken);
-            return session != null && session.Role == nameof(RolUsuario.Admin);
+            return session != null
+                && (session.Role == nameof(RolUsuario.Admin) || session.Role == nameof(RolUsuario.SuperAdmin));
         }
 
         public bool EsRRHH()

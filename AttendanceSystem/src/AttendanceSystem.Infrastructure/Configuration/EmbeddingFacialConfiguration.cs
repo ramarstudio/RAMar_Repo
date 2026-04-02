@@ -38,8 +38,8 @@ public class EmbeddingFacialConfiguration : IEntityTypeConfiguration<EmbeddingFa
                .HasColumnName("actualizado_en");
 
         builder.HasOne<Empleado>()
-               .WithMany()
-               .HasForeignKey("empleadoId")
+               .WithOne("embeddingFacial")
+               .HasForeignKey<EmbeddingFacial>("empleadoId")
                .OnDelete(DeleteBehavior.Cascade)
                .HasConstraintName("fk_embeddings_empleado");
 

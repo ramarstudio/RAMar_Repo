@@ -20,9 +20,6 @@ namespace AttendanceSystem.App.Controllers
 
         public void IniciarCamara(EventHandler<BitmapSource> onFrameArrivedCallback)
         {
-            if (!_cameraHelper.HayCamarasDisponibles())
-                throw new InvalidOperationException("No se detectó ninguna cámara web.");
-
             _cameraHelper.OnFrameArrived += onFrameArrivedCallback;
             _cameraHelper.IniciarCamara(0);
         }

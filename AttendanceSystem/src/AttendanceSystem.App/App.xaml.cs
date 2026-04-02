@@ -70,6 +70,19 @@ namespace AttendanceSystem.App
             _serviceProvider.GetRequiredService<MainWindow>().Show();
         }
 
+        protected override void OnExit(ExitEventArgs e)
+        {
+            // Matar el proceso Python si estaba corriendo — libera RAM inmediatamente
+            try
+            {
+                var faceManager = _serviceProvider?.GetService<FaceServiceManager>();
+                faceManager?.Dispose();
+            }
+            catch { /* best-effort cleanup */ }
+
+            base.OnExit(e);
+        }
+
         /// <summary>
         /// Lee las claves de seguridad de la tabla configuraciones.
         /// Si no existen, las genera y las guarda. Así nunca dependen del appsettings.json.
@@ -149,6 +162,14 @@ namespace AttendanceSystem.App
             services.AddSingleton(new FacialServiceOptions(facialVerifyPath, facialEncodePath));
             services.AddSingleton(new HttpClient { BaseAddress = new Uri(facialBaseUrl) });
 
+            // FaceServiceManager — gestiona ciclo de vida del microservicio Python
+            // Costo en RAM ~0 (solo un timer + un HttpClient liviano)
+            // Arranca Python bajo demanda, lo mata tras 10 min de inactividad
+            var idleMinutes = int.TryParse(_configuration["FacialService:IdleTimeoutMinutos"], out var im) ? im : 10;
+            services.AddSingleton<FaceServiceManager>(sp =>
+                new FaceServiceManager(facialBaseUrl, idleMinutes, sp.GetService<ILogger<FaceServiceManager>>()));
+            services.AddSingleton<IFaceServiceLifecycle>(sp => sp.GetRequiredService<FaceServiceManager>());
+
             // EmpleadoDefaultOptions — valores por defecto al crear empleados
             int entradaHora   = int.TryParse(_configuration["Empleado:HorarioEntradaHora"], out var eh) ? eh : 8;
             int salidaHora    = int.TryParse(_configuration["Empleado:HorarioSalidaHora"],  out var sh) ? sh : 17;
@@ -173,7 +194,7 @@ namespace AttendanceSystem.App
 
             // ── Capa de presentación ──────────────────────────────────────────
             services.AddSingleton<NavigationHelper>();
-            services.AddTransient<CameraHelper>();
+            services.AddSingleton<CameraHelper>();
 
             // IBiometricoController — abstracción para MarcajeController
             services.AddTransient<IBiometricoController, BiometricoController>();
@@ -197,6 +218,7 @@ namespace AttendanceSystem.App
             services.AddTransient<AuditoriaController>();
             services.AddTransient<HorariosController>();
             services.AddTransient<ConfiguracionController>();
+            services.AddTransient<RegistroFacialController>();
 
             // Vistas
             services.AddTransient<MainWindow>();
@@ -210,23 +232,44 @@ namespace AttendanceSystem.App
         {
             if (!context.Roles.Any())
             {
-                var rolAdmin    = new Rol(); rolAdmin.SetNombre(RolUsuario.Admin);    rolAdmin.SetDescripcion("Administrador del sistema");
-                var rolRRHH     = new Rol(); rolRRHH.SetNombre(RolUsuario.RRHH);      rolRRHH.SetDescripcion("Recursos Humanos");
-                var rolEmpleado = new Rol(); rolEmpleado.SetNombre(RolUsuario.Empleado); rolEmpleado.SetDescripcion("Empleado regular");
-                context.Roles.AddRange(rolAdmin, rolRRHH, rolEmpleado);
+                var rolSuperAdmin = new Rol(); rolSuperAdmin.SetNombre(RolUsuario.SuperAdmin); rolSuperAdmin.SetDescripcion("Super Administrador — acceso total al sistema");
+                var rolAdmin      = new Rol(); rolAdmin.SetNombre(RolUsuario.Admin);           rolAdmin.SetDescripcion("Administrador del sistema");
+                var rolRRHH       = new Rol(); rolRRHH.SetNombre(RolUsuario.RRHH);             rolRRHH.SetDescripcion("Recursos Humanos");
+                var rolEmpleado   = new Rol(); rolEmpleado.SetNombre(RolUsuario.Empleado);      rolEmpleado.SetDescripcion("Empleado regular");
+                context.Roles.AddRange(rolSuperAdmin, rolAdmin, rolRRHH, rolEmpleado);
                 context.SaveChanges();
+            }
+            else if (!context.Roles.AsEnumerable().Any(r => r.GetNombre() == RolUsuario.SuperAdmin))
+            {
+                var rolSuperAdmin = new Rol(); rolSuperAdmin.SetNombre(RolUsuario.SuperAdmin); rolSuperAdmin.SetDescripcion("Super Administrador — acceso total al sistema");
+                context.Roles.Add(rolSuperAdmin);
+                context.SaveChanges();
+            }
+
+            // Promover el primer admin existente a SuperAdmin si no hay ningún SuperAdmin
+            var rolSA = context.Roles.AsEnumerable().First(r => r.GetNombre() == RolUsuario.SuperAdmin);
+            bool haySuperAdmin = context.Usuarios.AsEnumerable().Any(u => u.GetRol()?.GetNombre() == RolUsuario.SuperAdmin);
+            if (!haySuperAdmin)
+            {
+                var primerAdmin = context.Usuarios.AsEnumerable()
+                    .FirstOrDefault(u => u.GetRol()?.GetNombre() == RolUsuario.Admin);
+                if (primerAdmin != null)
+                {
+                    primerAdmin.SetRol(rolSA);
+                    context.Usuarios.Update(primerAdmin);
+                    context.SaveChanges();
+                }
             }
 
             if (!context.Usuarios.Any())
             {
-                var rolAdmin = context.Roles.AsEnumerable().First(r => r.GetNombre() == RolUsuario.Admin);
-                var admin    = new Usuario();
+                var admin = new Usuario();
                 admin.SetUsername("admin");
                 admin.SetPassword(hasher.HashPassword("admin123"));
                 admin.SetNombre("Administrador");
                 admin.SetActivo(true);
                 admin.SetFechaCreacion(DateTime.UtcNow);
-                admin.SetRol(rolAdmin);
+                admin.SetRol(rolSA);
                 context.Usuarios.Add(admin);
                 context.SaveChanges();
             }

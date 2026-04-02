@@ -51,10 +51,18 @@ namespace AttendanceSystem.Services
                 return Fallo("El empleado no tiene consentimiento biométrico vigente.");
 
             // 3. Verificar identidad facial
-            bool identidadVerificada = await _biometricoService.VerificarIdentidadAsync(
-                request.DatosBiometricos, request.CodigoEmpleado);
+            bool identidadVerificada;
+            try
+            {
+                identidadVerificada = await _biometricoService.VerificarIdentidadAsync(
+                    request.DatosBiometricos, request.CodigoEmpleado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Fallo(ex.Message);
+            }
             if (!identidadVerificada)
-                return Fallo("No se pudo verificar la identidad. Intente nuevamente.");
+                return Fallo("Rostro no reconocido. La similitud es insuficiente. Intente nuevamente con buena iluminación.");
 
             // 4. Calcular tardanza usando ITardanzaService (lógica centralizada)
             var ahora = DateTime.Now;

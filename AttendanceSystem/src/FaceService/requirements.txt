@@ -1,0 +1,9 @@
+fastapi>=0.115.0,<1.0
+uvicorn[standard]>=0.30.0,<1.0
+insightface==0.7.3
+onnxruntime>=1.20.0
+numpy>=1.24,<3.0
+opencv-python-headless>=4.10.0
+pydantic>=2.0,<3.0
+pydantic-settings>=2.0,<3.0
+python-dotenv>=1.0,<2.0

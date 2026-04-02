@@ -8,6 +8,7 @@ using AttendanceSystem.App.Controllers;
 using AttendanceSystem.App.Controllers.Admin;
 using AttendanceSystem.Core.Interfaces;
 using MaterialDesignThemes.Wpf;
+using AttendanceSystem.App.Interfaces;
 
 namespace AttendanceSystem.App.Views.Admin
 {
@@ -20,10 +21,14 @@ namespace AttendanceSystem.App.Views.Admin
         private readonly AuditoriaView       _auditoriaView;
         private readonly HorariosView        _horariosView;
         private readonly ConfiguracionView   _configView;
+        private readonly RegistroFacialView  _biometriaView;
 
         private readonly AuthController      _authCtrl;
         private readonly ISessionManager     _session;
+        private readonly MarcajeController   _marcajeCtrl;
+        private readonly IBiometricoController _biometricoCtrl;
 
+        private MarcajeView _miAsistenciaView;
         private Button _activeBtn;
 
         private Brush ActiveBg   => (Brush)FindResource("NavActiveBg");
@@ -42,15 +47,18 @@ namespace AttendanceSystem.App.Views.Admin
         private bool _isDarkTheme = true;
 
         public AdminShellView(
-            DashboardController      dashboardCtrl,
-            UsuariosController       usuariosCtrl,
-            MarcajesAdminController  marcajesCtrl,
-            ReportesController       reportesCtrl,
-            AuditoriaController      auditoriaCtrl,
-            HorariosController       horariosCtrl,
-            ConfiguracionController  configCtrl,
-            AuthController           authCtrl,
-            ISessionManager          session)
+            DashboardController        dashboardCtrl,
+            UsuariosController         usuariosCtrl,
+            MarcajesAdminController    marcajesCtrl,
+            ReportesController         reportesCtrl,
+            AuditoriaController        auditoriaCtrl,
+            HorariosController         horariosCtrl,
+            ConfiguracionController    configCtrl,
+            RegistroFacialController   biometriaCtrl,
+            AuthController             authCtrl,
+            ISessionManager            session,
+            MarcajeController          marcajeCtrl,
+            IBiometricoController      biometricoCtrl)
         {
             InitializeComponent();
 
@@ -61,9 +69,12 @@ namespace AttendanceSystem.App.Views.Admin
             _auditoriaView = new AuditoriaView(auditoriaCtrl);
             _horariosView  = new HorariosView(horariosCtrl);
             _configView    = new ConfiguracionView(configCtrl);
+            _biometriaView = new RegistroFacialView(biometriaCtrl);
 
             _authCtrl = authCtrl;
             _session  = session;
+            _marcajeCtrl     = marcajeCtrl;
+            _biometricoCtrl  = biometricoCtrl;
 
             _dashboardView.AlertasCalculadas += OnAlertasCalculadas;
         }
@@ -77,6 +88,10 @@ namespace AttendanceSystem.App.Views.Admin
             {
                 btnNavUsuarios.Visibility = Visibility.Collapsed;
                 btnNavConfig.Visibility   = Visibility.Collapsed;
+            }
+            else if (!_session.EsSuperAdmin())
+            {
+                btnNavConfig.Visibility = Visibility.Collapsed;
             }
 
             ActivarSeccion(btnNavDashboard, _dashboardView);
@@ -109,9 +124,21 @@ namespace AttendanceSystem.App.Views.Admin
                 "reportes"      => _reportesView,
                 "auditoria"     => _auditoriaView,
                 "configuracion" => _configView,
+                "biometria"     => _biometriaView,
+                "miasistencia"  => ObtenerMiAsistenciaView(),
                 _               => _dashboardView
             };
             ActivarSeccion(btn, view);
+        }
+
+        /// <summary>
+        /// Lazy-init del MarcajeView para que Admin/RRHH registren su propia asistencia.
+        /// Se crea bajo demanda para no inicializar la cámara innecesariamente.
+        /// </summary>
+        private MarcajeView ObtenerMiAsistenciaView()
+        {
+            _miAsistenciaView ??= new MarcajeView(_marcajeCtrl, _biometricoCtrl);
+            return _miAsistenciaView;
         }
 
         private void ActivarSeccion(Button btn, UserControl view)
