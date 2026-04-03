@@ -1,35 +1,43 @@
-# Control de Asistencia Biométrico
+# RAMar Studio — Control de Asistencia Biométrico
 
-El **Control de Asistencia Biométrico** es un sistema de escritorio que registra la entrada y salida del personal mediante reconocimiento facial. Opera 100% en la red local, sin internet y sin almacenar fotografías.
+El **RAMar Attendance System** es un ecosistema de escritorio diseñado para empresas que priorizan la eficiencia y la privacidad total. Mediante reconocimiento facial avanzado, permite registrar la entrada y salida del personal en menos de un segundo, operando **100% en red local** y sin almacenar fotografías de los empleados.
 
 ---
 
-## Características
+## ⚡ Instalación en un solo paso
+
+Hemos simplificado drásticamente el despliegue. Ya no necesitas configurar archivos JSON ni entornos manuales.
+
+[🚀 **¿Cómo empezar en 5 minutos?**](instalacion/guia.md){ .md-button .md-button--primary }
+[⚙️ **Ver Requisitos previos**](instalacion/requisitos.md){ .md-button }
+
+---
+
+## 🛡️ Características clave
 
 | Característica | Detalle |
 |---|---|
-| **Reconocimiento facial** | Identificación en menos de 1 segundo con InsightFace (ArcFace) |
-| **Privacidad** | Cero fotos almacenadas — solo vectores matemáticos cifrados con AES-256 |
+| **Reconocimiento facial** | Identificación en menos de 1 segundo con **InsightFace (ArcFace)** |
+| **Privacidad total** | Cero fotos almacenadas — solo vectores matemáticos cifrados con **AES-256** |
 | **Sin internet** | Funciona completamente offline en la red local de la empresa |
-| **Panel admin** | Dashboard, empleados, horarios, marcajes, reportes, auditoría |
-| **Roles** | Empleado, Administrador, SuperAdministrador |
-| **Configurable** | Tolerancia de tardanzas, horarios, parámetros del sistema |
+| **Panel admin** | Gestión de empleados, horarios, marcajes, reportes y auditoría |
+| **Multi-Rol** | Empleado, Administrador, RRHH, SuperAdministrador |
 
 ---
 
-## Stack tecnológico
+## 🧩 Stack tecnológico
 
 | Componente | Tecnología |
 |---|---|
-| Aplicación de escritorio | C# .NET 8 (WPF) |
-| Motor de reconocimiento facial | Python 3.13 + FastAPI + InsightFace |
-| Base de datos | PostgreSQL + Entity Framework Core |
-| Cifrado biométrico | AES-256 |
-| Comunicación interna | HTTP localhost:8000 |
+| **Frontend/Core** | C# .NET 8 (WPF) |
+| **Motor Facial** | **Python (Venv Aislado)** + FastAPI + InsightFace |
+| **Base de Datos** | **PostgreSQL** + Entity Framework Core |
+| **Cifrado** | **AES-256** para vectores biométricos |
+| **Puerto local** | HTTP localhost:5001 |
 
 ---
 
-## Arquitectura
+## 🏗️ Arquitectura del Sistema
 
 ```mermaid
 graph LR
@@ -40,14 +48,6 @@ graph LR
     C --> E[(PostgreSQL)]
     C --> F[Resultado en pantalla]
 ```
-
-**Flujo de marcaje:**
-
-1. El empleado se acerca a la cámara
-2. La app WPF captura el frame y lo envía al motor Python
-3. Python genera un embedding facial de 512 dimensiones
-4. La app compara el embedding contra los registrados en PostgreSQL
-5. Se muestra el resultado (aprobado/denegado) y se registra el marcaje
 
 ---
 

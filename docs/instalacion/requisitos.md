@@ -1,56 +1,47 @@
-# Requisitos previos
+# Requisitos previos (Solo 3 cosas)
 
-## Sistema operativo
-
-- **Windows 10** u **11** (x64)
+Para que el asistente de una sola ejecución (`iniciar.bat`) funcione sin errores, asegúrate de tener estos tres componentes instalados antes de arrancar.
 
 ---
 
-## Software requerido
+## 1. El Portal de Datos (PostgreSQL)
 
-| Componente | Versión | Descarga | Función |
-|---|---|---|---|
-| .NET 8 SDK | 8.0+ | [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/8.0) | Compilar y ejecutar la aplicación WPF |
-| Python | 3.10 – 3.13 | [python.org](https://www.python.org/downloads/) | Motor de reconocimiento facial (InsightFace) |
-| PostgreSQL | 15+ | [postgresql.org](https://www.postgresql.org/download/windows/) | Base de datos |
+El sistema usa **PostgreSQL 15+** para almacenar empleados, marcajes y los vectores matemáticos de los rostros.
 
-!!! warning "Python: marcar 'Add to PATH'"
-    Al instalar Python, asegúrate de marcar la casilla **"Add Python to PATH"** en la primera pantalla del instalador. Sin esto, la aplicación no podrá iniciar el motor facial automáticamente.
-
-!!! info "Instalación de dependencias Python"
-    El proyecto incluye un script `install.py` que detecta tu versión de Python y descarga automáticamente el wheel correcto de `insightface` para Windows. Usar `python install.py` en vez de `pip install -r requirements.txt`.
+- [**Descargar PostgreSQL para Windows**](https://www.postgresql.org/download/windows/)
+- Durante la instalación, ponle una contraseña que puedas recordar.
+- Crea una base de datos vacía llamada **`AttendanceSystem`** (mediante `pgAdmin` o la consola).
 
 ---
 
-## Hardware
+## 2. El Motor de Aplicación (.NET)
 
-| Componente | Requisito |
-|---|---|
-| **Cámara web** | Cualquier webcam USB o integrada (DirectShow) |
-| **RAM** | 4 GB mínimo — 8 GB recomendado |
-| **CPU** | x64 con soporte SSE2 |
-| **Disco** | ~1 GB (aplicación + modelos IA + dependencias Python) |
+El panel de control está construido sobre **.NET 8**.
 
-!!! info "Sobre la memoria RAM"
-    El motor de reconocimiento facial consume ~400-500 MB de RAM **solo cuando está activo**. La aplicación lo inicia automáticamente cuando se necesita y lo detiene tras 10 minutos de inactividad, liberando la memoria completamente.
+- [**Descargar .NET 8 SDK**](https://dotnet.microsoft.com/download/dotnet/8.0)
+- Instala la versión de **64 bits (x64)**.
 
 ---
 
-## Puertos de red
+## 3. El Motor Inteligente (Python)
 
-| Puerto | Servicio | Acceso |
-|---|---|---|
-| `5432` | PostgreSQL | Red local |
-| `5001` | Motor facial (FaceService) | Solo localhost |
+La biometría facial de clase mundial (InsightFace) corre sobre Python.
 
-!!! warning "Firewall"
-    El puerto `5001` escucha exclusivamente en `127.0.0.1`. No es necesario abrirlo en el firewall — la comunicación es interna al equipo. La aplicación C# arranca y detiene el servicio Python automáticamente.
+- [**Descargar Python 3.10+**](https://www.python.org/downloads/)
+- !!! warning "Paso Crítico"
+    Al instalar Python, **MARCA OBLIGATORIAMENTE la casilla "Add Python to PATH"** en la primera pantalla del instalador.
 
 ---
 
-## Conexión a internet
+## ⚡ Librería de compatibilidad (C++ Runtime)
 
-| Cuándo | Para qué | Obligatorio |
-|---|---|---|
-| Solo la primera vez | Descargar modelos InsightFace (~600 MB) | Sí |
-| Después | El sistema funciona 100% offline | No |
+Para que la IA procese los vectores matemáticos a alta velocidad, Windows necesita los binarios de ejecución de C++. La mayoría de computadoras ya los tienen, pero si recibes un **"Error de Biometría"**, esta es la solución más común:
+
+- [**Descargar Visual C++ Redistributable (vc_redist.x64.exe)**](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+
+---
+
+!!! info "Hardware recomendado"
+    - **Cámara:** Web USB estándar o integrada con resolución 720p+.
+    - **Memoria RAM:** 8 GB recomendado (funciona con 4 GB).
+    - **Procesador:** Intel Core i3 / AMD Ryzen 3 o superior.
