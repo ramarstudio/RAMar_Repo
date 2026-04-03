@@ -49,16 +49,14 @@ Para hacer funcionar el sistema, el entorno requiere:
 ### Pasos esenciales
 
 1. Instala Python 3.12 si no lo tienes: `winget install Python.Python.3.12`
-2. Crea la base de datos `AttendanceSystem` en PostgreSQL:
-   - **Opción fácil:** Abre **pgAdmin 4**, haz clic derecho en *Databases* > *Create* > *Database...* y ponle de nombre `AttendanceSystem`.
-   - **Opción terminal:** Ejecuta `CREATE DATABASE AttendanceSystem;` en psql.
-3. Configura la conexión:
+2. Configura la conexión a la base de datos:
    ```bash
    cd AttendanceSystem/src/AttendanceSystem.App
+   # Solo existe el archivo de ejemplo, cópialo/renómbralo así:
    copy appsettings.example.json appsettings.json
-   # Edita appsettings.json con tu contraseña de PostgreSQL
    ```
-4. Instala el motor de IA:
+   **Edita `appsettings.json`** y coloca la contraseña de tu PostgreSQL. *Nota: La aplicación creará la base de datos automáticamente con esta contraseña.*
+3. Instala el motor de IA:
    ```bash
    cd ../FaceService
    python -m venv venv          # o: py -3.12 -m venv venv  (si tienes Python 3.13+)

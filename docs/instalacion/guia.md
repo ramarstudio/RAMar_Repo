@@ -69,12 +69,9 @@ Abre `appsettings.json` y reemplaza `CAMBIAR_POR_TU_CONTRASEÑA` con la contrase
 "DefaultConnection": "Host=localhost;Port=5432;Database=AttendanceSystem;Username=postgres;Password=TU_CONTRASEÑA"
 ```
 
-!!! info "¿Cómo creo la base de datos si no sé usar comandos?"
-    1. Abre **pgAdmin 4** (se instaló junto con PostgreSQL).
-    2. En el menú izquierdo, despliega **Servers** y pon tu contraseña.
-    3. Haz clic derecho sobre **Databases** > **Create** > **Database...**
-    4. En el campo *Database*, escribe `AttendanceSystem`.
-    5. Haz clic en el botón **Save**. Todo lo demás (tablas, relaciones) lo creará el sistema automáticamente.
+!!! info "La base de datos se crea sola"
+    En el repositorio **solo existe el archivo `appsettings.example.json`**. Es obligatorio que lo copies/renombres a `appsettings.json` y modifiques únicamente la contraseña. 
+    Al correr la aplicación por primera vez, **Entity Framework usará esa contraseña para crear automáticamente** toda la base de datos y sus tablas de forma transparente. No necesitas saber ni usar comandos SQL.
 
 ### 3. Instalar librerías de IA
 
