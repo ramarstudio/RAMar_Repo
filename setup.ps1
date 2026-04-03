@@ -158,24 +158,25 @@ if (-not (Test-Path $JsonPath)) {
     Write-Host "  -------------------------------------------------------------------------" -ForegroundColor DarkGray
     Write-Host "   CONFIGURACION INICIAL - Base de Datos" -ForegroundColor Yellow
     Write-Host "  -------------------------------------------------------------------------" -ForegroundColor DarkGray
-    Write-Host "   PostgreSQL debe estar instalado y corriendo." -ForegroundColor Gray
-    Write-Host "   La base de datos se creara automaticamente si no existe." -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "   Necesitamos conectar la aplicacion con PostgreSQL." -ForegroundColor Gray
+    Write-Host "   Presiona Enter en cada pregunta para usar el valor por defecto." -ForegroundColor Gray
     Write-Host ""
 
     # Pedir host (default localhost)
-    $dbHost = Read-Host "   Host de PostgreSQL [localhost]"
+    $dbHost = Read-Host "   Servidor (Enter = localhost)"
     if ([string]::IsNullOrWhiteSpace($dbHost)) { $dbHost = "localhost" }
 
     # Pedir puerto (default 5432)
-    $dbPort = Read-Host "   Puerto de PostgreSQL [5432]"
+    $dbPort = Read-Host "   Puerto   (Enter = 5432)"
     if ([string]::IsNullOrWhiteSpace($dbPort)) { $dbPort = "5432" }
 
     # Pedir usuario (default postgres)
-    $dbUser = Read-Host "   Usuario de PostgreSQL [postgres]"
+    $dbUser = Read-Host "   Usuario  (Enter = postgres)"
     if ([string]::IsNullOrWhiteSpace($dbUser)) { $dbUser = "postgres" }
 
     # Pedir contrasena (con SecureString para no mostrarla en pantalla)
-    $dbPassSecure = Read-Host "   Contrasena de PostgreSQL" -AsSecureString
+    $dbPassSecure = Read-Host "   Contrasena de PostgreSQL (la que pusiste al instalar)" -AsSecureString
     $dbPass = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
         [Runtime.InteropServices.Marshal]::SecureStringToBSTR($dbPassSecure)
     )
