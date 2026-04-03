@@ -3,14 +3,13 @@
 # setup.ps1 - Configuracion, verificacion e inicio del sistema
 # ############################################################################
 
-param([string]$ScriptDir = $PSScriptRoot)
-
 $Host.UI.RawUI.WindowTitle = "RAMar - Control de Asistencia Biometrico"
 $ErrorActionPreference = "Stop"
 
+$ScriptDir   = $PSScriptRoot
 $AppDir      = Join-Path $ScriptDir "AttendanceSystem"
-$FaceDir     = Join-Path $AppDir "src\FaceService"
-$AppProject  = Join-Path $AppDir "src\AttendanceSystem.App"
+$FaceDir     = Join-Path $AppDir "src" | Join-Path -ChildPath "FaceService"
+$AppProject  = Join-Path $AppDir "src" | Join-Path -ChildPath "AttendanceSystem.App"
 $JsonPath    = Join-Path $AppProject "appsettings.json"
 $ExamplePath = Join-Path $AppProject "appsettings.example.json"
 $VenvPy      = Join-Path $FaceDir "venv\Scripts\python.exe"
