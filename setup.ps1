@@ -285,26 +285,27 @@ if (-not (Test-Path $VenvPy)) {
     }
 }
 
-# ── 5. LANZAR APLICACION ─────────────────────────────────────────────────────
+# ── 5. COMPILAR Y LANZAR APLICACION ──────────────────────────────────────────
 
-Write-Step 5 5 "Iniciando aplicacion..."
+$PublishDir = Join-Path $AppDir "publish"
+$AppExe     = Join-Path $PublishDir "AttendanceSystem.App.exe"
 
-# Buscar el ejecutable en orden de preferencia
-$AppExe = $null
-$exeCandidates = @(
-    (Join-Path $AppDir "publish\AttendanceSystem.App.exe"),
-    (Join-Path $AppProject "bin\Release\net8.0-windows\AttendanceSystem.App.exe"),
-    (Join-Path $AppProject "bin\Debug\net8.0-windows\AttendanceSystem.App.exe")
-)
-foreach ($c in $exeCandidates) {
-    if (Test-Path $c) { $AppExe = $c; break }
+Write-Step 5 5 "Verificando ejecutable..."
+
+if (-not (Test-Path $AppExe)) {
+    Write-Host "      Compilando aplicacion por primera vez (puede tardar 1-2 min)..." -ForegroundColor DarkGray
+    Push-Location $AppDir
+    dotnet publish src\AttendanceSystem.App -c Release --self-contained false -o publish 2>&1 | Out-Null
+    $pubCode = $LASTEXITCODE
+    Pop-Location
+
+    if ($pubCode -ne 0 -or -not (Test-Path $AppExe)) {
+        Exit-WithError "No se pudo compilar la aplicacion (codigo $pubCode).`n         Verifica que el .NET 8 SDK este instalado correctamente."
+    }
+    Write-Ok "Aplicacion compilada."
+} else {
+    Write-Ok "Ejecutable listo."
 }
-
-if (-not $AppExe) {
-    Exit-WithError "No se encontro el ejecutable de la aplicacion.`n         Asegurate de que AttendanceSystem.App.exe este en la carpeta publish\ o bin\."
-}
-
-Write-Ok "Ejecutable encontrado."
 Write-Host ""
 Write-Host "===========================================================================" -ForegroundColor DarkCyan
 Write-Host "   Entorno listo. Iniciando RAMar Control de Asistencia..." -ForegroundColor White
