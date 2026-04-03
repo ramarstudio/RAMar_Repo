@@ -34,40 +34,96 @@ namespace AttendanceSystem.App
         {
             base.OnStartup(e);
 
-            // LiveCharts2: inicializar antes de mostrar cualquier ventana
-            LiveCharts.Configure(config => config
-                .AddSkiaSharp()
-                .AddDefaultMappers()
-                .AddDarkTheme());
-
-            // Compatibilidad Npgsql: permite DateTime(Kind=UTC) en timestamp without time zone
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
-            _configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddUserSecrets<App>(optional: true)
-                .Build();
-
-            // 1. Crear/migrar la BD y obtener las claves de seguridad persistidas
-            var connectionString = Environment.GetEnvironmentVariable("AS_DB_CONNECTION")
-                ?? _configuration.GetConnectionString("DefaultConnection");
-            var securityKeys = InitSecurityKeys(connectionString);
-
-            // 2. Configurar DI con las claves de la BD
-            var services = new ServiceCollection();
-            ConfigureServices(services, connectionString, securityKeys);
-            _serviceProvider = services.BuildServiceProvider();
-
-            // 3. Seed de roles y usuario admin
-            using (var scope = _serviceProvider.CreateScope())
+            // Capturar cualquier excepcion no manejada y mostrarla al usuario
+            DispatcherUnhandledException += (s, ex) =>
             {
-                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                var hasher  = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-                SeedData(context, hasher);
-            }
+                MessageBox.Show(
+                    $"Error inesperado:\n\n{ex.Exception.Message}",
+                    "RAMar — Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                ex.Handled = true;
+                Shutdown(1);
+            };
 
-            _serviceProvider.GetRequiredService<MainWindow>().Show();
+            try
+            {
+                // LiveCharts2: inicializar antes de mostrar cualquier ventana
+                LiveCharts.Configure(config => config
+                    .AddSkiaSharp()
+                    .AddDefaultMappers()
+                    .AddDarkTheme());
+
+                // Compatibilidad Npgsql: permite DateTime(Kind=UTC) en timestamp without time zone
+                AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+                var appBase = AppDomain.CurrentDomain.BaseDirectory;
+                var appSettingsPath = Path.Combine(appBase, "appsettings.json");
+
+                if (!File.Exists(appSettingsPath))
+                {
+                    MessageBox.Show(
+                        "No se encontró el archivo de configuración appsettings.json.\n\n" +
+                        "Ejecuta iniciar.bat para configurar la base de datos.",
+                        "RAMar — Configuración requerida",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    Shutdown(1);
+                    return;
+                }
+
+                _configuration = new ConfigurationBuilder()
+                    .SetBasePath(appBase)
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddUserSecrets<App>(optional: true)
+                    .Build();
+
+                // 1. Crear/migrar la BD y obtener las claves de seguridad persistidas
+                var connectionString = Environment.GetEnvironmentVariable("AS_DB_CONNECTION")
+                    ?? _configuration.GetConnectionString("DefaultConnection");
+
+                try
+                {
+                    var securityKeys = InitSecurityKeys(connectionString);
+
+                    // 2. Configurar DI con las claves de la BD
+                    var services = new ServiceCollection();
+                    ConfigureServices(services, connectionString, securityKeys);
+                    _serviceProvider = services.BuildServiceProvider();
+
+                    // 3. Seed de roles y usuario admin
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                        var hasher  = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+                        SeedData(context, hasher);
+                    }
+
+                    _serviceProvider.GetRequiredService<MainWindow>().Show();
+                }
+                catch (Exception dbEx)
+                {
+                    MessageBox.Show(
+                        "No se pudo conectar a la base de datos PostgreSQL.\n\n" +
+                        "Verifica que:\n" +
+                        "  • PostgreSQL esté corriendo (busca 'Servicios' en Windows)\n" +
+                        "  • La contraseña en appsettings.json sea correcta\n\n" +
+                        $"Detalle: {dbEx.Message}",
+                        "RAMar — Error de conexión",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    Shutdown(1);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error al iniciar la aplicación:\n\n{ex.Message}",
+                    "RAMar — Error de inicio",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                Shutdown(1);
+            }
         }
 
         protected override void OnExit(ExitEventArgs e)
