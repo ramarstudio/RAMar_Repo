@@ -2,80 +2,140 @@
 
 # RAMar Software Studio
 
-**Privacidad Computacional y Soluciones de Asistencia Biométrica**
+**Sistema de Control de Asistencia Biométrico**
 
-[![Documentación](https://img.shields.io/badge/Documentaci%C3%B3n-Ver%20portal-2e7d32?style=for-the-badge)](https://ramarstudio.github.io/RAMar_Repo/)
+[![Documentación](https://img.shields.io/badge/Documentación-Ver%20portal-2e7d32?style=for-the-badge)](https://ramarstudio.github.io/RAMar_Repo/)
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.10--3.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![License](https://img.shields.io/badge/Licencia-Propietaria-red?style=flat-square)](./LICENSE)
 
 </div>
 
 ---
 
-## ⚡ Instalación en 3 Pasos (Zero-Touch)
-
-Hemos optimizado todo para que no pierdas tiempo editando archivos de configuración. 
-
-### 1. Preparación
-Instala [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0), [Python 3.12](https://www.python.org/downloads/) (marcando **Add to PATH**) y [PostgreSQL](https://www.postgresql.org/download/windows/).
-
-### 2. Base de Datos
-Abre pgAdmin y crea una base de datos vacía llamada `AttendanceSystem`.
-
-### 3. ¡Ejecutar!
-Haz doble clic en **`iniciar.bat`**. El asistente te pedirá tu clave de PostgreSQL y configurará todo el sistema por ti.
+Aplicación de escritorio Windows que registra la asistencia del personal mediante **reconocimiento facial en tiempo real**. Opera 100% en red local, sin internet, sin almacenar fotografías, con respuestas menores a un segundo.
 
 ---
 
-## 🛡️ Sobre el Sistema
+## Características
 
-El **RAMar Attendance System** es una solución de escritorio corporativa que utiliza **reconocimiento facial de última generación** (InsightFace) para gestionar el control de asistencia.
-
-- **Identificación Instantánea**: Reconocimiento en menos de 1 segundo.
-- **Privacidad por Diseño**: No guarda fotos. Solo vectores matemáticos cifrados con AES-256.
-- **Operación Local**: Funciona 100% offline. Tus datos biométricos nunca salen de tu empresa.
-- **Gestión Integral**: Dashboard, gestión de empleados, reportes de asistencia y auditoría.
+| | Detalle |
+|---|---|
+| **Reconocimiento facial** | Identificación en < 1 s con InsightFace ArcFace (embedding 512-D) |
+| **Privacidad total** | Cero fotos — solo vectores matemáticos cifrados con AES-256-GCM |
+| **100% offline** | Sin internet, sin suscripciones, sin datos en la nube |
+| **Panel administrativo** | Dashboard, empleados, horarios, marcajes, reportes, auditoría |
+| **Roles** | Empleado · RRHH · Administrador · SuperAdministrador |
+| **Configurable** | Tolerancia de tardanzas, horarios, parámetros del sistema |
+| **Seguro** | Claves de seguridad persistidas en BD, nunca en archivos de configuración |
 
 ---
 
-## 🏗️ Arquitectura Técnica
+## Arquitectura
 
 ```
-┌──────────────────────────────┐     HTTP localhost:5001  ┌─────────────────────────┐
-│   App WPF — C# .NET 8       │ ◄────────────────────►  │  Motor IA — Python      │
-│                              │                          │                         │
-│   · Interfaz gráfica         │                          │  · FastAPI + Uvicorn    │
-│   · Captura de cámara        │                          │  · InsightFace/ArcFace  │
-│   · Lógica de negocio        │                          │  · Embedding 512-d      │
-│   · Entity Framework Core    │                          │  · Inicio bajo demanda  │
-└──────────────┬───────────────┘                          └─────────────────────────┘
+┌─────────────────────────────────┐    HTTP localhost:5001   ┌──────────────────────────┐
+│   Aplicación WPF — C# .NET 8   │ ◄─────────────────────► │   Motor IA — Python      │
+│                                 │                          │                          │
+│   · Panel administrativo        │                          │   · FastAPI + Uvicorn    │
+│   · Captura de cámara           │                          │   · InsightFace / ArcFace│
+│   · Lógica de negocio           │                          │   · Embedding 512-D      │
+│   · Entity Framework Core       │                          │   · Inicio bajo demanda  │
+│   · Cifrado AES-256-GCM         │                          │   · Auto-stop inactivo   │
+└──────────────┬──────────────────┘                          └──────────────────────────┘
                │
                ▼
-      ┌─────────────────┐
-      │   PostgreSQL     │
+      ┌──────────────────┐
+      │    PostgreSQL     │
       │                  │
       │  · Empleados     │
       │  · Marcajes      │
       │  · Embeddings    │
-      └─────────────────┘
+      │  · Auditoría     │
+      │  · Configuración │
+      └──────────────────┘
 ```
 
 ---
 
-## 📖 Documentación
+## Instalación rápida
 
-| Guía | Contenido |
-| :--- | :--- |
-| [**Manual de Instalación**](https://ramarstudio.github.io/RAMar_Repo/instalacion/guia/) | Paso a paso detallado para nuevos usuarios. |
-| [**Requisitos de Sistema**](https://ramarstudio.github.io/RAMar_Repo/instalacion/requisitos/) | Software y hardware necesario. |
-| [**Arquitectura de Red**](https://ramarstudio.github.io/RAMar_Repo/arquitectura/motor-biometrico/) | Cómo funciona el motor biométrico. |
+### Requisitos previos
+
+| Software | Versión | Descarga |
+|---|---|---|
+| .NET SDK | 8.0 | [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/8.0) |
+| Python | 3.10, 3.11 o 3.12 | [python.org](https://www.python.org/downloads/) |
+| PostgreSQL | 15+ | [postgresql.org](https://www.postgresql.org/download/windows/) |
+
+> **Python:** instala marcando **"Add Python to PATH"**. Python 3.13+ no es compatible aún con `onnxruntime`.
+
+**Hardware mínimo:** 8 GB RAM · 4 GB libres en disco · Cámara 720p · Windows 10 64-bit
+
+### Ejecutar
+
+```bash
+# Clonar
+git clone https://github.com/ramarstudio/RAMar_Repo.git
+cd RAMar_Repo
+
+# Doble clic en iniciar.bat (o ejecutar desde terminal)
+iniciar.bat
+```
+
+El asistente automático (`setup.ps1`) se encarga de:
+
+1. Verificar versiones de .NET y Python
+2. Solicitar la contraseña de PostgreSQL
+3. Crear la base de datos automáticamente
+4. Instalar las librerías de IA (InsightFace, ONNX Runtime)
+5. Crear los archivos de configuración
+6. Iniciar la aplicación
+
+**Login inicial:** usuario `admin` / contraseña `admin123`
+
+---
+
+## Estructura del repositorio
+
+```
+RAMar_Repo/
+├── iniciar.bat                         # Lanzador principal
+├── setup.ps1                           # Instalador automático (PowerShell)
+├── AttendanceSystem/
+│   └── src/
+│       ├── AttendanceSystem.App/        # WPF: vistas, controladores, DI
+│       ├── AttendanceSystem.Core/       # DTOs, interfaces, entidades
+│       ├── AttendanceSystem.Services/   # Lógica de negocio
+│       ├── AttendanceSystem.Infrastructure/ # EF Core, repositorios
+│       ├── AttendanceSystem.Security/   # AES-256, sesiones, hashing
+│       └── FaceService/                 # Microservicio Python (FastAPI)
+│           ├── install.py               # Instalador de librerías
+│           ├── requirements.txt         # Dependencias con versiones acotadas
+│           └── .env.example             # Plantilla de variables de entorno
+└── docs/                                # Fuente de la documentación web
+```
+
+---
+
+## Documentación
+
+**[ramarstudio.github.io/RAMar_Repo](https://ramarstudio.github.io/RAMar_Repo/)**
+
+| Sección | Contenido |
+|---|---|
+| [Instalación — Usuario final](https://ramarstudio.github.io/RAMar_Repo/instalacion/guia/#guia-usuario) | Guía paso a paso sin conocimientos técnicos |
+| [Instalación — Técnico](https://ramarstudio.github.io/RAMar_Repo/instalacion/guia/#guia-tecnica) | Configuración manual, variables de entorno |
+| [Requisitos del sistema](https://ramarstudio.github.io/RAMar_Repo/instalacion/requisitos/) | Hardware, software, espacio en disco |
+| [Arquitectura técnica](https://ramarstudio.github.io/RAMar_Repo/arquitectura/) | Diseño del sistema, decisiones de arquitectura |
+| [Motor biométrico](https://ramarstudio.github.io/RAMar_Repo/arquitectura/motor-biometrico/) | Cómo funciona el reconocimiento facial |
+| [Ingeniería](https://ramarstudio.github.io/RAMar_Repo/ingenieria/) | Metodología, requisitos MoSCoW, diagramas |
 
 ---
 
 <div align="center">
 
-> **RAMar Software Studio** — Innovación, privacidad computacional y soluciones corporativas.
-> © 2026 Todos los derechos reservados.
+© 2026 RAMar Software Studio — Uso exclusivo interno. Todos los derechos reservados.
 
 </div>
