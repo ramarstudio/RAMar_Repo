@@ -2,175 +2,118 @@
 
 ---
 
-## Guía usuario
+## Requisitos previos
 
-Para administradores y usuarios finales sin conocimientos técnicos.
-
-### Paso 1 — Instalar los tres programas base
-
-Instala en este orden:
+Instala estos tres programas antes de continuar:
 
 **PostgreSQL 15+**
 
 1. Descarga desde [postgresql.org/download/windows](https://www.postgresql.org/download/windows/)
-2. Ejecuta el instalador y sigue los pasos
-3. Cuando te pida contraseña para el usuario `postgres`, elige una que recuerdes bien
-4. Puerto: déjalo en `5432`
-5. Finaliza la instalación
+2. Sigue el instalador — cuando pida contraseña para `postgres`, elige una que recuerdes
+3. Puerto: déjalo en `5432`
 
-**Python 3.12**
+**Python 3.10, 3.11 o 3.12**
 
-1. Descarga desde [python.org/downloads](https://www.python.org/downloads/) — busca la versión **3.12.x**
-2. Ejecuta el instalador
-3. **Importante:** en la primera pantalla, marca la casilla **"Add Python to PATH"**
-4. Haz clic en "Install Now"
+1. Descarga desde [python.org/downloads](https://www.python.org/downloads/) — versión **3.12.x**
+2. **Importante:** marca la casilla **"Add Python to PATH"** en la primera pantalla
+3. Haz clic en "Install Now"
+
+!!! danger "Python 3.13 no es compatible"
+    `onnxruntime` (motor de IA) no tiene soporte para Python 3.13 aún. Instala únicamente 3.10, 3.11 o 3.12.
 
 **.NET 8 SDK**
 
 1. Descarga desde [dotnet.microsoft.com/download/dotnet/8.0](https://dotnet.microsoft.com/download/dotnet/8.0)
 2. Descarga el **SDK x64**
-3. Ejecuta el instalador y finaliza
+3. Ejecuta el instalador
 
 ---
 
-### Paso 2 — Descargar el sistema
+## Instalación paso a paso
 
-1. Ve a [github.com/ramarstudio/RAMar_Repo](https://github.com/ramarstudio/RAMar_Repo)
-2. Haz clic en el botón verde **Code** → **Download ZIP**
-3. Extrae el ZIP en una carpeta de tu elección, por ejemplo `C:\RAMar`
-
----
-
-### Paso 3 — Ejecutar iniciar.bat
-
-1. Entra a la carpeta donde extrajiste el sistema
-2. Busca el archivo **`iniciar.bat`**
-3. Haz **doble clic**
-
-Se abrirá una ventana negra. El asistente verificará los programas instalados y te pedirá la contraseña de PostgreSQL que configuraste en el Paso 1.
-
-!!! info "Lo que hace el asistente automáticamente"
-    - Crea la base de datos `AttendanceSystem` si no existe
-    - Crea el archivo de configuración con tu contraseña
-    - Instala las librerías de inteligencia artificial (solo la primera vez, tarda 2–5 min)
-    - Inicia la aplicación
-
----
-
-### Paso 4 — Primer inicio de sesión
-
-Cuando la aplicación abra, ingresa con:
-
-- **Usuario:** `admin`
-- **Contraseña:** `admin123`
-
-!!! tip "Primeros pasos recomendados"
-    1. Ve a **Usuarios** → crea los empleados del sistema
-    2. Ve a **Registro Facial** → otorga consentimiento y captura el rostro de cada empleado
-    3. Ve a **Horarios** → configura los horarios de entrada y salida
-    4. Ve a **Configuración** → ajusta la tolerancia de tardanzas y otros parámetros
-
----
-
-### Solución de problemas comunes
-
-| Problema | Causa probable | Solución |
-|---|---|---|
-| "Python no compatible" | Tienes Python 3.13+ | Instala Python 3.12 desde python.org |
-| "Python no encontrado" | No se marcó "Add to PATH" | Reinstala Python marcando esa casilla |
-| "No se pudo conectar a la base de datos" | PostgreSQL no está corriendo | Abre Servicios de Windows y verifica que `postgresql` esté iniciado |
-| "Error de biometría" | Falta Visual C++ | Descarga e instala [vc_redist.x64.exe](https://aka.ms/vs/17/release/vc_redist.x64.exe) |
-| "Cámara no abre" | Otra app la está usando | Cierra Zoom, Teams u otra app que use la cámara |
-| "Error de reconocimiento facial" | Poca iluminación | Asegúrate de tener luz frontal al capturar el rostro |
-
-!!! note "Para reconfigurar la base de datos"
-    Si cambiaste la contraseña de PostgreSQL o necesitas reconectar, elimina el archivo:
-    ```
-    AttendanceSystem\src\AttendanceSystem.App\appsettings.json
-    ```
-    y vuelve a ejecutar `iniciar.bat`.
-
----
-
-## Guía técnica
-
-Para desarrolladores y personal de TI.
-
-### Clonar el repositorio
+### 1. Clonar el repositorio
 
 ```bash
 git clone https://github.com/ramarstudio/RAMar_Repo.git
 cd RAMar_Repo
 ```
 
-### Configurar appsettings.json manualmente
-
-Si prefieres configurar sin el asistente:
+### 2. Configurar la base de datos
 
 ```bash
 cd AttendanceSystem/src/AttendanceSystem.App
 copy appsettings.example.json appsettings.json
 ```
 
-Edita `appsettings.json` y reemplaza la cadena de conexión:
+Abre `appsettings.json` y reemplaza `CAMBIAR_POR_TU_CONTRASEÑA` con la contraseña que pusiste al instalar PostgreSQL:
 
 ```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=AttendanceSystem;Username=postgres;Password=TU_CONTRASEÑA"
-  }
-}
+"DefaultConnection": "Host=localhost;Port=5432;Database=AttendanceSystem;Username=postgres;Password=TU_CONTRASEÑA"
 ```
 
-### Crear la base de datos
+!!! info "La base de datos se crea sola"
+    No necesitas crear la base de datos manualmente. La aplicación la crea automáticamente al primer arranque usando Entity Framework.
 
-La aplicación usa `EnsureCreated()` de Entity Framework Core. La base de datos y todas las tablas se crean automáticamente al primer arranque. Solo necesitas que exista PostgreSQL corriendo.
-
-Si prefieres crearla manualmente:
-
-```sql
-CREATE DATABASE "AttendanceSystem" ENCODING 'UTF8';
-```
-
-### Instalar dependencias Python
+### 3. Instalar librerías de IA
 
 ```bash
-cd AttendanceSystem/src/FaceService
+cd ../FaceService
 
-# Crear entorno virtual
 python -m venv venv
-venv\Scripts\activate   # Windows
-# source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate
 
-# Instalar dependencias
-# Windows (usa wheels comunitarios para insightface):
 python install.py
-
-# Linux/Mac:
-pip install -r requirements.txt
 ```
 
-!!! warning "Versiones compatibles"
-    | Librería | Versión |
-    |---|---|
-    | Python | 3.10, 3.11, 3.12 |
-    | onnxruntime | >=1.18.0, <1.21.0 |
-    | numpy | >=1.24.0, <2.0.0 |
-    | insightface | ==0.7.3 |
+La primera vez tarda entre **2 y 5 minutos** — descarga el modelo de reconocimiento facial (~600 MB).
 
-    Estas restricciones están documentadas en `requirements.txt` y son forzadas por `install.py`.
-
-### Compilar y ejecutar la aplicación
+### 4. Correr la aplicación
 
 ```bash
-cd AttendanceSystem
-dotnet build
+cd ../../..
 dotnet run --project src/AttendanceSystem.App
 ```
 
-### Variables de entorno del FaceService
+---
 
-El servicio Python se configura mediante `.env` en `AttendanceSystem/src/FaceService/`:
+## Primer inicio de sesión
+
+- **Usuario:** `admin`
+- **Contraseña:** `admin123`
+
+!!! tip "Primeros pasos recomendados"
+    1. Ve a **Usuarios** → crea los empleados del sistema
+    2. Ve a **Registro Facial** → captura el rostro de cada empleado
+    3. Ve a **Horarios** → configura los horarios de entrada y salida
+    4. Ve a **Configuración** → ajusta tolerancias y parámetros
+
+---
+
+## Solución de problemas
+
+| Problema | Causa probable | Solución |
+|---|---|---|
+| La app no abre y sale error de base de datos | PostgreSQL no está corriendo | Abre **Servicios** de Windows → inicia `postgresql` |
+| "Python no compatible" | Tienes Python 3.13 | Instala Python 3.12 desde python.org |
+| "Python no encontrado" | No se marcó "Add to PATH" | Reinstala Python marcando esa casilla |
+| Error de biometría / ONNX | Falta Visual C++ | Instala [vc_redist.x64.exe](https://aka.ms/vs/17/release/vc_redist.x64.exe) |
+| "Cámara no abre" | Otra app la está usando | Cierra Zoom, Teams u otra app con la cámara |
+
+!!! note "Reconfigurar la base de datos"
+    Si cambiaste la contraseña de PostgreSQL, edita directamente:
+    ```
+    AttendanceSystem/src/AttendanceSystem.App/appsettings.json
+    ```
+
+---
+
+## Variables de entorno del FaceService (opcional)
+
+El servicio de IA se configura con un archivo `.env` en `AttendanceSystem/src/FaceService/`:
+
+```bash
+copy .env.example .env
+```
 
 ```env
 FACE_HOST=0.0.0.0
@@ -183,37 +126,4 @@ FACE_API_KEY=           # vacío = sin autenticación
 FACE_LOG_LEVEL=INFO
 ```
 
-Copia `.env.example` como `.env` y ajusta según el entorno. El `iniciar.bat` lo crea automáticamente.
-
-### Ciclo de vida del servicio Python
-
-El `FaceServiceManager` en la aplicación WPF gestiona el proceso Python automáticamente:
-
-- **Inicio bajo demanda**: se lanza cuando se necesita verificación o registro biométrico
-- **Health check**: verifica `GET /api/health` antes de cada operación
-- **Apagado por inactividad**: se detiene tras N minutos sin uso (configurable en `appsettings.json`)
-- **Reinicio automático**: si el proceso muere inesperadamente, se relanza en la siguiente operación
-
-### Estructura del repositorio
-
-```
-RAMar_Repo/
-├── iniciar.bat                    # Lanzador principal (doble clic)
-├── setup.ps1                      # Lógica de instalación (PowerShell)
-├── AttendanceSystem/
-│   ├── AttendanceSystem.sln
-│   └── src/
-│       ├── AttendanceSystem.App/         # WPF + controladores + vistas
-│       │   └── appsettings.example.json  # Plantilla de configuración
-│       ├── AttendanceSystem.Core/        # DTOs, interfaces, enums
-│       ├── AttendanceSystem.Services/    # Lógica de negocio
-│       ├── AttendanceSystem.Infrastructure/  # EF Core, repositorios
-│       ├── AttendanceSystem.Security/    # AES-256, sesiones
-│       └── FaceService/                  # Microservicio Python
-│           ├── install.py                # Instalador de librerías
-│           ├── requirements.txt          # Dependencias Python
-│           ├── .env.example              # Plantilla de variables
-│           └── run.py                    # Punto de entrada
-├── docs/                          # Fuente de esta documentación
-└── mkdocs.yml                     # Configuración del portal
-```
+Si no creas el `.env`, el servicio usa estos valores por defecto automáticamente.
