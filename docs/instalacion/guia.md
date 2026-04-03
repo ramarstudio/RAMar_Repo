@@ -1,72 +1,70 @@
-# Guía de Instalación (Zero-Touch)
+# Guía de Instalación Definitiva 🚀
 
-La instalación de **RAMar Attendance System** ha sido diseñada para ser lo más cercana posible a un **"Siguiente, Siguiente, Siguiente"**.
-
----
-
-## 1. Clonar el repositorio
-
-Abre una terminal de Windows y ejecuta estos comandos:
-
-```bash
-git clone https://github.com/ramarstudio/RAMar_Repo.git
-cd RAMar_Repo
-```
+Esta guía está diseñada para que cualquier persona, sin importar su nivel técnico, pueda desplegar el **RAMar Attendance System** de forma exitosa en menos de 5 minutos.
 
 ---
 
-## 2. Arrancar `iniciar.bat` (El asistente)
+## 📋 Fase 1: Lo que necesitas tener instalado
 
-Navega hasta la carpeta descargada y busca el archivo **`iniciar.bat`**. Haz doble clic sobre él.
+Antes de tocar el código, asegúrate de tener estas sólidas bases en tu PC:
 
-Aparecerá una ventana negra que realizará los siguientes pasos por ti:
+| Software | ¿Por qué? | Link Directo |
+| :--- | :--- | :--- |
+| **.NET 8 SDK** | Es el corazón del panel de control. | [Descargar x64](https://dotnet.microsoft.com/download/dotnet/8.0) |
+| **Python 3.12** | Es el cerebro de la Inteligencia Facial. | [Descargar](https://www.python.org/downloads/) |
+| **PostgreSQL 15+** | Es la memoria donde se guardan los datos. | [Descargar](https://www.postgresql.org/download/windows/) |
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Script (iniciar.bat)
-    participant PostgreSQL
-    Script->>Script: Verificar .NET & Python
-    Script-->>User: Solicitar Contraseña PostgreSQL
-    User->>Script: Ingrese Clave: [*****]
-    Script->>Script: Inyectar clave en appsettings.json
-    Script->>Script: Crear Venv & Instalar IA
-    Script->>Script: Compilar C#
-    Script->>PostgreSQL: Crear tablas automáticas (EnsureCreated)
-    Script->>User: Abrir Panel de Control
-```
+!!! important "⚠️ Nota Crítica para Python"
+    Al instalar Python, **DEBES marcar la casilla "Add Python to PATH"** en la primera ventana del instalador. Sin esto, el asistente no podrá arrancar.
 
 ---
 
-## 3. ¿Qué pasa durante la primera ejecución?
+## 🏗️ Fase 2: Preparar la Base de Datos
 
-La primera vez que el asistente ruede, verás los siguientes mensajes en la consola:
+El sistema guardará todo en una base de datos local. Sigue estos pasos:
 
-- **"Creando entorno virtual aislado (venv)"**: Aísla el motor de IA de tu sistema para no generar conflictos.
-- **"Instalando librerías especializadas (InsightFace)"**: Descarga el motor de reconocimiento facial compatible con tu versión de Python.
-- **"SISTEMA INICIANDO..."**: La app de escritorio (WPF) se abrirá automáticamente.
-
----
-
-## 4. Primer inicio de sesión
-
-Una vez abierta la interfaz, usa las credenciales maestras predefinidas:
-
-| Campo | Valor |
-|---|---|
-| **Usuario** | `admin` |
-| **Contraseña** | `admin123` |
-
-!!! warning "Seguridad crìtica"
-    **Cambia la contraseña inmediatamente** desde el panel para asegurar tu instancia.
+1. Abre **pgAdmin 4** (se instaló con PostgreSQL).
+2. Conéctate con tu contraseña maestra.
+3. Haz clic derecho en **Databases** -> **Create** -> **Database...**
+4. En el nombre, escribe exactamente: `AttendanceSystem`
+5. Dale a **Save**. ¡Listo! Ya puedes cerrar pgAdmin.
 
 ---
 
-### ❓ Preguntas frecuentes e intuitivas
+## 🪄 Fase 3: Despliegue en un clic con `iniciar.bat`
 
-- **¿Qué pasa si mi internet es lento?**
-  El sistema descargará silenciosamente el motor de IA (~600MB) la primera vez que se use la cámara. Verás el panel de registro facial "cargando". Se paciente, solo ocurre una vez.
-- **¿Puedo mover mi carpeta de lugar después de instalar?**
-  Sí, pero asegúrate de siempre usar el archivo `iniciar.bat` para que el sistema actualice las rutas internas.
-- **¿Cómo lo desinstalo?**
-  Simplemente borra la carpeta del repositorio. No se instalan servicios pesados en Segundo Plano.
+Ahora viene la magia. Hemos automatizado 15 pasos técnicos en un solo archivo inteligente.
+
+1. **Descarga o clona** el repositorio en una carpeta limpia.
+2. Entra a la carpeta y busca el archivo llamado **`iniciar.bat`**.
+3. Haz **Doble Clic** sobre él.
+
+### ¿Qué sucederá en la pantalla negra?
+
+1. **Validación**: El script revisará que tengas .NET y Python instalados.
+2. **Tu Contraseña**: El script se detendrá y te pedirá: *">> Ingrese la CONTRASEÑA de su base de datos PostgreSQL:"*. Escríbela y dale a **Enter**.
+3. **Autoconfiguración**: El asistente inyectará esa clave en los archivos internos por ti. **(Cero edición manual de JSON)**.
+4. **Instalación IA**: Se abrirá una pequeña descarga automática de las librerías de IA. Esto ocurre solo la primera vez.
+5. **¡Éxito!**: Verás el logotipo de RAMar y la aplicación se abrirá sola.
+
+---
+
+## 💡 Fase 4: Primer Inicio de Sesión
+
+Una vez abierta la aplicación azul de RAMar, ingresa con estas credenciales:
+
+- **Usuario:** `admin`
+- **Contraseña:** `admin123`
+
+!!! tip "Primeros Pasos Recomendados"
+    1. Ve a **Configuración** y cambia tu contraseña.
+    2. Ve a **Usuarios** y registra a tu primer empleado.
+    3. Ve a **Registro Facial** y captura su rostro para activar la biometría.
+
+---
+
+### 🛠️ ¿Problemas? (Checklist de Seguridad)
+
+- [ ] **"Error de Biometría"**: Instala el [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe). Es necesario para el motor ONNX.
+- [ ] **"Base de datos no encontrada"**: Revisa que la base se llame `AttendanceSystem` (respetando mayúsculas/minúsculas).
+- [ ] **"Cámara no abre"**: Asegúrate de que ninguna otra app (Zoom, Teams) esté usando la cámara en ese momento.
