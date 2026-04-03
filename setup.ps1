@@ -221,7 +221,7 @@ if (-not (Test-Path $JsonPath)) {
     # Generar appsettings.json con los datos ingresados
     $json = Get-Content $ExamplePath -Raw -Encoding UTF8
     $connStr = "Host=$dbHost;Port=$dbPort;Database=AttendanceSystem;Username=$dbUser;Password=$dbPass"
-    $json = $json -replace "Host=localhost;Port=5432;Database=AttendanceSystem;Username=postgres;Password=CAMBIAR_POR_TU_CONTRASEÑA", $connStr
+    $json = $json.Replace("Host=localhost;Port=5432;Database=AttendanceSystem;Username=postgres;Password=CAMBIAR_POR_TU_CONTRASEÑA", $connStr)
     Set-Content -Path $JsonPath -Value $json -Encoding UTF8 -NoNewline
 
     Write-Ok "appsettings.json creado correctamente."
@@ -268,12 +268,18 @@ if (-not (Test-Path $VenvPy)) {
     Write-Ok "Motor de IA instalado correctamente."
 } else {
     # Verificar que insightface este instalado
+    $prevPref = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
     $check = & $VenvPy -c "import insightface; print('ok')" 2>&1
-    if ($check -ne "ok") {
+    $ErrorActionPreference = $prevPref
+
+    if (($check -join "") -ne "ok") {
         Write-Host "      Reparando librerias faltantes..." -ForegroundColor Yellow
         Push-Location $FaceDir
         & "venv\Scripts\python.exe" install.py
+        if ($LASTEXITCODE -ne 0) { Exit-WithError "Fallo la reparacion de librerias. Verifica tu conexion a internet." }
         Pop-Location
+        Write-Ok "Motor de IA reparado."
     } else {
         Write-Ok "Motor de IA listo."
     }
@@ -282,17 +288,35 @@ if (-not (Test-Path $VenvPy)) {
 # ── 5. LANZAR APLICACION ─────────────────────────────────────────────────────
 
 Write-Step 5 5 "Iniciando aplicacion..."
+
+# Buscar el ejecutable en orden de preferencia
+$AppExe = $null
+$exeCandidates = @(
+    (Join-Path $AppDir "publish\AttendanceSystem.App.exe"),
+    (Join-Path $AppProject "bin\Release\net8.0-windows\AttendanceSystem.App.exe"),
+    (Join-Path $AppProject "bin\Debug\net8.0-windows\AttendanceSystem.App.exe")
+)
+foreach ($c in $exeCandidates) {
+    if (Test-Path $c) { $AppExe = $c; break }
+}
+
+if (-not $AppExe) {
+    Exit-WithError "No se encontro el ejecutable de la aplicacion.`n         Asegurate de que AttendanceSystem.App.exe este en la carpeta publish\ o bin\."
+}
+
+Write-Ok "Ejecutable encontrado."
 Write-Host ""
 Write-Host "===========================================================================" -ForegroundColor DarkCyan
-Write-Host "   Sistema listo. Iniciando RAMar Control de Asistencia..." -ForegroundColor White
+Write-Host "   Entorno listo. Iniciando RAMar Control de Asistencia..." -ForegroundColor White
 Write-Host "   Usuario inicial: admin   /   Contrasena: admin123" -ForegroundColor DarkGray
 Write-Host "===========================================================================" -ForegroundColor DarkCyan
 Write-Host ""
+Write-Host "   Presione cualquier tecla para iniciar la aplicacion..." -ForegroundColor Yellow
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+Write-Host ""
 
-Push-Location $AppDir
-dotnet run --project src\AttendanceSystem.App
+& $AppExe
 $exitCode = $LASTEXITCODE
-Pop-Location
 
 if ($exitCode -ne 0) {
     Write-Host ""
