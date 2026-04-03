@@ -1,68 +1,92 @@
 @echo off
 :: ############################################################################
 :: # RAMar Software Studio - Attendance System
-:: # Script de Arranque Automático (One-Click)
+:: # Script de Configuración y Arranque Automático (Zero-Touch)
 :: ############################################################################
-setlocal
+setlocal enabledelayedexpansion
 chcp 65001 >nul
-title RAMar - Control de Asistencia Biométrico
+title RAMar - Control de Asistencia Biométrico (Instalador)
 
 echo.
 echo ===========================================================================
 echo    RAMar Software Studio - Attendance System
-echo    Inicializador Automático Global (Windows)
+echo    Configurador Automático de Proyecto
 echo ===========================================================================
 echo.
 
-:: 1. Verificación de Entorno (.NET SDK)
+:: 0. Verificación de Permisos (Opcional pero recomendado)
+net session >nul 2>&1
+if %errorLevel% == 0 (
+    echo [INFO] Ejecutando con permisos de Administrador.
+) else (
+    echo [AVISO] No se detectaron permisos de Administrador. 
+    echo Si el proceso falla, intenta darle clic derecho "Ejecutar como administrador".
+)
+
+:: 1. Verificación de Requisitos (Software Base)
+echo.
 echo [1/4] Verificando Requisitos de Software...
-dotnet --version >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR CRITICO] .NET 8 SDK no está instalado.
-    echo Por favor, instálalo desde: https://dotnet.microsoft.com/download/dotnet/8.0
-    goto :ERROR
+
+set "DOTNET_OK=0"
+dotnet --version >nul 2>&1 && set "DOTNET_OK=1"
+if "!DOTNET_OK!"=="0" (
+    echo [ERROR] .NET 8 SDK no está instalado.
+    echo Descárgalo aquí: https://dotnet.microsoft.com/download/dotnet/8.0
+    pause & exit /b 1
 )
 echo   - OK (.NET 8 SDK detectado)
 
-:: 2. Verificación de Python
-python --version >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR CRITICO] Python no está instalado o no se agregó al PATH.
-    echo Por favor, instala Python 3.10+ y asegúrate de marcar "Add Python to PATH".
-    goto :ERROR
+set "PYTHON_OK=0"
+python --version >nul 2>&1 && set "PYTHON_OK=1"
+if "!PYTHON_OK!"=="0" (
+    echo [ERROR] Python no está instalado o no se agregó al PATH.
+    echo Instala Python 3.10+ y MARCA "Add Python to PATH".
+    pause & exit /b 1
 )
 echo   - OK (Python detectado)
 
-:: 3. Configuración de Base de Datos
+:: 2. Configuración Inteligente de appsettings.json
 echo.
-echo [2/4] Verificando Base de Datos...
+echo [2/4] Configurando Base de Datos (PostgreSQL)...
 set "APP_DIR=%~dp0AttendanceSystem"
-set "CONFIG_PATH=%APP_DIR%\src\AttendanceSystem.App\appsettings.json"
+set "JSON_PATH=%APP_DIR%\src\AttendanceSystem.App\appsettings.json"
 set "EXAMPLE_PATH=%APP_DIR%\src\AttendanceSystem.App\appsettings.example.json"
 
-if not exist "%CONFIG_PATH%" (
+if not exist "%JSON_PATH%" (
     echo.
     echo ***************************************************************************
-    echo                 CONFIGURACION INICIAL (Primera vez)
+    echo   ASISTENTE DE CONFIGURACION DE BASE DE DATOS
     echo ***************************************************************************
     echo.
-    echo Creando archivo appsettings.json basándose en el ejemplo...
-    copy "%EXAMPLE_PATH%" "%CONFIG_PATH%" >nul
+    echo Parece que es la primera vez que inicias el sistema.
+    echo Necesitamos conectar la base de datos de PostgreSQL.
     echo.
-    echo PASO OBLIGATORIO:
-    echo 1. Abre el archivo: AttendanceSystem\src\AttendanceSystem.App\appsettings.json
-    echo 2. Busca "CAMBIAR_POR_TU_CONTRASEÑA" y pon tu clave de PostgreSQL.
-    echo 3. Guarda el archivo.
+    set /p "DB_PASS=>> Ingrese la CONTRASEÑA de su base de datos PostgreSQL: "
+    
+    if "%DB_PASS%"=="" (
+        echo [ERROR] La contraseña no puede estar vacía.
+        pause & exit /b 1
+    )
+
     echo.
-    echo Pulsa cualquier tecla una vez que hayas guardado el archivo...
-    pause >nul
+    echo Creando configuracion local...
+    copy "%EXAMPLE_PATH%" "%JSON_PATH%" >nul
+
+    :: Usar PowerShell para reemplazar la contraseña en el JSON de forma segura
+    powershell -Command "(gc '%JSON_PATH%') -replace 'CAMBIAR_POR_TU_CONTRASEÑA', '%DB_PASS%' | Out-File -encoding utf8 '%JSON_PATH%'"
+    
+    if errorlevel 1 (
+        echo [ERROR] Falló al escribir la contraseña en el archivo.
+        pause & exit /b 1
+    )
+    echo ✅ Base de datos configurada con éxito.
 ) else (
-    echo   - OK (appsettings.json configurado)
+    echo   - OK (Ya existe appsettings.json configurado)
 )
 
-:: 4. Motor Biométrico (Python Venv)
+:: 3. Preparación de Motor IA (Python Venv)
 echo.
-echo [3/4] Preparando el Motor de Inteligencia Artificial (Biometría)...
+echo [3/4] Preparando Inteligencia Artificial (Biometría)...
 cd /d "%APP_DIR%\src\FaceService"
 
 if not exist "venv\Scripts\python.exe" (
@@ -70,40 +94,28 @@ if not exist "venv\Scripts\python.exe" (
     python -m venv venv
 )
 
-echo   - Validando/Instalando librerías faciales (InsightFace)...
-echo     (Esto puede tardar unos minutos en la primera ejecución)
+echo   - Instalando librerías especializadas (InsightFace)...
 call venv\Scripts\activate.bat
 python install.py
 if errorlevel 1 (
-    echo [ERROR] Falló la instalación de librerías de IA. 
-    goto :ERROR
+    echo [ERROR] Falló la instalación de IA. Revisa tu conexión a internet.
+    pause & exit /b 1
 )
 
-:: 5. Arranque Final
+:: 4. Lanzamiento Final
 echo.
-echo [4/4] Compilando e Iniciando Sistema...
+echo [4/4] Compilando e Iniciando Sistema Principal...
+echo ===========================================================================
+echo.
 cd /d "%APP_DIR%"
-echo.
-echo ===========================================================================
-echo    SISTEMA INICIANDO... (No cierres esta ventana)
-echo ===========================================================================
-echo.
 dotnet run --project src\AttendanceSystem.App
 
 if errorlevel 1 (
     echo.
-    echo [ERROR] La aplicación se cerró inesperadamente. Revisa los mensajes arriba.
-    goto :ERROR
+    echo [ERROR] El servidor no pudo iniciar. 
+    echo Verifica que PostgreSQL esté corriendo y la contraseña ingresada.
+    pause & exit /b 1
 )
 
-goto :FIN
-
-:ERROR
-echo.
-echo El proceso se interrumpió por un error.
-pause
-exit /b 1
-
-:FIN
 pause
 exit /b 0

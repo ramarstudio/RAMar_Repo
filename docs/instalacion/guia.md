@@ -1,6 +1,6 @@
-# Guía paso a paso
+# Guía de Instalación (Zero-Touch)
 
-Hemos optimizado el proyecto para que **cualquier persona pueda arrancarlo con un par de clics**. El script automatizado hará todo el trabajo pesado por ti (crear entornos virtuales, descargar IA, configurar rutas, etc.).
+Hemos diseñado el sistema para que **cualquier persona pueda arrancarlo en menos de 5 minutos** sin necesidad de conocimientos técnicos avanzados.
 
 ## 1. Clonar el repositorio
 
@@ -11,54 +11,39 @@ cd RAMar_Repo
 
 ---
 
-## 2. Instalar software requerido
+## 2. Un solo clic: Arrancar `iniciar.bat`
 
-Si es un equipo nuevo, instala esto primero:
+Dirígete a la carpeta `RAMar_Repo` y haz **doble clic en el archivo `iniciar.bat`**.
 
-- [**.NET 8 SDK**](https://dotnet.microsoft.com/download/dotnet/8.0) — descargar "SDK" x64
-- [**Python 3.10 – 3.13**](https://www.python.org/downloads/) — al instalar, **marca estrictamente "Add Python to PATH"**
-- [**PostgreSQL 15+**](https://www.postgresql.org/download/windows/) — al instalar, recuerda la contraseña del usuario `postgres`
-
----
-
-## 3. Configurar PostgreSQL
-
-En `pgAdmin` o `psql`, simplemente crea una base de datos vacía. El sistema construirá todas las tablas por sí solo.
-
-```sql
-CREATE DATABASE AttendanceSystem;
-```
+El asistente inteligente hará todo lo siguiente de forma automática:
+1. **Verificará** si tienes instalado `.NET 8` y `Python`.
+2. **Configurará tu base de datos**: El script te preguntará la contraseña de tu PostgreSQL en la misma ventana negra y **la inyectará automáticamente** en el archivo de configuración.
+3. **Preparará la IA**: Creará un entorno virtual aislado y descargará el motor de reconocimiento facial compatible con tu PC.
+4. **Lanzará la Aplicación**: Compilará y abrirá el panel de control.
 
 ---
 
-## 4. Un solo clic: Ejecutar `iniciar.bat`
+## 3. Requisitos previos (Solo si no los tienes)
 
-Dirígete a la carpeta `RAMar_Repo` inicial y haz **doble clic en el archivo `iniciar.bat`**.
+Si el asistente te indica que falta software, simplemente instala estos tres programas:
 
-El asistente interactivo de consola hará lo siguiente:
-1. **Detectará** si es la primera vez que se lanza.
-2. **Generará** tu `appsettings.json` y se pausará indicándote que pongas la contraseña de tu base de datos allí.
-3. **Creará** el entorno virtual para aislar Python sin ensuciar tu sistema.
-4. **Instalará** automáticamente todas las librerías faciales compatibles con tu versión exacta de Python.
-5. **Compilará** y ejecutará el software en C#.
+- [**.NET 8 SDK**](https://dotnet.microsoft.com/download/dotnet/8.0) — descarga el "SDK" x64.
+- [**Python 3.10+**](https://www.python.org/downloads/) — **IMPORTANTE**: marca "Add Python to PATH" al instalar.
+- [**PostgreSQL 15+**](https://www.postgresql.org/download/windows/) — al instalarlo, ponle una contraseña que recuerdes.
 
-!!! tip "Ejecuciones futuras"
-    Las próximas veces que lo abras, el script `iniciar.bat` verá que todo está listo y arrancará el panel en menos de 3 segundos.
+!!! tip "Sobre la Base de Datos"
+    Antes de correr el script por primera vez, asegúrate de tener creada una base de datos vacía llamada **`AttendanceSystem`** en tu PostgreSQL (puedes crearla usando pgAdmin).
 
 ---
 
-## Primer uso en la App
+## Primer uso en el Panel
 
-1. Inicia sesión con las credenciales maestras por defecto:
+Una vez abierta la aplicación, usa las credenciales maestras:
 
-    | Campo | Valor |
-    |---|---|
-    | **Usuario** | `admin` |
-    | **Contraseña** | `admin123` |
+| Campo | Valor |
+|---|---|
+| **Usuario** | `admin` |
+| **Contraseña** | `admin123` |
 
-2. **Cambia la contraseña inmediatamente** desde el panel para asegurar tu instancia.
-3. Registra a tu primer empleado y escanea su rostro en el **Registro Facial**.
-4. ¡Listo! El reloj biométrico ya está en funcionamiento.
-
-!!! info "La descarga IA"
-    Si la pantalla se queda cargando un momento al abrir por primera vez la cámara biométrica, no te preocupes. Está descargando los motores matemáticos `InsightFace` (~600 MB silenciosos a internet).
+!!! warning "Seguridad"
+    Cambia la contraseña inmediatamente desde el panel de administración tras ingresar por primera vez.
