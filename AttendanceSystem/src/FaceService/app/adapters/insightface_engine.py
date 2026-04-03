@@ -60,16 +60,30 @@ class InsightFaceEngine(FaceEngine):
 
             import insightface
 
+            import os
+            import insightface
+
+            # Usar una ruta local para evitar problemas con nombres de usuario con caracteres especiales en Windows
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            model_root = os.path.join(base_dir, "models")
+            
             logger.info(
-                "Cargando modelo %s (det_size=%s, gpu=%d)...",
-                self._model_name, self._det_size, self._gpu_id,
+                "Cargando modelo %s (det_size=%s, gpu=%d) desde %s...",
+                self._model_name, self._det_size, self._gpu_id, model_root
             )
-            self._app = insightface.app.FaceAnalysis(
-                name=self._model_name,
-                providers=self._get_providers(),
-            )
-            self._app.prepare(ctx_id=self._gpu_id, det_size=self._det_size)
-            logger.info("Modelo cargado correctamente.")
+            
+            try:
+                self._app = insightface.app.FaceAnalysis(
+                    name=self._model_name,
+                    root=model_root,
+                    providers=self._get_providers(),
+                )
+                self._app.prepare(ctx_id=self._gpu_id, det_size=self._det_size)
+                logger.info("Modelo cargado correctamente.")
+            except Exception as e:
+                logger.error("ERROR CRITICO al cargar el motor facial: %s", e)
+                self._app = None
+                raise RuntimeError(f"No se pudo inicializar InsightFace: {e}")
 
     def _get_providers(self) -> list[str]:
         """Selecciona provider ONNX según disponibilidad de GPU."""

@@ -1,78 +1,109 @@
 @echo off
+:: ############################################################################
+:: # RAMar Software Studio - Attendance System
+:: # Script de Arranque Automático (One-Click)
+:: ############################################################################
+setlocal
 chcp 65001 >nul
-title RAMar - Control de Asistencia Biometrico
+title RAMar - Control de Asistencia Biométrico
 
-echo =======================================================
+echo.
+echo ===========================================================================
 echo    RAMar Software Studio - Attendance System
-echo    Inicializador Automatico Global
-echo =======================================================
+echo    Inicializador Automático Global (Windows)
+echo ===========================================================================
 echo.
 
-cd /d "%~dp0\AttendanceSystem"
-
-:: 1. Verificación de AppSettings
-echo [1/3] Verificando configuracion de Base de Datos...
-if not exist "src\AttendanceSystem.App\appsettings.json" (
-    echo.
-    echo *******************************************************
-    echo                 PRIMERA EJECUCION
-    echo *******************************************************
-    echo.
-    echo Se acaba de crear tu archivo de configuracion local...
-    copy "src\AttendanceSystem.App\appsettings.example.json" "src\AttendanceSystem.App\appsettings.json" >nul
-    echo.
-    echo PASO REQUERIDO:
-    echo 1. Ve a la carpeta: AttendanceSystem\src\AttendanceSystem.App
-    echo 2. Abre el archivo "appsettings.json"
-    echo 3. Cambia "CAMBIAR_POR_TU_CONTRASEÑA" por la contrasena de tu PostgreSQL.
-    echo 4. Guarda el archivo y vuelve a esta ventana.
-    echo.
-    echo Presiona cualquier tecla UNA VEZ que hayas guardado el archivo...
-    pause >nul
-) else (
-    echo   - OK (appsettings.json encontrado)
+:: 1. Verificación de Entorno (.NET SDK)
+echo [1/4] Verificando Requisitos de Software...
+dotnet --version >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR CRITICO] .NET 8 SDK no está instalado.
+    echo Por favor, instálalo desde: https://dotnet.microsoft.com/download/dotnet/8.0
+    goto :ERROR
 )
+echo   - OK (.NET 8 SDK detectado)
 
-:: 2. Verificación e Instalación de Python
-echo.
-echo [2/3] Preparando el Motor Biometrico (Python)...
-cd src\FaceService
-
-:: Verificar si existe Python en la línea de comandos
+:: 2. Verificación de Python
 python --version >nul 2>&1
 if errorlevel 1 (
+    echo [ERROR CRITICO] Python no está instalado o no se agregó al PATH.
+    echo Por favor, instala Python 3.10+ y asegúrate de marcar "Add Python to PATH".
+    goto :ERROR
+)
+echo   - OK (Python detectado)
+
+:: 3. Configuración de Base de Datos
+echo.
+echo [2/4] Verificando Base de Datos...
+set "APP_DIR=%~dp0AttendanceSystem"
+set "CONFIG_PATH=%APP_DIR%\src\AttendanceSystem.App\appsettings.json"
+set "EXAMPLE_PATH=%APP_DIR%\src\AttendanceSystem.App\appsettings.example.json"
+
+if not exist "%CONFIG_PATH%" (
     echo.
-    echo [ERROR CRITICO] Python no esta instalado o no se agrego al PATH.
-    echo Por favor, instala Python 3.10+ y asegurate de marcar "Add Python to PATH".
-    pause
-    exit /b
+    echo ***************************************************************************
+    echo                 CONFIGURACION INICIAL (Primera vez)
+    echo ***************************************************************************
+    echo.
+    echo Creando archivo appsettings.json basándose en el ejemplo...
+    copy "%EXAMPLE_PATH%" "%CONFIG_PATH%" >nul
+    echo.
+    echo PASO OBLIGATORIO:
+    echo 1. Abre el archivo: AttendanceSystem\src\AttendanceSystem.App\appsettings.json
+    echo 2. Busca "CAMBIAR_POR_TU_CONTRASEÑA" y pon tu clave de PostgreSQL.
+    echo 3. Guarda el archivo.
+    echo.
+    echo Pulsa cualquier tecla una vez que hayas guardado el archivo...
+    pause >nul
+) else (
+    echo   - OK (appsettings.json configurado)
 )
 
+:: 4. Motor Biométrico (Python Venv)
+echo.
+echo [3/4] Preparando el Motor de Inteligencia Artificial (Biometría)...
+cd /d "%APP_DIR%\src\FaceService"
+
 if not exist "venv\Scripts\python.exe" (
-    echo   - Creando entorno virtual de Python por primera vez...
+    echo   - Creando entorno virtual aislado (venv)...
     python -m venv venv
 )
 
-echo   - Instalando/Verificando dependencias (esto puede tardar si es la primera vez)...
+echo   - Validando/Instalando librerías faciales (InsightFace)...
+echo     (Esto puede tardar unos minutos en la primera ejecución)
 call venv\Scripts\activate.bat
 python install.py
 if errorlevel 1 (
-    echo.
-    echo [ERROR] Ocurrio un problema instalando las dependencias.
-    pause
-    exit /b
+    echo [ERROR] Falló la instalación de librerías de IA. 
+    goto :ERROR
 )
-cd ..\..
 
-:: 3. Ejecución de .NET
+:: 5. Arranque Final
 echo.
-echo [3/3] Compilando e Iniciando la Aplicacion Principal...
+echo [4/4] Compilando e Iniciando Sistema...
+cd /d "%APP_DIR%"
+echo.
+echo ===========================================================================
+echo    SISTEMA INICIANDO... (No cierres esta ventana)
+echo ===========================================================================
 echo.
 dotnet run --project src\AttendanceSystem.App
 
 if errorlevel 1 (
     echo.
-    echo [ERROR] La aplicacion encontro un problema al ejecutarse (revisa errores arriba).
-    pause
-    exit /b
+    echo [ERROR] La aplicación se cerró inesperadamente. Revisa los mensajes arriba.
+    goto :ERROR
 )
+
+goto :FIN
+
+:ERROR
+echo.
+echo El proceso se interrumpió por un error.
+pause
+exit /b 1
+
+:FIN
+pause
+exit /b 0

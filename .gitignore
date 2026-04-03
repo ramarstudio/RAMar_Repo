@@ -93,3 +93,13 @@ appsettings.json
 coverage/
 *.coverage
 *.coveragexml
+
+## Documentation & AI Junk
+site/
+.gemini/
+.antigravity/
+
+## Misc
+[Cc]amera[Ll]og.*
+[Dd]irect[Ss]how.*
+*.log

@@ -174,7 +174,8 @@ namespace AttendanceSystem.App.Helpers
 
         private async Task<bool> WaitForReadyAsync(CancellationToken ct)
         {
-            var deadline = DateTime.UtcNow.AddSeconds(45);
+            // Aumentado a 120 segundos para dar tiempo a la descarga inicial de modelos (600MB) en conexiones lentas
+            var deadline = DateTime.UtcNow.AddSeconds(120);
 
             while (DateTime.UtcNow < deadline && !ct.IsCancellationRequested)
             {
