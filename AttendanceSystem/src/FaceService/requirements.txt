@@ -1,9 +1,32 @@
+# ─────────────────────────────────────────────────────────────
+#  FaceService — Motor de Reconocimiento Facial
+#  Compatible: Python 3.10, 3.11, 3.12, 3.13
+#
+#  INSTALACIÓN EN WINDOWS:
+#    python install.py        ← Usa este script, NO pip install directo.
+#                               Descarga automáticamente el wheel correcto
+#                               de insightface para tu versión de Python.
+#
+#  INSTALACIÓN EN LINUX/MAC:
+#    pip install -r requirements.txt   ← Funciona directo.
+# ─────────────────────────────────────────────────────────────
+
+# --- Web framework ---
 fastapi>=0.115.0,<1.0
 uvicorn[standard]>=0.30.0,<1.0
+
+# --- Reconocimiento Facial (InsightFace / ArcFace) ---
+# NOTA WINDOWS: insightface NO tiene wheels oficiales en PyPI para Windows.
+#   El script install.py resuelve esto automáticamente descargando un wheel
+#   comunitario precompilado para tu versión de Python.
 insightface==0.7.3
 onnxruntime>=1.20.0
+
+# --- Procesamiento de imagen ---
 numpy>=1.24,<3.0
 opencv-python-headless>=4.10.0
+
+# --- Configuración ---
 pydantic>=2.0,<3.0
 pydantic-settings>=2.0,<3.0
 python-dotenv>=1.0,<2.0

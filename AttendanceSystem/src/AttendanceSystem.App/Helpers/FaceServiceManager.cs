@@ -142,9 +142,9 @@ namespace AttendanceSystem.App.Helpers
             };
 
             // Si es .py, ejecutar con python
-            if (executablePath.EndsWith(".py", StringComparison.OrdinalIgnoreCase))
+            if (executablePath.EndsWith(".py"))
             {
-                psi.FileName = FindPython();
+                psi.FileName = FindPython(executablePath);
                 psi.Arguments = $"\"{executablePath}\"";
 
                 if (string.IsNullOrEmpty(psi.FileName))
@@ -248,9 +248,17 @@ namespace AttendanceSystem.App.Helpers
             return null;
         }
 
-        private static string FindPython()
+        private static string FindPython(string scriptPath)
         {
-            // Buscar python en PATH
+            // 1. Buscar en el entorno virtual aislado (venv)
+            string scriptDir = Path.GetDirectoryName(scriptPath);
+            if (!string.IsNullOrEmpty(scriptDir))
+            {
+                string venvPython = Path.Combine(scriptDir, "venv", "Scripts", "python.exe");
+                if (File.Exists(venvPython)) return venvPython;
+            }
+
+            // 2. Buscar python global en PATH
             foreach (var name in new[] { "python", "python3" })
             {
                 try

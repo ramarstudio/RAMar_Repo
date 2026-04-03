@@ -6,7 +6,7 @@
 
 [![Documentación](https://img.shields.io/badge/Documentaci%C3%B3n-Ver%20portal-2e7d32?style=for-the-badge)](https://ramarstudio.github.io/RAMar_Repo/)
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
-[![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/Licencia-Propietaria-red?style=flat-square)](./LICENSE)
 
@@ -22,23 +22,23 @@ Aplicación de escritorio que registra la asistencia del personal mediante **rec
 
 | | Detalle |
 |---|---|
-| **Reconocimiento facial** | Identificación en < 1 segundo con InsightFace (ArcFace) |
+| **Reconocimiento facial** | Identificación en < 1 segundo con InsightFace (ArcFace, embedding 512-D) |
 | **Privacidad** | Cero fotos — solo vectores matemáticos cifrados con AES-256 |
 | **Offline** | Funciona sin internet, sin suscripciones, sin datos en la nube |
 | **Panel admin** | Dashboard, empleados, horarios, marcajes, reportes, auditoría |
-| **Roles** | Empleado · Administrador · SuperAdministrador |
+| **Roles** | Empleado · Administrador · RRHH · SuperAdministrador |
 
 ### Arquitectura
 
 ```
-┌──────────────────────────────┐     HTTP localhost     ┌─────────────────────────┐
-│   App WPF — C# .NET 8       │ ◄────────────────────► │  Motor IA — Python      │
-│                              │                        │                         │
-│   · Interfaz gráfica         │                        │  · FastAPI              │
-│   · Captura de cámara        │                        │  · InsightFace/ArcFace  │
-│   · Lógica de negocio        │                        │  · Embedding 512-d      │
-│   · Entity Framework Core    │                        │  · Inicio bajo demanda  │
-└──────────────┬───────────────┘                        └─────────────────────────┘
+┌──────────────────────────────┐     HTTP localhost:5001  ┌─────────────────────────┐
+│   App WPF — C# .NET 8       │ ◄────────────────────►  │  Motor IA — Python      │
+│                              │                          │                         │
+│   · Interfaz gráfica         │                          │  · FastAPI + Uvicorn    │
+│   · Captura de cámara        │                          │  · InsightFace/ArcFace  │
+│   · Lógica de negocio        │                          │  · Embedding 512-d      │
+│   · Entity Framework Core    │                          │  · Inicio bajo demanda  │
+└──────────────┬───────────────┘                          └─────────────────────────┘
                │
                ▼
       ┌─────────────────┐
@@ -56,31 +56,34 @@ Aplicación de escritorio que registra la asistencia del personal mediante **rec
 ```
 RAMar_Repo/
 ├── AttendanceSystem/
+│   ├── AttendanceSystem.sln              # Solución principal
 │   └── src/
-│       ├── AttendanceSystem.App/            # Interfaz WPF
-│       ├── AttendanceSystem.Core/           # DTOs, interfaces, enums
-│       ├── AttendanceSystem.Services/       # Lógica de negocio
-│       ├── AttendanceSystem.Infrastructure/ # Acceso a datos (EF Core)
-│       ├── AttendanceSystem.Security/       # Autenticación, cifrado AES
-│       └── FaceService/                     # Motor biométrico (Python)
-├── Projects/                                # Planeamiento e ingeniería
-├── docs/                                    # Código fuente de la documentación
-└── mkdocs.yml                               # Configuración del portal web
+│       ├── AttendanceSystem.App/         # Interfaz WPF + controladores
+│       ├── AttendanceSystem.Core/        # DTOs, interfaces, enums
+│       ├── AttendanceSystem.Services/    # Lógica de negocio
+│       ├── AttendanceSystem.Infrastructure/  # Acceso a datos (EF Core)
+│       ├── AttendanceSystem.Security/    # Autenticación, cifrado AES
+│       └── FaceService/                  # Motor biométrico (Python/FastAPI)
+├── Projects/                             # Planeamiento e ingeniería
+├── docs/                                 # Código fuente de la documentación
+└── mkdocs.yml                            # Configuración del portal web
 ```
 
 ### Inicio rápido
 
-```bash
+```powershell
 # 1. Clonar
 git clone https://github.com/ramarstudio/RAMar_Repo.git
+cd RAMar_Repo
 
-# 2. Configurar la base de datos PostgreSQL y el archivo .env
+# 2. Crear la base de datos PostgreSQL
+#    Abrir pgAdmin o psql y ejecutar: CREATE DATABASE AttendanceSystem;
 
-# 3. Instalar dependencias de Python
-cd AttendanceSystem/src/FaceService && pip install -r requirements.txt
+# 3. Arrancar el sistema (Autoconfiguración)
+#    Haz doble clic en el archivo "iniciar.bat" (o ejecútalo aquí)
+.\iniciar.bat
 
-# 4. Compilar y ejecutar
-cd AttendanceSystem && dotnet run --project src/AttendanceSystem.App
+# 4. Login: usuario "admin", contraseña "admin123"
 ```
 
 Para la guía completa de instalación, consulta la **[documentación](https://ramarstudio.github.io/RAMar_Repo/instalacion/guia/)**.

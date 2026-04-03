@@ -1,5 +1,7 @@
 # Guía paso a paso
 
+Hemos optimizado el proyecto para que **cualquier persona pueda arrancarlo con un par de clics**. El script automatizado hará todo el trabajo pesado por ti (crear entornos virtuales, descargar IA, configurar rutas, etc.).
+
 ## 1. Clonar el repositorio
 
 ```bash
@@ -9,73 +11,54 @@ cd RAMar_Repo
 
 ---
 
-## 2. Configurar PostgreSQL
+## 2. Instalar software requerido
 
-Crear la base de datos y el usuario con permisos completos:
+Si es un equipo nuevo, instala esto primero:
+
+- [**.NET 8 SDK**](https://dotnet.microsoft.com/download/dotnet/8.0) — descargar "SDK" x64
+- [**Python 3.10 – 3.13**](https://www.python.org/downloads/) — al instalar, **marca estrictamente "Add Python to PATH"**
+- [**PostgreSQL 15+**](https://www.postgresql.org/download/windows/) — al instalar, recuerda la contraseña del usuario `postgres`
+
+---
+
+## 3. Configurar PostgreSQL
+
+En `pgAdmin` o `psql`, simplemente crea una base de datos vacía. El sistema construirá todas las tablas por sí solo.
 
 ```sql
-CREATE DATABASE attendance_db;
-CREATE USER attendance_user WITH PASSWORD 'tu_password_seguro';
-GRANT ALL PRIVILEGES ON DATABASE attendance_db TO attendance_user;
+CREATE DATABASE AttendanceSystem;
 ```
 
 ---
 
-## 3. Variables de entorno
+## 4. Un solo clic: Ejecutar `iniciar.bat`
 
-Crear el archivo `.env` en `AttendanceSystem/`:
+Dirígete a la carpeta `RAMar_Repo` inicial y haz **doble clic en el archivo `iniciar.bat`**.
 
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=attendance_db
-DB_USER=attendance_user
-DB_PASSWORD=tu_password_seguro
-```
+El asistente interactivo de consola hará lo siguiente:
+1. **Detectará** si es la primera vez que se lanza.
+2. **Generará** tu `appsettings.json` y se pausará indicándote que pongas la contraseña de tu base de datos allí.
+3. **Creará** el entorno virtual para aislar Python sin ensuciar tu sistema.
+4. **Instalará** automáticamente todas las librerías faciales compatibles con tu versión exacta de Python.
+5. **Compilará** y ejecutará el software en C#.
 
-!!! danger "Seguridad"
-    Nunca subas el archivo `.env` al repositorio. Ya está incluido en `.gitignore`.
-
----
-
-## 4. Dependencias de Python
-
-```bash
-cd AttendanceSystem/src/FaceService
-pip install -r requirements.txt
-```
-
-!!! info "Primera ejecución"
-    La primera vez se descargan automáticamente los modelos de InsightFace (~200 MB). Esto ocurre **una sola vez**.
+!!! tip "Ejecuciones futuras"
+    Las próximas veces que lo abras, el script `iniciar.bat` verá que todo está listo y arrancará el panel en menos de 3 segundos.
 
 ---
 
-## 5. Compilar la aplicación
+## Primer uso en la App
 
-```bash
-cd AttendanceSystem
-dotnet build
-```
+1. Inicia sesión con las credenciales maestras por defecto:
 
----
+    | Campo | Valor |
+    |---|---|
+    | **Usuario** | `admin` |
+    | **Contraseña** | `admin123` |
 
-## 6. Ejecutar
+2. **Cambia la contraseña inmediatamente** desde el panel para asegurar tu instancia.
+3. Registra a tu primer empleado y escanea su rostro en el **Registro Facial**.
+4. ¡Listo! El reloj biométrico ya está en funcionamiento.
 
-```bash
-dotnet run --project src/AttendanceSystem.App
-```
-
-La aplicación WPF se abrirá. El motor de reconocimiento facial se iniciará **automáticamente** cuando se necesite — no es necesario ejecutar Python manualmente.
-
----
-
-## Primer uso
-
-1. Inicia sesión con las credenciales de administrador por defecto
-2. Cambia la contraseña inmediatamente desde el panel
-3. Registra los empleados desde **Usuarios**
-4. Captura el rostro de cada empleado desde **Registro Facial**
-5. Los empleados ya pueden marcar asistencia con su rostro
-
-!!! tip "Credenciales iniciales"
-    El sistema crea un usuario `admin` con rol SuperAdmin en la primera ejecución. Consulta la documentación interna para la contraseña inicial.
+!!! info "La descarga IA"
+    Si la pantalla se queda cargando un momento al abrir por primera vez la cámara biométrica, no te preocupes. Está descargando los motores matemáticos `InsightFace` (~600 MB silenciosos a internet).

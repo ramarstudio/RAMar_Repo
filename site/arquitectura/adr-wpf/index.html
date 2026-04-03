@@ -12,29 +12,31 @@
         <meta name="author" content="RAMar Studio">
       
       
-        <link rel="canonical" href="https://ramarstudio.github.io/RAMar_Repo/">
+        <link rel="canonical" href="https://ramarstudio.github.io/RAMar_Repo/arquitectura/adr-wpf/">
       
       
+        <link rel="prev" href="../">
       
-        <link rel="next" href="producto/">
+      
+        <link rel="next" href="../motor-biometrico/">
       
       
         
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>RAMar Studio</title>
+        <title>WPF vs Web - RAMar Studio</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,9 +55,9 @@
       
     
     
-      <link rel="stylesheet" href="assets/custom.css">
+      <link rel="stylesheet" href="../../assets/custom.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -80,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#control-de-asistencia-biometrico" class="md-skip">
+        <a href="#wpf-vs-web-decision-de-arquitectura" class="md-skip">
           Saltar a contenido
         </a>
       
@@ -96,7 +98,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Cabecera">
-    <a href="." title="RAMar Studio" class="md-header__button md-logo" aria-label="RAMar Studio" data-md-component="logo">
+    <a href="../.." title="RAMar Studio" class="md-header__button md-logo" aria-label="RAMar Studio" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -116,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Inicio
+              WPF vs Web
             
           </span>
         </div>
@@ -234,7 +236,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navegación" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="RAMar Studio" class="md-nav__button md-logo" aria-label="RAMar Studio" data-md-component="logo">
+    <a href="../.." title="RAMar Studio" class="md-nav__button md-logo" aria-label="RAMar Studio" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -261,37 +263,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Inicio
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -307,59 +282,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Tabla de contenidos
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#caracteristicas" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Características
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#stack-tecnologico" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Stack tecnológico
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#arquitectura" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Arquitectura
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -398,7 +320,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="producto/" class="md-nav__link ">
+            <a href="../../producto/" class="md-nav__link ">
               
   
   
@@ -442,7 +364,7 @@
   
   
     <li class="md-nav__item">
-      <a href="producto/beneficios/" class="md-nav__link">
+      <a href="../../producto/beneficios/" class="md-nav__link">
         
   
   
@@ -470,7 +392,7 @@
   
   
     <li class="md-nav__item">
-      <a href="producto/como-funciona/" class="md-nav__link">
+      <a href="../../producto/como-funciona/" class="md-nav__link">
         
   
   
@@ -532,7 +454,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="instalacion/" class="md-nav__link ">
+            <a href="../../instalacion/" class="md-nav__link ">
               
   
   
@@ -576,7 +498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="instalacion/requisitos/" class="md-nav__link">
+      <a href="../../instalacion/requisitos/" class="md-nav__link">
         
   
   
@@ -604,7 +526,7 @@
   
   
     <li class="md-nav__item">
-      <a href="instalacion/guia/" class="md-nav__link">
+      <a href="../../instalacion/guia/" class="md-nav__link">
         
   
   
@@ -636,6 +558,8 @@
       
   
   
+    
+  
   
   
     
@@ -658,15 +582,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="arquitectura/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -690,7 +614,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -707,10 +631,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="arquitectura/adr-wpf/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WPF vs Web
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -726,6 +677,120 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexto
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problema-identificado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problema identificado
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problema identificado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-barrera-del-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Barrera del hardware
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-latencia-de-red-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Latencia de red HTTP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-consumo-de-recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Consumo de recursos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisión
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparativa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparativa
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consecuencias-negativas-aceptadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consecuencias negativas aceptadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -738,7 +803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="arquitectura/motor-biometrico/" class="md-nav__link">
+      <a href="../motor-biometrico/" class="md-nav__link">
         
   
   
@@ -802,7 +867,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="ingenieria/" class="md-nav__link ">
+            <a href="../../ingenieria/" class="md-nav__link ">
               
   
   
@@ -846,7 +911,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ingenieria/metodologia/" class="md-nav__link">
+      <a href="../../ingenieria/metodologia/" class="md-nav__link">
         
   
   
@@ -874,7 +939,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ingenieria/requisitos/" class="md-nav__link">
+      <a href="../../ingenieria/requisitos/" class="md-nav__link">
         
   
   
@@ -902,7 +967,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ingenieria/diagramas/" class="md-nav__link">
+      <a href="../../ingenieria/diagramas/" class="md-nav__link">
         
   
   
@@ -957,10 +1022,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#caracteristicas" class="md-nav__link">
+  <a href="#contexto" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Características
+        Contexto
       
     </span>
   </a>
@@ -968,10 +1033,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stack-tecnologico" class="md-nav__link">
+  <a href="#problema-identificado" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stack tecnológico
+        Problema identificado
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problema identificado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-barrera-del-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Barrera del hardware
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-latencia-de-red-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Latencia de red HTTP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-consumo-de-recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Consumo de recursos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisión
       
     </span>
   </a>
@@ -979,10 +1094,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#arquitectura" class="md-nav__link">
+  <a href="#comparativa" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Arquitectura
+        Comparativa
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consecuencias-negativas-aceptadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consecuencias negativas aceptadas
       
     </span>
   </a>
@@ -1007,6 +1133,46 @@
   
 
 
+  <nav class="md-path" aria-label="Navegación" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Inicio
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Arquitectura
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
               
               <article class="md-content__inner md-typeset">
                 
@@ -1017,97 +1183,76 @@
   
 
 
-<h1 id="control-de-asistencia-biometrico">Control de Asistencia Biométrico<a class="headerlink" href="#control-de-asistencia-biometrico" title="Permanent link">&para;</a></h1>
-<p>El <strong>Control de Asistencia Biométrico</strong> es un sistema de escritorio que registra la entrada y salida del personal mediante reconocimiento facial. Opera 100% en la red local, sin internet y sin almacenar fotografías.</p>
+<h1 id="wpf-vs-web-decision-de-arquitectura">WPF vs Web — Decisión de arquitectura<a class="headerlink" href="#wpf-vs-web-decision-de-arquitectura" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Resumen</p>
+<p>Se descartó la arquitectura web (React) a favor de una aplicación nativa de escritorio con <strong>WPF (.NET 8)</strong> para obtener acceso directo al hardware y eliminar la latencia de red.</p>
+</div>
 <hr />
-<h2 id="caracteristicas">Características<a class="headerlink" href="#caracteristicas" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Característica</th>
-<th>Detalle</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Reconocimiento facial</strong></td>
-<td>Identificación en menos de 1 segundo con InsightFace (ArcFace)</td>
-</tr>
-<tr>
-<td><strong>Privacidad</strong></td>
-<td>Cero fotos almacenadas — solo vectores matemáticos cifrados con AES-256</td>
-</tr>
-<tr>
-<td><strong>Sin internet</strong></td>
-<td>Funciona completamente offline en la red local de la empresa</td>
-</tr>
-<tr>
-<td><strong>Panel admin</strong></td>
-<td>Dashboard, empleados, horarios, marcajes, reportes, auditoría</td>
-</tr>
-<tr>
-<td><strong>Roles</strong></td>
-<td>Empleado, Administrador, SuperAdministrador</td>
-</tr>
-<tr>
-<td><strong>Configurable</strong></td>
-<td>Tolerancia de tardanzas, horarios, parámetros del sistema</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="stack-tecnologico">Stack tecnológico<a class="headerlink" href="#stack-tecnologico" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Componente</th>
-<th>Tecnología</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Aplicación de escritorio</td>
-<td>C# .NET 8 (WPF)</td>
-</tr>
-<tr>
-<td>Motor de reconocimiento facial</td>
-<td>Python 3.13 + FastAPI + InsightFace</td>
-</tr>
-<tr>
-<td>Base de datos</td>
-<td>PostgreSQL + Entity Framework Core</td>
-</tr>
-<tr>
-<td>Cifrado biométrico</td>
-<td>AES-256</td>
-</tr>
-<tr>
-<td>Comunicación interna</td>
-<td>HTTP localhost:8000</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="arquitectura">Arquitectura<a class="headerlink" href="#arquitectura" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>graph LR
-    A[Empleado] --&gt; B[Cámara]
-    B --&gt; C[App WPF - C#]
-    C --&gt;|HTTP local| D[Motor IA - Python]
-    D --&gt;|Embedding 512d| C
-    C --&gt; E[(PostgreSQL)]
-    C --&gt; F[Resultado en pantalla]</code></pre>
-<p><strong>Flujo de marcaje:</strong></p>
+<h2 id="contexto">Contexto<a class="headerlink" href="#contexto" title="Permanent link">&para;</a></h2>
+<p>El planteamiento original era construir el kiosco de asistencia como una <strong>aplicación web</strong> con React renderizada en el navegador del equipo.</p>
+<h2 id="problema-identificado">Problema identificado<a class="headerlink" href="#problema-identificado" title="Permanent link">&para;</a></h2>
+<p>Durante la construcción de prototipos se descubrieron problemas críticos con el enfoque web:</p>
+<h3 id="1-barrera-del-hardware">1. Barrera del hardware<a class="headerlink" href="#1-barrera-del-hardware" title="Permanent link">&para;</a></h3>
+<p>Una página web no puede controlar directamente la GPU y la cámara. Solo accede al hardware mediante APIs del navegador que introducen capas de abstracción innecesarias.</p>
+<h3 id="2-latencia-de-red-http">2. Latencia de red HTTP<a class="headerlink" href="#2-latencia-de-red-http" title="Permanent link">&para;</a></h3>
+<p>Para que React envíe un frame de video a Python, debe:</p>
 <ol>
-<li>El empleado se acerca a la cámara</li>
-<li>La app WPF captura el frame y lo envía al motor Python</li>
-<li>Python genera un embedding facial de 512 dimensiones</li>
-<li>La app compara el embedding contra los registrados en PostgreSQL</li>
-<li>Se muestra el resultado (aprobado/denegado) y se registra el marcaje</li>
+<li>Capturar el frame vía la API del navegador</li>
+<li>Codificarlo como Base64 o Blob</li>
+<li>Enviarlo por HTTP al backend</li>
+<li>Esperar la respuesta</li>
 </ol>
+<p>Este ciclo produce latencia perceptible e inconsistente, incluso dentro de la red local.</p>
+<h3 id="3-consumo-de-recursos">3. Consumo de recursos<a class="headerlink" href="#3-consumo-de-recursos" title="Permanent link">&para;</a></h3>
+<p>El navegador Chrome consume RAM y CPU significativos solo para renderizar la interfaz, compitiendo con el motor de reconocimiento facial.</p>
 <hr />
-<blockquote>
-<p><strong>RAMar Software Studio</strong> — Innovación, privacidad computacional y soluciones corporativas.</p>
-</blockquote>
+<h2 id="decision">Decisión<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
+<p>Migrar toda la solución gráfica a una <strong>aplicación nativa de escritorio Windows</strong> escrita en C# (.NET 8 WPF).</p>
+<h2 id="comparativa">Comparativa<a class="headerlink" href="#comparativa" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Aspecto</th>
+<th>Web (React)</th>
+<th>Nativo (WPF)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Acceso a cámara</td>
+<td>API del navegador (indirecto)</td>
+<td>DirectShow / punteros en memoria</td>
+</tr>
+<tr>
+<td>FPS de video</td>
+<td>~15 FPS con parpadeos</td>
+<td>&gt; 30 FPS fluidos</td>
+</tr>
+<tr>
+<td>CPU en reposo</td>
+<td>~8-12% (navegador)</td>
+<td>~1%</td>
+</tr>
+<tr>
+<td>Latencia biométrica</td>
+<td>Variable</td>
+<td>&lt; 1 segundo</td>
+</tr>
+<tr>
+<td>RAM base</td>
+<td>~300 MB (Chrome)</td>
+<td>~80 MB</td>
+</tr>
+</tbody>
+</table>
+<h2 id="consecuencias-negativas-aceptadas">Consecuencias negativas aceptadas<a class="headerlink" href="#consecuencias-negativas-aceptadas" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Limitado a <strong>Windows</strong> (no es multiplataforma)</li>
+<li>Requiere instalación en cada equipo</li>
+<li>El equipo necesita conocer C#/WPF</li>
+</ul>
+<p>Estas limitaciones son aceptables porque el sistema opera exclusivamente en computadoras de oficina con Windows.</p>
 
 
 
@@ -1174,10 +1319,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "toc.follow"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
