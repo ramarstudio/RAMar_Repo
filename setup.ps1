@@ -72,32 +72,78 @@ try {
     Exit-WithError ".NET 8 SDK no encontrado.`n         Descargalo en: https://dotnet.microsoft.com/download/dotnet/8.0`n         Marca 'Add to PATH' al instalar."
 }
 
-# ── 2. VERIFICAR PYTHON 3.10–3.12 ────────────────────────────────────────────
+# ── 2. VERIFICAR / INSTALAR PYTHON 3.12 ──────────────────────────────────────
 
 Write-Step 2 5 "Verificando Python..."
 
-$pyExe = $null
-foreach ($cmd in @("python", "python3", "py")) {
-    try {
-        $ver = & $cmd --version 2>&1
-        if ($ver -match "Python (\d+)\.(\d+)") {
-            $pyMajor = [int]$Matches[1]
-            $pyMinor = [int]$Matches[2]
-            if ($pyMajor -eq 3 -and $pyMinor -in @(10, 11, 12)) {
-                $pyExe = $cmd
-                $pyFull = "$pyMajor.$pyMinor"
-                break
+# Version objetivo
+$PY_TARGET_FULL  = "3.12.10"
+$PY_INSTALLER_URL = "https://www.python.org/ftp/python/$PY_TARGET_FULL/python-$PY_TARGET_FULL-amd64.exe"
+$PY_INSTALLER_PATH = Join-Path $env:TEMP "python-$PY_TARGET_FULL-amd64.exe"
+
+function Find-CompatiblePython {
+    foreach ($cmd in @("python", "python3", "py -3.12", "py -3.11", "py -3.10")) {
+        try {
+            $ver = & $cmd.Split()[0] $cmd.Split()[1..99] --version 2>&1
+            if ($ver -match "Python (\d+)\.(\d+)") {
+                $maj = [int]$Matches[1]; $min = [int]$Matches[2]
+                if ($maj -eq 3 -and $min -in @(10, 11, 12)) {
+                    return @{ Exe = $cmd.Split()[0]; Full = "$maj.$min" }
+                }
             }
-        }
-    } catch {}
+        } catch {}
+    }
+    return $null
 }
 
-if (-not $pyExe) {
-    $verTry = try { & python --version 2>&1 } catch { "no encontrado" }
-    Exit-WithError "Python compatible no encontrado. Version detectada: $verTry`n`n         Se requiere Python 3.10, 3.11 o 3.12.`n         Python 3.13+ aun no es compatible con onnxruntime.`n`n         Descarga en: https://www.python.org/downloads/`n         IMPORTANTE: marca 'Add Python to PATH' al instalar."
+function Install-Python312 {
+    Write-Host ""
+    Write-Host "      Python compatible no encontrado. Instalando Python $PY_TARGET_FULL automaticamente..." -ForegroundColor Yellow
+    Write-Host "      Descargando instalador (~27 MB)..." -ForegroundColor DarkGray
+
+    try {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $wc = New-Object System.Net.WebClient
+        $wc.DownloadFile($PY_INSTALLER_URL, $PY_INSTALLER_PATH)
+    } catch {
+        Exit-WithError "No se pudo descargar Python. Verifica tu conexion a internet.`n         URL: $PY_INSTALLER_URL`n         O instalalo manualmente desde: https://www.python.org/downloads/"
+    }
+
+    Write-Host "      Instalando Python $PY_TARGET_FULL (puede tardar 1-2 minutos)..." -ForegroundColor DarkGray
+
+    # Instalacion silenciosa: solo para el usuario actual, agrega al PATH
+    $pyInstallArgs = "/quiet InstallAllUsers=0 PrependPath=1 Include_test=0 Include_doc=0 Include_launcher=1"
+    $proc = Start-Process -FilePath $PY_INSTALLER_PATH -ArgumentList $pyInstallArgs -Wait -PassThru
+
+    Remove-Item $PY_INSTALLER_PATH -ErrorAction SilentlyContinue
+
+    if ($proc.ExitCode -ne 0) {
+        Exit-WithError "La instalacion de Python fallo (codigo $($proc.ExitCode)).`n         Instalalo manualmente desde: https://www.python.org/downloads/`n         Marca 'Add Python to PATH' al instalar."
+    }
+
+    # Refrescar PATH en el proceso actual para encontrar python recien instalado
+    $userPath  = [Environment]::GetEnvironmentVariable("PATH", "User")
+    $machinePath = [Environment]::GetEnvironmentVariable("PATH", "Machine")
+    $env:PATH  = "$userPath;$machinePath"
+
+    Write-Ok "Python $PY_TARGET_FULL instalado correctamente."
 }
 
-Write-Ok "Python $pyFull compatible."
+# Buscar Python compatible ya instalado
+$pyFound = Find-CompatiblePython
+
+if (-not $pyFound) {
+    Install-Python312
+    # Buscar de nuevo despues de instalar
+    $pyFound = Find-CompatiblePython
+    if (-not $pyFound) {
+        Exit-WithError "Python se instalo pero no se encontro en PATH.`n         Cierra esta ventana, abre una nueva y vuelve a ejecutar iniciar.bat."
+    }
+}
+
+$pyExe  = $pyFound.Exe
+$pyFull = $pyFound.Full
+Write-Ok "Python $pyFull listo."
 
 # ── 3. CONFIGURAR BASE DE DATOS ───────────────────────────────────────────────
 
