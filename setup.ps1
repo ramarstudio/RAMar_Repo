@@ -1,11 +1,11 @@
 # ############################################################################
-# RAMar Software Studio — Setup y Lanzador
-# setup.ps1 — Configuracion, verificacion e inicio del sistema
+# RAMar Software Studio - Setup y Lanzador
+# setup.ps1 - Configuracion, verificacion e inicio del sistema
 # ############################################################################
 
 param([string]$ScriptDir = $PSScriptRoot)
 
-$Host.UI.RawUI.WindowTitle = "RAMar — Control de Asistencia Biometrico"
+$Host.UI.RawUI.WindowTitle = "RAMar - Control de Asistencia Biometrico"
 $ErrorActionPreference = "Stop"
 
 $AppDir      = Join-Path $ScriptDir "AttendanceSystem"
@@ -22,7 +22,7 @@ $EnvExample  = Join-Path $FaceDir ".env.example"
 function Write-Header {
     Write-Host ""
     Write-Host "===========================================================================" -ForegroundColor DarkCyan
-    Write-Host "   RAMar Software Studio — Control de Asistencia Biometrico" -ForegroundColor White
+    Write-Host "   RAMar Software Studio - Control de Asistencia Biometrico" -ForegroundColor White
     Write-Host "===========================================================================" -ForegroundColor DarkCyan
     Write-Host ""
 }
@@ -157,7 +157,7 @@ if (-not (Test-Path $JsonPath)) {
 
     Write-Host ""
     Write-Host "  -------------------------------------------------------------------------" -ForegroundColor DarkGray
-    Write-Host "   CONFIGURACION INICIAL — Base de Datos" -ForegroundColor Yellow
+    Write-Host "   CONFIGURACION INICIAL - Base de Datos" -ForegroundColor Yellow
     Write-Host "  -------------------------------------------------------------------------" -ForegroundColor DarkGray
     Write-Host "   PostgreSQL debe estar instalado y corriendo." -ForegroundColor Gray
     Write-Host "   La base de datos se creara automaticamente si no existe." -ForegroundColor Gray
@@ -203,16 +203,15 @@ if (-not (Test-Path $JsonPath)) {
 
     if ($psqlExe) {
         Write-Host ""
-        Write-Host "      Intentando crear la base de datos automaticamente..." -ForegroundColor DarkGray
+        Write-Host "      Verificando base de datos..." -ForegroundColor DarkGray
         $env:PGPASSWORD = $dbPass
-        $createResult = & $psqlExe -h $dbHost -p $dbPort -U $dbUser -c "SELECT 1 FROM pg_database WHERE datname='AttendanceSystem'" postgres 2>&1
-        if ($createResult -match "\(0 rows\)") {
-            & $psqlExe -h $dbHost -p $dbPort -U $dbUser -c "CREATE DATABASE ""AttendanceSystem"" ENCODING 'UTF8'" postgres 2>&1 | Out-Null
-            Write-Ok "Base de datos 'AttendanceSystem' creada."
-        } elseif ($createResult -match "\(1 row\)") {
-            Write-Ok "Base de datos 'AttendanceSystem' ya existe."
+        $checkResult = & $psqlExe -h $dbHost -p $dbPort -U $dbUser -tAc "SELECT 1 FROM pg_database WHERE datname='AttendanceSystem'" postgres 2>&1
+        $dbExists = ($checkResult -join "") -match "1"
+        if (-not $dbExists) {
+            & $psqlExe -h $dbHost -p $dbPort -U $dbUser postgres -c "CREATE DATABASE AttendanceSystem ENCODING 'UTF8'" 2>&1 | Out-Null
+            Write-Ok "Base de datos creada."
         } else {
-            Write-Warn "No se pudo verificar la base de datos automaticamente. La app la creara al iniciar."
+            Write-Ok "Base de datos ya existe."
         }
         Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
     } else {
