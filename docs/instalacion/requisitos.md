@@ -37,7 +37,7 @@ Verifica que el equipo cumple estos requisitos antes de instalar.
 
 ## Software requerido
 
-Estos tres programas deben estar instalados **antes** de ejecutar `iniciar.bat`.
+Estos tres programas deben estar instalados **antes** de continuar con la instalación.
 
 ### PostgreSQL 15 o superior
 
@@ -56,7 +56,7 @@ Plataforma de ejecución del panel de administración.
 - Descargar el **SDK** (no solo el Runtime)
 - Verificar instalación: abrir CMD y escribir `dotnet --version` — debe mostrar `8.x.x`
 
-### Python 3.10, 3.11 o 3.12
+### Python 3.12 (3.10 y 3.11 también funcionan)
 
 Motor del servicio de reconocimiento facial.
 
@@ -64,10 +64,35 @@ Motor del servicio de reconocimiento facial.
     Instala **únicamente Python 3.10, 3.11 o 3.12**.
 
     Python 3.13+ no es compatible con `onnxruntime` (motor de inferencia de IA) y causará errores durante la instalación.
-    El script `iniciar.bat` bloquea versiones incompatibles y te indica qué versión descargar.
+    El script `install.py` bloquea versiones incompatibles y te indica qué versión descargar.
 
-- Descarga: [python.org/downloads](https://www.python.org/downloads/) — busca la sección "Looking for a specific release?" y descarga la **3.12.x**
-- **Obligatorio:** marcar la casilla **"Add Python to PATH"** en la primera pantalla del instalador
+**¿Ya tienes Python instalado?** Verifica en terminal:
+
+```cmd
+python --version
+```
+
+| Resultado | Acción |
+|---|---|
+| `3.10.x`, `3.11.x` o `3.12.x` | ✅ No necesitas hacer nada |
+| `3.13.x` o superior | ⚠️ Instala 3.12 **a la par** (no desinstales la 3.13) |
+| Error / no encontrado | ❌ Instala Python 3.12 |
+
+**Instalar Python 3.12:**
+
+- **Desde terminal (recomendada):**
+    ```cmd
+    winget install Python.Python.3.12
+    ```
+- **Manual:** descargar desde [python.org/downloads](https://www.python.org/downloads/) — buscar la sección "Looking for a specific release?" y descargar la **3.12.x**
+- **Obligatorio:** marcar la casilla **"Add Python to PATH"** en la primera pantalla del instalador (si se usa el instalador manual)
+
+!!! tip "Si tienes Python 3.13+ y acabas de instalar 3.12"
+    Ambas versiones conviven sin problemas. Para crear el entorno virtual del proyecto con la 3.12, usa:
+    ```cmd
+    py -3.12 -m venv venv
+    ```
+    Una vez dentro del venv, `python` siempre apuntará a la 3.12.
 
 ---
 

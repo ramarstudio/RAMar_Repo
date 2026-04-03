@@ -122,6 +122,26 @@ def install_insightface() -> None:
 
 
 def main() -> None:
+    # ── Pre-flight: verificar versión de Python ──────────────────
+    ver_short = get_python_version_short()
+    if ver_short not in SUPPORTED_VERSIONS:
+        print("=" * 60)
+        print("  ❌ ERROR: Versión de Python incompatible")
+        print("=" * 60)
+        print(f"  Detectada: Python {ver_short}")
+        print(f"  Requerida: {', '.join(sorted(SUPPORTED_VERSIONS))}")
+        print()
+        if sys.version_info >= (3, 13):
+            print("  ⚠️  Python 3.13+ no soporta onnxruntime aún.")
+        print()
+        print("  Para instalar Python 3.12 en Windows:")
+        print("    winget install Python.Python.3.12")
+        print()
+        print("  O descarga desde:")
+        print("    https://www.python.org/downloads/release/python-3120/")
+        print("=" * 60)
+        sys.exit(1)
+
     print("=" * 60)
     print("  FaceService — Instalador de Dependencias")
     print("=" * 60)

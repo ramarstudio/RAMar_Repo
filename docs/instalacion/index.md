@@ -30,15 +30,17 @@ Elige la ruta según tu perfil.
 
 ```mermaid
 graph TD
-    A[Instalar PostgreSQL, .NET 8, Python 3.10-3.12] --> B[Doble clic en iniciar.bat]
-    B --> C{Primera vez?}
-    C -- Sí --> D[Ingresar contraseña de PostgreSQL]
-    D --> E[Script crea BD, instala IA automáticamente]
-    E --> F[App abre. Login: admin / admin123]
-    C -- No --> F
+    A["Instalar PostgreSQL, .NET 8, Python 3.12"] --> B["Clonar repo y configurar appsettings.json"]
+    B --> C["cd FaceService"]
+    C --> D{"python --version?"}
+    D -- "3.10–3.12" --> E["python -m venv venv"]
+    D -- "3.13+" --> F["py -3.12 -m venv venv"]
+    E --> G["activate + python install.py"]
+    F --> G
+    G --> H["dotnet run — Login: admin / admin123"]
 ```
 
 ---
 
-!!! success "Sin editar archivos de configuración"
-    El script `iniciar.bat` configura todo automáticamente. No necesitas abrir ningún archivo JSON ni terminal.
+!!! info "Instalación por comandos"
+    Toda la instalación se realiza por terminal. Consulta la [guía paso a paso](guia.md) para los comandos exactos.

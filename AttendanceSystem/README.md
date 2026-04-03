@@ -42,18 +42,34 @@ Para hacer funcionar el sistema, el entorno requiere:
 1.  **Sistema Operativo:** Windows 10 u 11 (x64)
 2.  **Software:**
     - `.NET 8 SDK` — [descargar aquí](https://dotnet.microsoft.com/download/dotnet/8.0)
-    - `Python 3.10+` — [descargar aquí](https://www.python.org/downloads/) (marcar "Add to PATH")
+    - `Python 3.12` — `winget install Python.Python.3.12` (⚠️ 3.13+ no es compatible)
     - `PostgreSQL 15+` — [descargar aquí](https://www.postgresql.org/download/windows/)
 3.  **Hardware:** Cualquier cámara web USB o integrada + 4 GB RAM mínimo (8 GB recomendado)
 
 ### Pasos esenciales
 
-1. Crea la base de datos PostgreSQL mediante psql o pgAdmin:
-   `CREATE DATABASE AttendanceSystem;`
-2. Ve a la carpeta raíz del repositorio (`RAMar_Repo`).
-3. Haz doble clic en el archivo **`iniciar.bat`**.
-
-El script guiado te pedirá colocar tu contraseña, creará los entornos de Python descargando la Inteligencia artificial y finalmente arrancará la interfaz.
+1. Instala Python 3.12 si no lo tienes: `winget install Python.Python.3.12`
+2. Crea la base de datos `AttendanceSystem` en PostgreSQL:
+   - **Opción fácil:** Abre **pgAdmin 4**, haz clic derecho en *Databases* > *Create* > *Database...* y ponle de nombre `AttendanceSystem`.
+   - **Opción terminal:** Ejecuta `CREATE DATABASE AttendanceSystem;` en psql.
+3. Configura la conexión:
+   ```bash
+   cd AttendanceSystem/src/AttendanceSystem.App
+   copy appsettings.example.json appsettings.json
+   # Edita appsettings.json con tu contraseña de PostgreSQL
+   ```
+4. Instala el motor de IA:
+   ```bash
+   cd ../FaceService
+   python -m venv venv          # o: py -3.12 -m venv venv  (si tienes Python 3.13+)
+   venv\Scripts\activate
+   python install.py
+   ```
+5. Ejecuta la aplicación:
+   ```bash
+   cd ../../..
+   dotnet run --project src/AttendanceSystem.App
+   ```
 
 ### Credenciales iniciales
 
