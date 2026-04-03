@@ -242,7 +242,11 @@ namespace AttendanceSystem.App.Helpers
             string devPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "FaceService", "run.py"));
             if (File.Exists(devPath)) return devPath;
 
-            // 3. Buscar run.py junto al exe
+            // 3. Buscar desde publish/ → ../src/FaceService/run.py
+            string publishPath = Path.GetFullPath(Path.Combine(baseDir, "..", "src", "FaceService", "run.py"));
+            if (File.Exists(publishPath)) return publishPath;
+
+            // 4. Buscar run.py junto al exe
             string localPy = Path.Combine(baseDir, "FaceService", "run.py");
             if (File.Exists(localPy)) return localPy;
 
