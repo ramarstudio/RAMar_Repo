@@ -1,32 +1,36 @@
 # ─────────────────────────────────────────────────────────────
-#  FaceService — Motor de Reconocimiento Facial
-#  Compatible: Python 3.10, 3.11, 3.12, 3.13
+#  FaceService — Dependencias del Motor de Reconocimiento Facial
 #
-#  INSTALACIÓN EN WINDOWS:
-#    python install.py        ← Usa este script, NO pip install directo.
-#                               Descarga automáticamente el wheel correcto
-#                               de insightface para tu versión de Python.
+#  IMPORTANTE — Windows:
+#    NO uses "pip install -r requirements.txt" directamente.
+#    Usa el script de instalacion:  python install.py
+#    (resuelve el wheel de insightface para Windows automaticamente)
 #
-#  INSTALACIÓN EN LINUX/MAC:
-#    pip install -r requirements.txt   ← Funciona directo.
+#  Linux/Mac:
+#    pip install -r requirements.txt   funciona directo.
+#
+#  Versiones de Python soportadas: 3.10, 3.11, 3.12
+#  Python 3.13 NO esta soportado aun (onnxruntime no tiene wheel estable).
 # ─────────────────────────────────────────────────────────────
 
 # --- Web framework ---
 fastapi>=0.115.0,<1.0
 uvicorn[standard]>=0.30.0,<1.0
 
-# --- Reconocimiento Facial (InsightFace / ArcFace) ---
-# NOTA WINDOWS: insightface NO tiene wheels oficiales en PyPI para Windows.
-#   El script install.py resuelve esto automáticamente descargando un wheel
-#   comunitario precompilado para tu versión de Python.
+# --- Reconocimiento Facial ---
+# Windows: instalado via install.py con wheel comunitario
+# Linux/Mac: pip install directo funciona
 insightface==0.7.3
-onnxruntime>=1.20.0
+
+# --- ONNX Runtime (motor de inferencia) ---
+# Usar CPU. Para GPU: reemplazar por onnxruntime-gpu
+onnxruntime>=1.18.0,<1.21.0
 
 # --- Procesamiento de imagen ---
-numpy>=1.24,<3.0
-opencv-python-headless>=4.10.0
+numpy>=1.24.0,<2.0.0
+opencv-python-headless>=4.8.0,<5.0.0
 
-# --- Configuración ---
+# --- Configuracion y entorno ---
 pydantic>=2.0,<3.0
 pydantic-settings>=2.0,<3.0
 python-dotenv>=1.0,<2.0
