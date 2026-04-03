@@ -295,7 +295,7 @@ Write-Step 5 5 "Verificando ejecutable..."
 if (-not (Test-Path $AppExe)) {
     Write-Host "      Compilando aplicacion por primera vez (puede tardar 1-2 min)..." -ForegroundColor DarkGray
     Push-Location $AppDir
-    dotnet publish src\AttendanceSystem.App -c Release --self-contained false -o publish 2>&1 | Out-Null
+    dotnet publish src\AttendanceSystem.App -c Release -r win-x64 --self-contained true -o publish 2>&1 | Out-Null
     $pubCode = $LASTEXITCODE
     Pop-Location
 
