@@ -112,7 +112,8 @@ namespace AttendanceSystem.App.Helpers
             lock (_frameLock)
             {
                 if (_lastFrame == null || _lastFrame.Empty()) return string.Empty;
-                Cv2.ImEncode(".jpg", _lastFrame, out var buffer);
+                Cv2.ImEncode(".jpg", _lastFrame, out var buffer,
+                    new ImageEncodingParam(ImwriteFlags.JpegQuality, 75));
                 return Convert.ToBase64String(buffer);
             }
         }

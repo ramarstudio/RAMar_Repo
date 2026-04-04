@@ -143,9 +143,9 @@ La primera vez tarda entre **2 y 5 minutos** — descarga el modelo de reconocim
 
 ### 4. Correr la aplicación
 
-```bash
-cd ../../..
-dotnet run --project src/AttendanceSystem.App
+```cmd
+cd ..\..\..
+dotnet run --project AttendanceSystem/src/AttendanceSystem.App
 ```
 
 ---

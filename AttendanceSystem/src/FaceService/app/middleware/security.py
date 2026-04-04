@@ -55,10 +55,14 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         now = time.monotonic()
 
         # Limpiar registros fuera de la ventana
-        self._requests[client_ip] = [
-            t for t in self._requests[client_ip]
-            if now - t < self._window
-        ]
+        recent = [t for t in self._requests[client_ip] if now - t < self._window]
+
+        # Purgar IPs sin actividad para evitar crecimiento ilimitado del dict
+        if not recent:
+            del self._requests[client_ip]
+            self._requests[client_ip] = []
+        else:
+            self._requests[client_ip] = recent
 
         if len(self._requests[client_ip]) >= self._max:
             raise HTTPException(429, detail="Demasiadas solicitudes. Intente de nuevo más tarde.")

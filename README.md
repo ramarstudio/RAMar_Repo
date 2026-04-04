@@ -93,7 +93,7 @@ python install.py
 
 :: 4. Correr la aplicación
 cd ..\..\..
-dotnet run --project src\AttendanceSystem.App
+dotnet run --project AttendanceSystem\src\AttendanceSystem.App
 ```
 
 **Login inicial:** usuario `admin` / contraseña `admin123`
