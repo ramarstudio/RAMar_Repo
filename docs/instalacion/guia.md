@@ -12,32 +12,49 @@ Instala estos tres programas antes de continuar:
 2. Sigue el instalador — cuando pida contraseña para `postgres`, elige una que recuerdes
 3. Puerto: déjalo en `5432`
 
-**Python 3.12** (obligatorio — 3.13+ no es compatible)
+**Python — versión requerida: 3.10, 3.11 o 3.12**
 
-Abre una terminal y verifica si ya tienes una versión compatible:
+Abre **cmd** y verifica tu versión actual:
 
 ```cmd
 python --version
 ```
 
-| Resultado | Qué hacer |
-|---|---|
-| `Python 3.10.x`, `3.11.x` o `3.12.x` | ✅ Ya estás listo, salta al siguiente requisito |
-| `Python 3.13.x` o superior | ⚠️ Versión incompatible — instala 3.12 **a la par** (ver abajo) |
-| `"Python was not found"` o error | ❌ No tienes Python — instálalo (ver abajo) |
+Según el resultado, sigue el camino correspondiente:
 
-**Instalar Python 3.12:**
+=== "✅ Tengo 3.10, 3.11 o 3.12"
 
-```cmd
-winget install Python.Python.3.12
-```
+    No necesitas hacer nada. Continúa con el siguiente requisito.
 
-O descarga manualmente desde [python.org/downloads](https://www.python.org/downloads/) (busca **3.12.x**) — marca **"Add Python to PATH"** durante la instalación.
+=== "⚠️ Tengo 3.13 o superior"
 
-Después de instalar, **cierra y reabre la terminal**.
+    `onnxruntime` (motor de IA) **no tiene soporte para Python 3.13** todavía. No desinstales tu 3.13 — instala 3.12 **a la par**:
 
-!!! danger "Python 3.13+ no es compatible"
-    `onnxruntime` (motor de IA) no soporta Python 3.13 aún. Si ya tienes 3.13, no lo desinstales — instala 3.12 junto a él. El paso 3 te muestra cómo forzar la versión correcta.
+    ```cmd
+    winget install Python.Python.3.12
+    ```
+
+    Cierra y reabre la terminal. Verifica que el launcher lo detecte:
+
+    ```cmd
+    py -3.12 --version
+    ```
+
+    Debe mostrar `Python 3.12.x`. Si muestra error, descarga el instalador manualmente desde [python.org](https://www.python.org/downloads/release/python-31210/) y marca **"Add Python to PATH"**.
+
+    El paso 3 usa `py -3.12` para crear el venv con la versión correcta, ignorando tu 3.13.
+
+=== "❌ No tengo Python"
+
+    Instala Python 3.12 directamente:
+
+    ```cmd
+    winget install Python.Python.3.12
+    ```
+
+    O descarga desde [python.org](https://www.python.org/downloads/) (busca **3.12.x**) — marca **"Add Python to PATH"** durante la instalación.
+
+    Cierra y reabre la terminal antes de continuar.
 
 **.NET 8 SDK**
 
@@ -85,26 +102,29 @@ Verifica qué versión de Python usarás:
 python --version
 ```
 
-**Según el resultado, elige cómo crear el entorno virtual:**
+**Crea el entorno virtual según tu versión de Python:**
 
-=== "Python 3.10–3.12 (o recién instalado)"
-
-    Tu `python` ya apunta a una versión compatible. Crea el entorno directamente:
+=== "✅ Tengo 3.10, 3.11 o 3.12"
 
     ```cmd
     python -m venv venv
     ```
 
-=== "Python 3.13+ (necesitas forzar 3.12)"
-
-    Si `python --version` muestra 3.13+, usa el **Python Launcher** (`py`) para forzar la versión 3.12 que instalaste a la par:
+=== "⚠️ Tengo 3.13+ (forzar 3.12)"
 
     ```cmd
     py -3.12 -m venv venv
     ```
 
-    !!! tip "¿Cómo funciona `py -3.12`?"
-        Windows instala un programa llamado **Python Launcher** (`py.exe`) que permite elegir entre varias versiones de Python instaladas. `py -3.12` le dice que use específicamente la 3.12, ignorando la 3.13.
+    Esto crea el venv usando Python 3.12 aunque tu versión por defecto sea 3.13. Una vez creado el venv, `python` dentro de él siempre será 3.12.
+
+**Verifica antes de continuar:**
+
+```cmd
+venv\Scripts\python.exe --version
+```
+
+Debe mostrar `Python 3.12.x`. Si muestra 3.13, elimina la carpeta `venv` y vuelve a crearla con `py -3.12 -m venv venv`.
 
 Luego, activa el entorno e instala las dependencias.
 

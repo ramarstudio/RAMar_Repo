@@ -66,32 +66,35 @@ Aplicación de escritorio Windows que registra la asistencia del personal median
 | Software | Versión | Descarga |
 |---|---|---|
 | .NET SDK | 8.0 | [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/8.0) |
-| Python | 3.10, 3.11 o 3.12 | [python.org](https://www.python.org/downloads/) |
+| Python | 3.10, 3.11 o **3.12** | [python.org](https://www.python.org/downloads/) |
 | PostgreSQL | 15+ | [postgresql.org](https://www.postgresql.org/download/windows/) |
-
-> **Python:** instala marcando **"Add Python to PATH"**. Python 3.13+ no es compatible aún con `onnxruntime`.
 
 **Hardware mínimo:** 8 GB RAM · 4 GB libres en disco · Cámara 720p · Windows 10 64-bit
 
+> ⚠️ **Python 3.13+ no es compatible** con `onnxruntime`. Si ya tienes 3.13, instala 3.12 a la par con `winget install Python.Python.3.12` y usa `py -3.12 -m venv venv` al crear el entorno virtual.
+
 ### Ejecutar
 
-```bash
-# Clonar
+```cmd
+:: 1. Clonar
 git clone https://github.com/ramarstudio/RAMar_Repo.git
 cd RAMar_Repo
 
-# Doble clic en iniciar.bat (o ejecutar desde terminal)
-iniciar.bat
+:: 2. Configurar base de datos
+cd AttendanceSystem\src\AttendanceSystem.App
+copy appsettings.example.json appsettings.json
+:: Editar appsettings.json y poner tu contraseña de PostgreSQL
+
+:: 3. Instalar librerías de IA (usar cmd, no PowerShell)
+cd ..\FaceService
+python -m venv venv          :: Si tienes 3.13+: py -3.12 -m venv venv
+venv\Scripts\activate.bat
+python install.py
+
+:: 4. Correr la aplicación
+cd ..\..\..
+dotnet run --project src\AttendanceSystem.App
 ```
-
-El asistente automático (`setup.ps1`) se encarga de:
-
-1. Verificar versiones de .NET y Python
-2. Solicitar la contraseña de PostgreSQL
-3. Crear la base de datos automáticamente
-4. Instalar las librerías de IA (InsightFace, ONNX Runtime)
-5. Crear los archivos de configuración
-6. Iniciar la aplicación
 
 **Login inicial:** usuario `admin` / contraseña `admin123`
 
