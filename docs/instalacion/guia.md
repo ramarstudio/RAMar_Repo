@@ -106,10 +106,13 @@ python --version
     !!! tip "¿Cómo funciona `py -3.12`?"
         Windows instala un programa llamado **Python Launcher** (`py.exe`) que permite elegir entre varias versiones de Python instaladas. `py -3.12` le dice que use específicamente la 3.12, ignorando la 3.13.
 
-Luego, activa el entorno e instala las dependencias:
+Luego, activa el entorno e instala las dependencias.
+
+!!! warning "Usa `cmd`, no PowerShell"
+    El comando `activate` no funciona en PowerShell si la ejecución de scripts está bloqueada. Abre **cmd** (no PowerShell) y ejecuta:
 
 ```cmd
-venv\Scripts\activate
+venv\Scripts\activate.bat
 python install.py
 ```
 
