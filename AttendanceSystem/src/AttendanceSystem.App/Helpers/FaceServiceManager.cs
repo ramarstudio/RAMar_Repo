@@ -160,11 +160,47 @@ namespace AttendanceSystem.App.Helpers
                 if (_serviceProcess == null)
                     return false;
 
+                // Capturar stderr en background para diagnóstico si el proceso muere pronto
+                var stderrBuffer = new System.Text.StringBuilder();
+                _serviceProcess.ErrorDataReceived += (_, e) =>
+                {
+                    if (e.Data != null) stderrBuffer.AppendLine(e.Data);
+                };
+                _serviceProcess.BeginErrorReadLine();
+
                 _logger?.LogInformation("FaceService iniciado (PID {Pid}). Esperando que esté listo...", _serviceProcess.Id);
 
-                // Esperar hasta que responda al health check (máx 30s para cargar modelo)
-                return await WaitForReadyAsync(ct);
+                bool ready = await WaitForReadyAsync(ct);
+
+                if (!ready && _serviceProcess is { HasExited: true })
+                {
+                    var stderr = stderrBuffer.ToString();
+                    _logger?.LogError("FaceService terminó inesperadamente. Stderr:\n{Stderr}", stderr);
+
+                    // Detectar errores comunes y lanzar excepción con mensaje claro
+                    if (stderr.Contains("No module named"))
+                    {
+                        var missing = stderr.Contains("insightface") ? "insightface" :
+                                      stderr.Contains("onnxruntime")  ? "onnxruntime"  :
+                                      stderr.Contains("fastapi")      ? "fastapi"      : "una librería";
+                        throw new InvalidOperationException(
+                            $"Falta la librería de IA '{missing}'.\n\n" +
+                            $"Ejecuta en cmd desde la carpeta del proyecto:\n" +
+                            $"  cd AttendanceSystem\\src\\FaceService\n" +
+                            $"  venv\\Scripts\\activate.bat\n" +
+                            $"  python install.py");
+                    }
+
+                    if (stderr.Contains("onnxruntime") || stderr.Contains("ONNX"))
+                        throw new InvalidOperationException(
+                            "Error en el motor de IA (ONNX Runtime).\n" +
+                            "Instala Visual C++ Redistributable desde:\n" +
+                            "https://aka.ms/vs/17/release/vc_redist.x64.exe");
+                }
+
+                return ready;
             }
+            catch (InvalidOperationException) { throw; }
             catch (Exception ex)
             {
                 _logger?.LogError(ex, "Error al iniciar FaceService.");
