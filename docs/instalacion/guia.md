@@ -92,54 +92,22 @@ Abre `appsettings.json` y reemplaza `CAMBIAR_POR_TU_CONTRASEÑA` con la contrase
 
 ### 3. Instalar librerías de IA
 
-```bash
+```cmd
 cd ../FaceService
-```
-
-Verifica qué versión de Python usarás:
-
-```cmd
-python --version
-```
-
-**Crea el entorno virtual según tu versión de Python:**
-
-=== "✅ Tengo 3.10, 3.11 o 3.12"
-
-    ```cmd
-    python -m venv venv
-    ```
-
-=== "⚠️ Tengo 3.13+ (forzar 3.12)"
-
-    ```cmd
-    py -3.12 -m venv venv
-    ```
-
-    Esto crea el venv usando Python 3.12 aunque tu versión por defecto sea 3.13. Una vez creado el venv, `python` dentro de él siempre será 3.12.
-
-**Verifica antes de continuar:**
-
-```cmd
-venv\Scripts\python.exe --version
-```
-
-Debe mostrar `Python 3.12.x`. Si muestra 3.13, elimina la carpeta `venv` y vuelve a crearla con `py -3.12 -m venv venv`.
-
-Luego, activa el entorno e instala las dependencias.
-
-!!! warning "Usa `cmd`, no PowerShell"
-    El comando `activate` no funciona en PowerShell si la ejecución de scripts está bloqueada. Abre **cmd** (no PowerShell) y ejecuta:
-
-```cmd
-venv\Scripts\activate.bat
 python install.py
 ```
 
+El script se encarga de todo automáticamente:
+
+- Detecta tu versión de Python
+- Si tienes 3.13+, busca Python 3.12 automáticamente usando el Python Launcher
+- Crea el entorno virtual con la versión correcta
+- Instala todas las dependencias
+
 La primera vez tarda entre **2 y 5 minutos** — descarga el modelo de reconocimiento facial (~600 MB).
 
-!!! note "Verificación rápida"
-    Después de activar el venv, ejecuta `python --version` — debe mostrar 3.10, 3.11 o 3.12 sin importar qué versión tengas instalada globalmente.
+!!! warning "Si sale 'Python compatible no encontrado'"
+    Instala Python 3.12 con `winget install Python.Python.3.12`, cierra y reabre la terminal, y vuelve a ejecutar `python install.py`.
 
 ### 4. Correr la aplicación
 

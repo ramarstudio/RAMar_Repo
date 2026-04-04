@@ -85,10 +85,8 @@ cd AttendanceSystem\src\AttendanceSystem.App
 copy appsettings.example.json appsettings.json
 :: Editar appsettings.json y poner tu contraseña de PostgreSQL
 
-:: 3. Instalar librerías de IA (usar cmd, no PowerShell)
+:: 3. Instalar librerías de IA
 cd ..\FaceService
-python -m venv venv          :: Si tienes 3.13+: py -3.12 -m venv venv
-venv\Scripts\activate.bat
 python install.py
 
 :: 4. Correr la aplicación

@@ -1,18 +1,15 @@
 """
-install.py — Instalador automático de dependencias del FaceService.
+install.py — Instalador completo y autónomo del FaceService.
 
-Resuelve el problema de que 'insightface' NO tiene wheels oficiales
-para Windows en PyPI, lo que causa errores de compilación C++ al
-hacer pip install directo.
-
-Este script:
-1. Instala todas las dependencias normales desde requirements.txt
-2. Detecta la versión de Python
-3. Descarga el wheel comunitario correcto de insightface
-4. Lo instala automáticamente
-
-Uso:
+El usuario solo necesita ejecutar:
     python install.py
+
+Este script se encarga de todo:
+1. Detecta la versión de Python
+2. Si es 3.13+, busca automáticamente py -3.12
+3. Crea el entorno virtual con la versión correcta
+4. Se re-ejecuta dentro del venv (sin que el usuario active nada)
+5. Instala todas las dependencias incluyendo insightface
 """
 
 import subprocess
@@ -21,99 +18,154 @@ import os
 import urllib.request
 import tempfile
 
-# URL base de los wheels comunitarios de insightface para Windows
-WHEEL_BASE_URL = (
-    "https://github.com/Gourieff/Assets/raw/main/Insightface"
-)
-
+WHEEL_BASE_URL  = "https://github.com/Gourieff/Assets/raw/main/Insightface"
 INSIGHTFACE_VERSION = "0.7.3"
-
-# Versiones de Python soportadas (con wheels disponibles)
-SUPPORTED_VERSIONS = {"3.10", "3.11", "3.12"}
-
-
-def get_python_version_tag() -> str:
-    """Retorna el tag de versión de Python (ej: '311' para 3.11)."""
-    major = sys.version_info.major
-    minor = sys.version_info.minor
-    return f"{major}{minor}"
+SUPPORTED_VERSIONS  = {"3.10", "3.11", "3.12"}
+VENV_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "venv")
 
 
-def get_python_version_short() -> str:
-    """Retorna la versión corta (ej: '3.11')."""
+# ── Helpers ────────────────────────────────────────────────────────────────────
+
+def ver_short(executable=None):
+    if executable:
+        out = subprocess.check_output([executable, "-c",
+              "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"],
+              text=True).strip()
+        return out
     return f"{sys.version_info.major}.{sys.version_info.minor}"
 
 
-def run_pip(*args: str) -> None:
-    """Ejecuta pip como subproceso."""
-    cmd = [sys.executable, "-m", "pip"] + list(args)
-    print(f"  → {' '.join(cmd)}")
-    subprocess.check_call(cmd)
+def ver_tag(executable=None):
+    v = ver_short(executable)
+    return v.replace(".", "")
 
 
-def install_requirements() -> None:
-    """Instala las dependencias desde requirements.txt (excepto insightface)."""
-    req_file = os.path.join(os.path.dirname(__file__), "requirements.txt")
+def run_pip(*args):
+    subprocess.check_call([sys.executable, "-m", "pip"] + list(args))
 
+
+def separator(title=""):
+    print("=" * 60)
+    if title:
+        print(f"  {title}")
+        print("=" * 60)
+
+
+# ── Paso 1: Verificar si ya estamos dentro del venv correcto ──────────────────
+
+def inside_correct_venv():
+    """True si el intérprete actual ES el python del venv de este proyecto."""
+    venv_python = os.path.join(VENV_DIR, "Scripts", "python.exe")
+    return os.path.abspath(sys.executable).lower() == os.path.abspath(venv_python).lower()
+
+
+# ── Paso 2: Encontrar el Python adecuado para crear el venv ──────────────────
+
+def find_compatible_python():
+    """
+    Devuelve la ruta al ejecutable de Python 3.10-3.12.
+    Si el Python actual es compatible, lo retorna directamente.
+    Si es 3.13+, busca 'py -3.12' o 'py -3.11'.
+    """
+    current = ver_short()
+
+    if current in SUPPORTED_VERSIONS:
+        return sys.executable, current
+
+    # Python incompatible (3.13+) — buscar con Python Launcher
+    print(f"\n  Python {current} detectado — no compatible con onnxruntime.")
+    print("  Buscando Python 3.12 mediante Python Launcher (py)...\n")
+
+    for target in ("3.12", "3.11", "3.10"):
+        try:
+            result = subprocess.run(
+                ["py", f"-{target}", "-c",
+                 "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"],
+                capture_output=True, text=True, timeout=5
+            )
+            if result.returncode == 0 and result.stdout.strip() == target:
+                py_path = subprocess.check_output(
+                    ["py", f"-{target}", "-c", "import sys; print(sys.executable)"],
+                    text=True
+                ).strip()
+                print(f"  Encontrado: Python {target} en {py_path}")
+                return py_path, target
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            continue
+
+    return None, None
+
+
+# ── Paso 3: Crear venv con el Python correcto ─────────────────────────────────
+
+def create_venv(python_exe):
+    print(f"\n  Creando entorno virtual con Python {ver_short(python_exe)}...")
+    subprocess.check_call([python_exe, "-m", "venv", VENV_DIR])
+    print("  Entorno virtual creado.")
+
+
+# ── Paso 4: Re-ejecutar este script dentro del venv ──────────────────────────
+
+def relaunch_in_venv():
+    venv_python = os.path.join(VENV_DIR, "Scripts", "python.exe")
+    print(f"\n  Relanzando instalador dentro del entorno virtual...")
+    result = subprocess.run([venv_python, os.path.abspath(__file__)])
+    sys.exit(result.returncode)
+
+
+# ── Instalación de dependencias (ya dentro del venv) ─────────────────────────
+
+def install_requirements():
+    req_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "requirements.txt")
     if not os.path.exists(req_file):
         print("ERROR: No se encontró requirements.txt")
         sys.exit(1)
 
-    # Leer requirements y filtrar insightface
     with open(req_file, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
-    filtered = []
-    for line in lines:
-        stripped = line.strip()
-        if stripped and not stripped.startswith("#") and "insightface" not in stripped.lower():
-            filtered.append(stripped)
+    deps = [
+        line.strip() for line in lines
+        if line.strip() and not line.startswith("#") and "insightface" not in line.lower()
+    ]
 
-    if filtered:
-        print("\n📦 Instalando dependencias base...")
-        run_pip("install", *filtered)
-    print("✅ Dependencias base instaladas.\n")
+    print("\n  Instalando dependencias base...")
+    run_pip("install", "--upgrade", "pip", "-q")
+    run_pip("install", *deps, "-q")
+    print("  Dependencias base instaladas.")
 
 
-def install_insightface() -> None:
-    """Descarga e instala el wheel comunitario de insightface."""
-    ver_tag = get_python_version_tag()
-    ver_short = get_python_version_short()
+def install_insightface():
+    vtag  = ver_tag()
+    vshort = ver_short()
 
-    if ver_short not in SUPPORTED_VERSIONS:
-        print(f"⚠️  Python {ver_short} no tiene wheel de insightface disponible.")
-        print(f"    Versiones soportadas: {', '.join(sorted(SUPPORTED_VERSIONS))}")
-        print("    Intenta instalar manualmente: pip install insightface==0.7.3")
+    if vshort not in SUPPORTED_VERSIONS:
+        print(f"\n  AVISO: Python {vshort} no tiene wheel de insightface.")
         return
 
-    wheel_name = f"insightface-{INSIGHTFACE_VERSION}-cp{ver_tag}-cp{ver_tag}-win_amd64.whl"
-    wheel_url = f"{WHEEL_BASE_URL}/{wheel_name}"
+    wheel_name = f"insightface-{INSIGHTFACE_VERSION}-cp{vtag}-cp{vtag}-win_amd64.whl"
+    wheel_url  = f"{WHEEL_BASE_URL}/{wheel_name}"
 
-    print(f"🔍 Python {ver_short} detectado.")
-    print(f"📥 Descargando insightface wheel: {wheel_name}")
-
-    # Descargar a un directorio temporal
-    tmp_dir = tempfile.mkdtemp()
+    print(f"\n  Descargando insightface {INSIGHTFACE_VERSION} para Python {vshort}...")
+    tmp_dir    = tempfile.mkdtemp()
     wheel_path = os.path.join(tmp_dir, wheel_name)
 
     try:
         urllib.request.urlretrieve(wheel_url, wheel_path)
-        print(f"✅ Descarga completada ({os.path.getsize(wheel_path) // 1024} KB)")
+        print(f"  Descarga completada ({os.path.getsize(wheel_path) // 1024} KB)")
     except Exception as e:
-        print(f"❌ Error al descargar: {e}")
-        print(f"   URL: {wheel_url}")
-        print(f"   Descárgalo manualmente y ejecuta: pip install {wheel_name}")
+        print(f"\n  ERROR al descargar insightface: {e}")
+        print(f"  URL: {wheel_url}")
+        print("  Puedes instalarlo manualmente luego con:")
+        print(f"    venv\\Scripts\\activate.bat && pip install {wheel_name}")
         return
 
-    # Instalar el wheel
-    print("📦 Instalando insightface...")
     try:
-        run_pip("install", wheel_path)
-        print("✅ insightface instalado correctamente.\n")
+        run_pip("install", wheel_path, "-q")
+        print("  insightface instalado.")
     except subprocess.CalledProcessError:
-        print(f"❌ Error al instalar. Intenta manualmente: pip install {wheel_path}")
+        print("  ERROR al instalar insightface desde wheel.")
     finally:
-        # Limpiar archivo temporal
         try:
             os.remove(wheel_path)
             os.rmdir(tmp_dir)
@@ -121,58 +173,76 @@ def install_insightface() -> None:
             pass
 
 
-def main() -> None:
-    # ── Pre-flight: verificar versión de Python ──────────────────
-    ver_short = get_python_version_short()
-    if ver_short not in SUPPORTED_VERSIONS:
-        print("=" * 60)
-        print("  ❌ ERROR: Versión de Python incompatible")
-        print("=" * 60)
-        print(f"  Detectada: Python {ver_short}")
-        print(f"  Requerida: {', '.join(sorted(SUPPORTED_VERSIONS))}")
-        print()
-        if sys.version_info >= (3, 13):
-            print("  ⚠️  Python 3.13+ no soporta onnxruntime aún.")
-        print()
-        print("  Para instalar Python 3.12 en Windows:")
-        print("    winget install Python.Python.3.12")
-        print()
-        print("  O descarga desde:")
-        print("    https://www.python.org/downloads/release/python-3120/")
-        print("=" * 60)
-        sys.exit(1)
+def install_insightface_linux():
+    print("\n  Instalando insightface (Linux/Mac)...")
+    try:
+        run_pip("install", f"insightface=={INSIGHTFACE_VERSION}", "-q")
+        print("  insightface instalado.")
+    except subprocess.CalledProcessError:
+        print("  ERROR: revisa que tengas build tools instalados (gcc, cmake).")
 
-    print("=" * 60)
-    print("  FaceService — Instalador de Dependencias")
-    print("=" * 60)
-    print(f"  Python:   {sys.version}")
-    print(f"  Platform: {sys.platform}")
-    print("=" * 60)
 
-    # Actualizar pip primero
-    print("\n📦 Actualizando pip...")
-    run_pip("install", "--upgrade", "pip")
+# ── Main ──────────────────────────────────────────────────────────────────────
 
-    # Instalar dependencias normales
+def main():
+    separator("FaceService — Instalador")
+    print(f"  Python actual : {sys.version.split()[0]}")
+    print(f"  Ejecutable    : {sys.executable}")
+    separator()
+
+    # ── Fase bootstrap (fuera del venv) ──────────────────────────────────────
+    if not inside_correct_venv():
+
+        python_exe, python_ver = find_compatible_python()
+
+        if python_exe is None:
+            separator("ERROR — Python compatible no encontrado")
+            print("  Se requiere Python 3.10, 3.11 o 3.12.")
+            print()
+            print("  Instala Python 3.12 con:")
+            print("    winget install Python.Python.3.12")
+            print()
+            print("  O descarga desde: https://www.python.org/downloads/")
+            print("  Marca 'Add Python to PATH' al instalar.")
+            separator()
+            sys.exit(1)
+
+        # Crear venv si no existe
+        venv_python = os.path.join(VENV_DIR, "Scripts", "python.exe")
+        if not os.path.exists(venv_python):
+            create_venv(python_exe)
+        else:
+            # Verificar que el venv existente usa la versión correcta
+            try:
+                existing_ver = ver_short(venv_python)
+                if existing_ver not in SUPPORTED_VERSIONS:
+                    print(f"\n  Venv existente usa Python {existing_ver} (incompatible). Recreando...")
+                    import shutil
+                    shutil.rmtree(VENV_DIR)
+                    create_venv(python_exe)
+                else:
+                    print(f"\n  Venv existente con Python {existing_ver} — reutilizando.")
+            except Exception:
+                create_venv(python_exe)
+
+        relaunch_in_venv()
+        return  # nunca llega aquí
+
+    # ── Fase instalación (dentro del venv correcto) ───────────────────────────
+    separator(f"Instalando dependencias (Python {ver_short()})")
+
     install_requirements()
 
-    # Instalar insightface con wheel comunitario
     if sys.platform == "win32":
         install_insightface()
     else:
-        # En Linux/Mac, pip install directo suele funcionar
-        print("📦 Instalando insightface...")
-        try:
-            run_pip("install", f"insightface=={INSIGHTFACE_VERSION}")
-            print("✅ insightface instalado correctamente.\n")
-        except subprocess.CalledProcessError:
-            print("⚠️  Error al instalar insightface. Revisa que tengas build tools instalados.")
+        install_insightface_linux()
 
-    print("=" * 60)
-    print("  ✅ Instalación completada")
-    print("=" * 60)
-    print("\n  Para ejecutar el servicio:")
-    print("    python run.py\n")
+    separator("Instalacion completada")
+    print()
+    print("  Para iniciar la aplicacion:")
+    print("    dotnet run --project AttendanceSystem/src/AttendanceSystem.App")
+    print()
 
 
 if __name__ == "__main__":
