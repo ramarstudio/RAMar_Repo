@@ -58,22 +58,33 @@ namespace AttendanceSystem.App.Helpers
         {
             _lastUsed = DateTime.UtcNow;
 
-            // Si ya está corriendo, verificar salud
             if (IsRunning)
             {
-                if (await HealthCheckAsync(ct))
+                // Caso 1: proceso vivo y modelo ya cargado → listo
+                if (await IsModelReadyAsync(ct))
                     return true;
 
-                // Proceso existe pero no responde — reiniciar
+                // Caso 2: proceso vivo pero modelo aún cargando → esperar
+                if (await IsServerRespondingAsync(ct))
+                    return await WaitForModelAsync(ct);
+
+                // Caso 3: proceso colgado o caído → reiniciar
+                _logger?.LogWarning("FaceService no responde. Reiniciando...");
                 StopService();
             }
 
             await _startLock.WaitAsync(ct);
             try
             {
-                // Double-check después del lock
-                if (IsRunning && await HealthCheckAsync(ct))
-                    return true;
+                // Double-check tras el lock — misma lógica que el bloque exterior.
+                // Si mientras esperábamos el lock otro caller ya arrancó el servicio,
+                // no intentar arrancar otro proceso en el mismo puerto.
+                if (IsRunning)
+                {
+                    if (await IsModelReadyAsync(ct)) return true;
+                    if (await IsServerRespondingAsync(ct)) return await WaitForModelAsync(ct);
+                    StopService();
+                }
 
                 return await StartServiceAsync(ct);
             }
@@ -125,8 +136,11 @@ namespace AttendanceSystem.App.Helpers
             string executablePath = ResolveServicePath();
             if (executablePath == null)
             {
-                _logger?.LogError("No se encontró el ejecutable/script del FaceService.");
-                return false;
+                _logger?.LogError("No se encontró run.py del FaceService.");
+                throw new InvalidOperationException(
+                    "No se encontró el motor de reconocimiento facial.\n\n" +
+                    "Ejecute manualmente para reparar:\n" +
+                    "  FaceService\\setup_faceservice.bat");
             }
 
             _logger?.LogInformation("Iniciando FaceService desde: {Path}", executablePath);
@@ -149,8 +163,11 @@ namespace AttendanceSystem.App.Helpers
 
                 if (string.IsNullOrEmpty(psi.FileName))
                 {
-                    _logger?.LogError("Python no encontrado en PATH.");
-                    return false;
+                    _logger?.LogError("Python no encontrado en venv ni en PATH.");
+                    throw new InvalidOperationException(
+                        "Python no encontrado. Las librerías de IA no están instaladas.\n\n" +
+                        "Instale Python 3.12 y luego ejecute:\n" +
+                        "  FaceService\\setup_faceservice.bat");
                 }
             }
 
@@ -208,44 +225,89 @@ namespace AttendanceSystem.App.Helpers
             }
         }
 
-        private async Task<bool> WaitForReadyAsync(CancellationToken ct)
+        // ── Chequeos de estado ────────────────────────────────────────────────
+
+        /// <summary>El servidor está arriba (aunque el modelo aún esté cargando).</summary>
+        private async Task<bool> IsServerRespondingAsync(CancellationToken ct)
         {
-            // Aumentado a 120 segundos para dar tiempo a la descarga inicial de modelos (600MB) en conexiones lentas
-            var deadline = DateTime.UtcNow.AddSeconds(120);
+            try
+            {
+                var r = await _healthClient.GetAsync($"{_serviceUrl}/api/health", ct);
+                return r.IsSuccessStatusCode;
+            }
+            catch { return false; }
+        }
+
+        /// <summary>El servidor está arriba Y el modelo ya terminó de cargar.</summary>
+        private async Task<bool> IsModelReadyAsync(CancellationToken ct)
+        {
+            try
+            {
+                var r = await _healthClient.GetAsync($"{_serviceUrl}/api/health", ct);
+                if (!r.IsSuccessStatusCode) return false;
+                var json = await r.Content.ReadAsStringAsync(ct);
+                return json.Contains("\"model_loaded\":true");
+            }
+            catch { return false; }
+        }
+
+        /// <summary>
+        /// Espera hasta que el modelo termine de cargarse (máx 5 min).
+        /// Se usa cuando el proceso ya está vivo pero el modelo aún carga.
+        /// </summary>
+        private async Task<bool> WaitForModelAsync(CancellationToken ct)
+        {
+            var deadline = DateTime.UtcNow.AddSeconds(300);
+            _logger?.LogInformation("FaceService arriba. Esperando carga del modelo...");
 
             while (DateTime.UtcNow < deadline && !ct.IsCancellationRequested)
             {
                 if (_serviceProcess is { HasExited: true })
                 {
-                    _logger?.LogError("FaceService se cerró inesperadamente.");
+                    _logger?.LogError("FaceService se cerró mientras cargaba el modelo.");
                     return false;
                 }
-
-                if (await HealthCheckAsync(ct))
+                if (await IsModelReadyAsync(ct))
                 {
-                    _logger?.LogInformation("FaceService listo.");
+                    _logger?.LogInformation("Modelo cargado. FaceService listo.");
                     return true;
                 }
+                await Task.Delay(2000, ct);
+            }
 
+            _logger?.LogError("El modelo no terminó de cargar en 5 minutos.");
+            return false;
+        }
+
+        /// <summary>
+        /// Arranque completo: espera servidor (60s) + espera modelo (5 min).
+        /// Solo se usa cuando el proceso acaba de ser lanzado.
+        /// </summary>
+        private async Task<bool> WaitForReadyAsync(CancellationToken ct)
+        {
+            var serverDeadline = DateTime.UtcNow.AddSeconds(60);
+
+            while (DateTime.UtcNow < serverDeadline && !ct.IsCancellationRequested)
+            {
+                if (_serviceProcess is { HasExited: true })
+                {
+                    _logger?.LogError("FaceService se cerró inesperadamente al arrancar.");
+                    return false;
+                }
+                if (await IsServerRespondingAsync(ct))
+                {
+                    _logger?.LogInformation("FaceService respondiendo. Esperando carga del modelo...");
+                    return await WaitForModelAsync(ct);
+                }
                 await Task.Delay(1000, ct);
             }
 
-            _logger?.LogError("FaceService no respondió en tiempo.");
+            _logger?.LogError("FaceService no arrancó en 60 segundos.");
             return false;
         }
 
         private async Task<bool> HealthCheckAsync(CancellationToken ct)
-        {
-            try
-            {
-                var response = await _healthClient.GetAsync($"{_serviceUrl}/api/health", ct);
-                return response.IsSuccessStatusCode;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+            => await IsModelReadyAsync(ct);
 
         private void CheckIdle(object _)
         {

@@ -33,7 +33,11 @@ def _load_engine() -> InsightFaceEngine:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Startup: carga modelo. Shutdown: limpieza."""
+    """
+    Startup: inicia el servidor inmediatamente y carga el modelo en background.
+    Esto permite que el health check responda desde el primer segundo,
+    evitando que el cliente C# agote el timeout esperando que el puerto abra.
+    """
     settings = get_settings()
 
     logging.basicConfig(
@@ -44,13 +48,26 @@ async def lifespan(app: FastAPI):
     logger = logging.getLogger("face_service")
     logger.info("Iniciando FaceService en :%d...", settings.port)
 
-    # Cargar modelo en background thread
     import asyncio
     loop = asyncio.get_event_loop()
-    engine = await loop.run_in_executor(_executor, _load_engine)
-    set_engine(engine)
 
-    logger.info("FaceService listo.")
+    async def _load_in_background():
+        try:
+            engine = await asyncio.wait_for(
+                loop.run_in_executor(_executor, _load_engine),
+                timeout=300,
+            )
+            set_engine(engine)
+            logger.info("Modelo cargado. FaceService listo.")
+        except asyncio.TimeoutError:
+            logger.error("Timeout cargando el modelo (>5 min). Verifica conexion a internet.")
+        except Exception as exc:
+            logger.error("Error cargando modelo: %s", exc)
+
+    # Lanzar carga en background — el servidor ya acepta conexiones
+    asyncio.create_task(_load_in_background())
+    logger.info("FaceService aceptando conexiones (modelo cargando en background)...")
+
     yield
     logger.info("FaceService detenido.")
 

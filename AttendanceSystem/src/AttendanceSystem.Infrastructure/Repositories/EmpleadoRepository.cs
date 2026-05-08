@@ -24,6 +24,16 @@ public class EmpleadoRepository : RepositoryBase<Empleado>, IEmpleadoRepository
                 EF.Property<string>(e, "codigo").ToLower() == codigo.ToLower() &&
                 EF.Property<bool>(e, "activo") == true);
 
+    // Consulta ligera para operaciones biométricas: solo carga embeddingFacial,
+    // sin horarios. Evita que Update() marque todos los horarios como Modified.
+    public async Task<Empleado> GetByCodigoConEmbeddingAsync(string codigo)
+        => await _context.Empleados
+            .Include("embeddingFacial")
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e =>
+                EF.Property<string>(e, "codigo").ToLower() == codigo.ToLower() &&
+                EF.Property<bool>(e, "activo") == true);
+
     public async Task<Empleado> GetByUsuarioIdAsync(int usuarioId)
         => await _context.Empleados
             .AsNoTracking()

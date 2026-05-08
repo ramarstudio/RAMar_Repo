@@ -203,13 +203,14 @@
                                 </StackPanel>
                             </Button>
                         </StackPanel>
+
+                        <!-- Feedback: dentro del panel de acciones para ser siempre visible -->
+                        <TextBlock x:Name="txtMensaje" Visibility="Collapsed"
+                                   FontSize="13" HorizontalAlignment="Center"
+                                   TextWrapping="Wrap" Margin="0,10,0,0"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
-
-            <!-- Feedback -->
-            <TextBlock x:Name="txtMensaje" Visibility="Collapsed"
-                       FontSize="13" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </UserControl>

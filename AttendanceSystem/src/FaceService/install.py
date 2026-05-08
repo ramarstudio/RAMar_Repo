@@ -6,243 +6,364 @@ El usuario solo necesita ejecutar:
 
 Este script se encarga de todo:
 1. Detecta la versión de Python
-2. Si es 3.13+, busca automáticamente py -3.12
+2. Si es 3.13+, busca automáticamente py -3.12 / -3.11 / -3.10
 3. Crea el entorno virtual con la versión correcta
 4. Se re-ejecuta dentro del venv (sin que el usuario active nada)
 5. Instala todas las dependencias incluyendo insightface
+6. Pre-descarga el modelo buffalo_l para que la app arranque al instante
 """
 
 import subprocess
 import sys
 import os
-import urllib.request
+import ssl
+import time
 import tempfile
+import urllib.request
+import urllib.error
 
-WHEEL_BASE_URL  = "https://github.com/Gourieff/Assets/raw/main/Insightface"
+WHEEL_BASE_URL      = "https://github.com/Gourieff/Assets/raw/main/Insightface"
 INSIGHTFACE_VERSION = "0.7.3"
 SUPPORTED_VERSIONS  = {"3.10", "3.11", "3.12"}
-VENV_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "venv")
+SCRIPT_DIR          = os.path.dirname(os.path.abspath(__file__))
+VENV_DIR            = os.path.join(SCRIPT_DIR, "venv")
+LOG_FILE            = os.path.join(SCRIPT_DIR, "install.log")
+
+
+# ── Log a consola + archivo ───────────────────────────────────────────────────
+
+class _Tee:
+    """Escribe en consola Y en archivo de log simultáneamente."""
+    def __init__(self, *streams):
+        self.streams = streams
+
+    def write(self, data):
+        for s in self.streams:
+            try:
+                s.write(data)
+                s.flush()
+            except Exception:
+                pass
+
+    def flush(self):
+        for s in self.streams:
+            try:
+                s.flush()
+            except Exception:
+                pass
+
+
+def _setup_log():
+    log = open(LOG_FILE, "a", encoding="utf-8", errors="replace")
+    sys.stdout = _Tee(sys.__stdout__, log)
+    return log
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
-def ver_short(executable=None):
-    if executable:
-        out = subprocess.check_output([executable, "-c",
-              "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"],
-              text=True).strip()
-        return out
-    return f"{sys.version_info.major}.{sys.version_info.minor}"
+def _ver(exe=None):
+    cmd = [exe or sys.executable, "-c",
+           "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"]
+    return subprocess.check_output(cmd, text=True, stderr=subprocess.DEVNULL).strip()
 
 
-def ver_tag(executable=None):
-    v = ver_short(executable)
-    return v.replace(".", "")
-
-
-def run_pip(*args):
+def _pip(*args):
     subprocess.check_call([sys.executable, "-m", "pip"] + list(args))
 
 
-def separator(title=""):
+def sep(title=""):
     print("=" * 60)
     if title:
         print(f"  {title}")
         print("=" * 60)
 
 
-# ── Paso 1: Verificar si ya estamos dentro del venv correcto ──────────────────
+# ── Descarga robusta (timeout, progreso, SSL-fallback, reintentos) ─────────────
 
-def inside_correct_venv():
-    """True si el intérprete actual ES el python del venv de este proyecto."""
-    venv_python = os.path.join(VENV_DIR, "Scripts", "python.exe")
-    return os.path.abspath(sys.executable).lower() == os.path.abspath(venv_python).lower()
-
-
-# ── Paso 2: Encontrar el Python adecuado para crear el venv ──────────────────
-
-def find_compatible_python():
+def _download(url, dest, label):
     """
-    Devuelve la ruta al ejecutable de Python 3.10-3.12.
-    Si el Python actual es compatible, lo retorna directamente.
-    Si es 3.13+, busca 'py -3.12' o 'py -3.11'.
+    Descarga con:
+    - Timeout de 120s por intento
+    - Progreso en tiempo real
+    - Fallback SSL sin verificación (entornos con proxy corporativo)
+    - 3 reintentos con pausa de 3s entre ellos
     """
-    current = ver_short()
+    for attempt in range(1, 4):
+        for verify_ssl in (True, False):
+            try:
+                ctx = ssl.create_default_context()
+                if not verify_ssl:
+                    ctx.check_hostname = False
+                    ctx.verify_mode = ssl.CERT_NONE
 
-    if current in SUPPORTED_VERSIONS:
-        return sys.executable, current
+                note = "" if verify_ssl else " (SSL sin verificar - proxy corporativo)"
+                print(f"\n  Intento {attempt}/3{note}...")
 
-    # Python incompatible (3.13+) — buscar con Python Launcher
-    print(f"\n  Python {current} detectado — no compatible con onnxruntime.")
-    print("  Buscando Python 3.12 mediante Python Launcher (py)...\n")
+                req = urllib.request.Request(
+                    url, headers={"User-Agent": "RAMar-Installer/1.0"})
+                with urllib.request.urlopen(req, context=ctx, timeout=120) as r:
+                    total = int(r.headers.get("Content-Length", 0))
+                    done  = 0
+                    with open(dest, "wb") as f:
+                        while True:
+                            chunk = r.read(65536)
+                            if not chunk:
+                                break
+                            f.write(chunk)
+                            done += len(chunk)
+                            if total:
+                                pct = min(100, done * 100 // total)
+                                print(f"\r  {label}: {pct:3d}% ({done/1e6:.1f} MB)",
+                                      end="", flush=True)
+                            else:
+                                print(f"\r  {label}: {done/1e6:.1f} MB",
+                                      end="", flush=True)
+
+                print(f"\n  Descarga completada ({os.path.getsize(dest)//1024} KB)")
+                return True
+
+            except Exception as e:
+                print(f"\n  Error: {e}")
+                if verify_ssl:
+                    print("  Reintentando sin verificar SSL...")
+                    continue
+                break
+
+        if attempt < 3:
+            print("  Esperando 3 segundos antes del siguiente intento...")
+            time.sleep(3)
+
+    return False
+
+
+# ── Venv ──────────────────────────────────────────────────────────────────────
+
+def _inside_venv():
+    venv_py = os.path.join(VENV_DIR, "Scripts", "python.exe")
+    return os.path.abspath(sys.executable).lower() == os.path.abspath(venv_py).lower()
+
+
+def _find_python():
+    """Devuelve (ruta, version) de un Python 3.10-3.12 compatible."""
+    cur = _ver()
+    if cur in SUPPORTED_VERSIONS:
+        return sys.executable, cur
+
+    print(f"\n  Python {cur} no es compatible con onnxruntime.")
+    print("  Buscando Python 3.12 / 3.11 / 3.10 via Python Launcher...")
 
     for target in ("3.12", "3.11", "3.10"):
         try:
-            result = subprocess.run(
+            r = subprocess.run(
                 ["py", f"-{target}", "-c",
                  "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"],
-                capture_output=True, text=True, timeout=5
-            )
-            if result.returncode == 0 and result.stdout.strip() == target:
-                py_path = subprocess.check_output(
+                capture_output=True, text=True, timeout=10)
+            if r.returncode == 0 and r.stdout.strip() == target:
+                py = subprocess.check_output(
                     ["py", f"-{target}", "-c", "import sys; print(sys.executable)"],
-                    text=True
-                ).strip()
-                print(f"  Encontrado: Python {target} en {py_path}")
-                return py_path, target
+                    text=True, stderr=subprocess.DEVNULL).strip()
+                print(f"  Encontrado Python {target}: {py}")
+                return py, target
         except (FileNotFoundError, subprocess.TimeoutExpired):
             continue
 
     return None, None
 
 
-# ── Paso 3: Crear venv con el Python correcto ─────────────────────────────────
-
-def create_venv(python_exe):
-    print(f"\n  Creando entorno virtual con Python {ver_short(python_exe)}...")
-    subprocess.check_call([python_exe, "-m", "venv", VENV_DIR])
+def _create_venv(py):
+    print(f"\n  Creando entorno virtual con Python {_ver(py)}...")
+    subprocess.check_call([py, "-m", "venv", VENV_DIR])
     print("  Entorno virtual creado.")
 
 
-# ── Paso 4: Re-ejecutar este script dentro del venv ──────────────────────────
-
-def relaunch_in_venv():
-    venv_python = os.path.join(VENV_DIR, "Scripts", "python.exe")
-    print(f"\n  Relanzando instalador dentro del entorno virtual...")
-    result = subprocess.run([venv_python, os.path.abspath(__file__)])
-    sys.exit(result.returncode)
+def _relaunch(log):
+    venv_py = os.path.join(VENV_DIR, "Scripts", "python.exe")
+    print("\n  Relanzando instalador dentro del entorno virtual...")
+    log.close()
+    sys.exit(subprocess.run([venv_py, os.path.abspath(__file__)]).returncode)
 
 
-# ── Instalación de dependencias (ya dentro del venv) ─────────────────────────
+# ── Instalación de paquetes ───────────────────────────────────────────────────
 
-def install_requirements():
-    req_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "requirements.txt")
-    if not os.path.exists(req_file):
-        print("ERROR: No se encontró requirements.txt")
+def _install_requirements():
+    req = os.path.join(SCRIPT_DIR, "requirements.txt")
+    if not os.path.exists(req):
+        print("ERROR: requirements.txt no encontrado")
         sys.exit(1)
 
-    with open(req_file, "r", encoding="utf-8") as f:
-        lines = f.readlines()
+    with open(req, encoding="utf-8") as f:
+        deps = [l.strip() for l in f
+                if l.strip() and not l.startswith("#")
+                and "insightface" not in l.lower()]
 
-    deps = [
-        line.strip() for line in lines
-        if line.strip() and not line.startswith("#") and "insightface" not in line.lower()
-    ]
-
-    print("\n  Instalando dependencias base...")
-    run_pip("install", "--upgrade", "pip", "-q")
-    run_pip("install", *deps, "-q")
+    print("\n  Actualizando pip...")
+    _pip("install", "--upgrade", "pip")
+    print("\n  Instalando dependencias base (fastapi, uvicorn, onnxruntime, numpy, opencv):")
+    _pip("install", *deps)
     print("  Dependencias base instaladas.")
 
 
-def install_insightface():
-    vtag  = ver_tag()
-    vshort = ver_short()
+def _install_insightface():
+    vshort = _ver()
+    vtag   = vshort.replace(".", "")
 
     if vshort not in SUPPORTED_VERSIONS:
         print(f"\n  AVISO: Python {vshort} no tiene wheel de insightface.")
         return
 
-    wheel_name = f"insightface-{INSIGHTFACE_VERSION}-cp{vtag}-cp{vtag}-win_amd64.whl"
-    wheel_url  = f"{WHEEL_BASE_URL}/{wheel_name}"
+    wheel = f"insightface-{INSIGHTFACE_VERSION}-cp{vtag}-cp{vtag}-win_amd64.whl"
+    url   = f"{WHEEL_BASE_URL}/{wheel}"
+    tmp   = tempfile.mkdtemp()
+    dest  = os.path.join(tmp, wheel)
 
     print(f"\n  Descargando insightface {INSIGHTFACE_VERSION} para Python {vshort}...")
-    tmp_dir    = tempfile.mkdtemp()
-    wheel_path = os.path.join(tmp_dir, wheel_name)
+    ok = _download(url, dest, "insightface")
 
-    try:
-        urllib.request.urlretrieve(wheel_url, wheel_path)
-        print(f"  Descarga completada ({os.path.getsize(wheel_path) // 1024} KB)")
-    except Exception as e:
-        print(f"\n  ERROR al descargar insightface: {e}")
-        print(f"  URL: {wheel_url}")
-        print("  Puedes instalarlo manualmente luego con:")
-        print(f"    venv\\Scripts\\activate.bat && pip install {wheel_name}")
-        return
-
-    try:
-        run_pip("install", wheel_path, "-q")
-        print("  insightface instalado.")
-    except subprocess.CalledProcessError:
-        print("  ERROR al instalar insightface desde wheel.")
-    finally:
+    if ok:
         try:
-            os.remove(wheel_path)
-            os.rmdir(tmp_dir)
-        except OSError:
-            pass
+            print("  Instalando desde wheel...")
+            _pip("install", dest)
+            print("  insightface instalado.")
+            return
+        except subprocess.CalledProcessError:
+            print("  Error instalando desde wheel. Intentando PyPI...")
+        finally:
+            try:
+                os.remove(dest)
+                os.rmdir(tmp)
+            except OSError:
+                pass
+
+    # Fallback: PyPI directo
+    print("  Instalando insightface desde PyPI (fallback)...")
+    try:
+        _pip("install", f"insightface=={INSIGHTFACE_VERSION}")
+        print("  insightface instalado desde PyPI.")
+    except subprocess.CalledProcessError:
+        print(f"\n  ERROR: No se pudo instalar insightface.")
+        print("  Instrucciones manuales:")
+        print(f"    venv\\Scripts\\activate.bat")
+        print(f"    pip install insightface=={INSIGHTFACE_VERSION}")
 
 
-def install_insightface_linux():
+def _install_insightface_linux():
     print("\n  Instalando insightface (Linux/Mac)...")
     try:
-        run_pip("install", f"insightface=={INSIGHTFACE_VERSION}", "-q")
+        _pip("install", f"insightface=={INSIGHTFACE_VERSION}")
         print("  insightface instalado.")
     except subprocess.CalledProcessError:
-        print("  ERROR: revisa que tengas build tools instalados (gcc, cmake).")
+        print("  ERROR: revisa que tengas gcc y cmake instalados.")
+
+
+# ── Pre-descarga del modelo buffalo_l ────────────────────────────────────────
+
+def _predownload_model():
+    """
+    Descarga el modelo buffalo_l (~400 MB) DURANTE la instalación.
+    Sin esto, el modelo se descarga la primera vez que el usuario usa
+    reconocimiento facial, causando una espera silenciosa de varios minutos.
+    """
+    sep("Pre-descargando modelo de reconocimiento facial")
+    print("  Modelo: buffalo_l (~400 MB)")
+    print("  Esto puede tardar varios minutos segun la velocidad de internet.")
+    print("  Solo se hace una vez.\n")
+
+    models_dir = os.path.join(SCRIPT_DIR, "models")
+    os.makedirs(models_dir, exist_ok=True)
+
+    buffalo_dir = os.path.join(models_dir, "buffalo_l")
+    if os.path.isdir(buffalo_dir) and any(
+        f.endswith(".onnx") for f in os.listdir(buffalo_dir)
+    ):
+        print("  Modelo ya existe — omitiendo descarga.")
+        return True
+
+    try:
+        import insightface
+        face_app = insightface.app.FaceAnalysis(
+            name="buffalo_l",
+            root=models_dir,
+            providers=["CPUExecutionProvider"],
+        )
+        face_app.prepare(ctx_id=-1, det_size=(320, 320))
+        print("\n  Modelo descargado correctamente.")
+        return True
+    except Exception as e:
+        print(f"\n  AVISO: No se pudo pre-descargar el modelo: {e}")
+        print("  El modelo se descargara automaticamente la primera vez")
+        print("  que uses el reconocimiento facial (requiere internet).")
+        return False
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
-    separator("FaceService — Instalador")
-    print(f"  Python actual : {sys.version.split()[0]}")
-    print(f"  Ejecutable    : {sys.executable}")
-    separator()
+    log = _setup_log()
 
-    # ── Fase bootstrap (fuera del venv) ──────────────────────────────────────
-    if not inside_correct_venv():
+    sep("FaceService — Instalador")
+    print(f"  Python    : {sys.version.split()[0]}")
+    print(f"  Ejecutable: {sys.executable}")
+    print(f"  Directorio: {SCRIPT_DIR}")
+    print(f"  Log       : {LOG_FILE}")
+    sep()
 
-        python_exe, python_ver = find_compatible_python()
+    if not _inside_venv():
+        # ── Fase bootstrap (fuera del venv) ──────────────────────────────────
+        py, ver = _find_python()
 
-        if python_exe is None:
-            separator("ERROR — Python compatible no encontrado")
+        if py is None:
+            sep("ERROR — Python compatible no encontrado")
             print("  Se requiere Python 3.10, 3.11 o 3.12.")
             print()
             print("  Instala Python 3.12 con:")
             print("    winget install Python.Python.3.12")
-            print()
             print("  O descarga desde: https://www.python.org/downloads/")
             print("  Marca 'Add Python to PATH' al instalar.")
-            separator()
+            sep()
+            log.close()
             sys.exit(1)
 
-        # Crear venv si no existe
-        venv_python = os.path.join(VENV_DIR, "Scripts", "python.exe")
-        if not os.path.exists(venv_python):
-            create_venv(python_exe)
-        else:
-            # Verificar que el venv existente usa la versión correcta
-            try:
-                existing_ver = ver_short(venv_python)
-                if existing_ver not in SUPPORTED_VERSIONS:
-                    print(f"\n  Venv existente usa Python {existing_ver} (incompatible). Recreando...")
-                    import shutil
-                    shutil.rmtree(VENV_DIR)
-                    create_venv(python_exe)
-                else:
-                    print(f"\n  Venv existente con Python {existing_ver} — reutilizando.")
-            except Exception:
-                create_venv(python_exe)
+        venv_py = os.path.join(VENV_DIR, "Scripts", "python.exe")
 
-        relaunch_in_venv()
-        return  # nunca llega aquí
+        if os.path.exists(venv_py):
+            try:
+                ev = _ver(venv_py)
+                if ev in SUPPORTED_VERSIONS:
+                    print(f"\n  Venv existente con Python {ev} — reutilizando.")
+                else:
+                    print(f"\n  Venv con Python {ev} es incompatible. Recreando...")
+                    import shutil
+                    shutil.rmtree(VENV_DIR, ignore_errors=True)
+                    _create_venv(py)
+            except Exception:
+                import shutil
+                shutil.rmtree(VENV_DIR, ignore_errors=True)
+                _create_venv(py)
+        else:
+            _create_venv(py)
+
+        _relaunch(log)
+        return
 
     # ── Fase instalación (dentro del venv correcto) ───────────────────────────
-    separator(f"Instalando dependencias (Python {ver_short()})")
+    sep(f"Instalando dependencias (Python {_ver()})")
 
-    install_requirements()
+    _install_requirements()
 
     if sys.platform == "win32":
-        install_insightface()
+        _install_insightface()
     else:
-        install_insightface_linux()
+        _install_insightface_linux()
 
-    separator("Instalacion completada")
+    _predownload_model()
+
+    sep("Instalacion completada")
     print()
-    print("  Para iniciar la aplicacion:")
-    print("    dotnet run --project AttendanceSystem/src/AttendanceSystem.App")
+    print("  El motor de reconocimiento facial esta listo.")
+    print("  Abre la aplicacion desde el acceso directo en el Escritorio.")
+    print(f"\n  Log completo guardado en: {LOG_FILE}")
     print()
+    log.close()
 
 
 if __name__ == "__main__":

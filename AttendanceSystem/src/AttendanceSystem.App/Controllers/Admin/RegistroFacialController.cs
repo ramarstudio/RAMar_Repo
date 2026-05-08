@@ -20,6 +20,7 @@ namespace AttendanceSystem.App.Controllers.Admin
         private readonly CameraHelper               _cameraHelper;
         private readonly AuditService               _auditService;
         private readonly ISessionManager            _session;
+        private readonly IFaceServiceLifecycle      _faceServiceLifecycle;
 
         public RegistroFacialController(
             AppDbContext               context,
@@ -27,14 +28,27 @@ namespace AttendanceSystem.App.Controllers.Admin
             IBiometricoService         biometricoService,
             CameraHelper               cameraHelper,
             AuditService               auditService,
-            ISessionManager            session)
+            ISessionManager            session,
+            IFaceServiceLifecycle      faceServiceLifecycle = null)
         {
-            _context            = context;
-            _consentimientoRepo = consentimientoRepo;
-            _biometricoService  = biometricoService;
-            _cameraHelper       = cameraHelper;
-            _auditService       = auditService;
-            _session            = session;
+            _context              = context;
+            _consentimientoRepo   = consentimientoRepo;
+            _biometricoService    = biometricoService;
+            _cameraHelper         = cameraHelper;
+            _auditService         = auditService;
+            _session              = session;
+            _faceServiceLifecycle = faceServiceLifecycle;
+        }
+
+        /// <summary>
+        /// Pre-calienta el FaceService en background al abrir la vista.
+        /// Así el modelo ya está cargado cuando el admin presione "Registrar".
+        /// </summary>
+        public async Task PrecalentarAsync()
+        {
+            if (_faceServiceLifecycle == null) return;
+            try { await _faceServiceLifecycle.EnsureRunningAsync(); }
+            catch { /* best-effort */ }
         }
 
         public async Task<List<EmpleadoBiometricoDto>> ObtenerEmpleadosAsync(CancellationToken ct = default)
@@ -91,6 +105,7 @@ namespace AttendanceSystem.App.Controllers.Admin
         public async Task<(bool Ok, string Mensaje)> OtorgarConsentimientoAsync(int empleadoId)
         {
             var empleado = await _context.Empleados
+                .AsNoTracking()
                 .FirstOrDefaultAsync(e => EF.Property<int>(e, "id") == empleadoId);
             if (empleado == null)
                 return (false, "Empleado no encontrado.");
@@ -139,7 +154,7 @@ namespace AttendanceSystem.App.Controllers.Admin
         {
             string fotoBase64 = _cameraHelper.CapturarFrameEnBase64();
             if (string.IsNullOrEmpty(fotoBase64))
-                return (false, "No se pudo capturar la imagen de la cámara.");
+                return (false, "La cámara no tiene imagen disponible. Espere un momento a que se inicialice y vuelva a intentarlo.");
 
             try
             {

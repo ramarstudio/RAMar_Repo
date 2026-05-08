@@ -59,13 +59,13 @@ class InsightFaceEngine(FaceEngine):
                 return
 
             import insightface
-
             import os
-            import insightface
 
-            # Usar una ruta local para evitar problemas con nombres de usuario con caracteres especiales en Windows
-            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-            model_root = os.path.join(base_dir, "models")
+            # Ruta absoluta al directorio FaceService (dos niveles arriba de adapters/)
+            # Esto evita rutas relativas que fallan si el CWD cambia
+            _adapters_dir  = os.path.dirname(os.path.abspath(__file__))
+            _faceservice_dir = os.path.dirname(os.path.dirname(_adapters_dir))
+            model_root = os.path.join(_faceservice_dir, "models")
             
             logger.info(
                 "Cargando modelo %s (det_size=%s, gpu=%d) desde %s...",
@@ -73,10 +73,15 @@ class InsightFaceEngine(FaceEngine):
             )
             
             try:
+                # Solo cargar deteccion y reconocimiento.
+                # Excluir landmark_3d_68 (~146 MB), landmark_2d_106 (~10 MB)
+                # y genderage (~1.3 MB) que no se usan para asistencia.
+                # Reduce el tiempo de carga de ~340 MB a ~183 MB.
                 self._app = insightface.app.FaceAnalysis(
                     name=self._model_name,
                     root=model_root,
                     providers=self._get_providers(),
+                    allowed_modules=["detection", "recognition"],
                 )
                 self._app.prepare(ctx_id=self._gpu_id, det_size=self._det_size)
                 logger.info("Modelo cargado correctamente.")

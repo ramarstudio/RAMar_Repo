@@ -24,10 +24,12 @@ insightface==0.7.3
 
 # --- ONNX Runtime (motor de inferencia) ---
 # Usar CPU. Para GPU: reemplazar por onnxruntime-gpu
-onnxruntime>=1.18.0,<1.21.0
+# 1.19+ soporta numpy 2.x
+onnxruntime>=1.19.0,<1.21.0
 
 # --- Procesamiento de imagen ---
-numpy>=1.24.0,<2.0.0
+# Sin limite superior para compatibilidad con tifffile moderno
+numpy>=1.26.0
 opencv-python-headless>=4.8.0,<5.0.0
 
 # --- Configuracion y entorno ---

@@ -10,6 +10,7 @@
     <UseWPF>true</UseWPF>
     <UserSecretsId>ramar-attendance-system-2024</UserSecretsId>
     <NoWarn>$(NoWarn);NU1701</NoWarn>
+    <ApplicationIcon>Resources\logo_ramar.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

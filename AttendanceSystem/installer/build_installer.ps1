@@ -1,8 +1,8 @@
 # ============================================================================
-#  build_installer.ps1 — Script de Build del Instalador
+#  build_installer.ps1 - Script de Build del Instalador
 #
 #  Automatiza todo el proceso:
-#    1. Publica la aplicación .NET como self-contained
+#    1. Publica la aplicacion .NET como self-contained
 #    2. Compila el script de Inno Setup para generar el .exe instalador
 #
 #  Uso:
@@ -22,11 +22,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$ScriptDir = $PSScriptRoot
+$ScriptDir   = $PSScriptRoot
 $SolutionDir = Split-Path $ScriptDir -Parent
-$PublishDir = Join-Path $SolutionDir "publish\app"
-$IssFile = Join-Path $ScriptDir "AttendanceSystem_Installer.iss"
-$OutputDir = Join-Path $ScriptDir "output"
+$PublishDir  = Join-Path $SolutionDir "publish\app"
+$IssFile     = Join-Path $ScriptDir "AttendanceSystem_Installer.iss"
+$OutputDir   = Join-Path $ScriptDir "output"
 
 # ── Funciones auxiliares ──────────────────────────────────────────────────────
 
@@ -43,22 +43,20 @@ function Write-Step($step, $text) {
 }
 
 function Write-Success($text) {
-    Write-Host "  ✓ $text" -ForegroundColor Green
+    Write-Host "  [OK] $text" -ForegroundColor Green
 }
 
 function Write-Fail($text) {
-    Write-Host "  ✗ $text" -ForegroundColor Red
+    Write-Host "  [ERROR] $text" -ForegroundColor Red
 }
 
 # ── Buscar Inno Setup Compiler ────────────────────────────────────────────────
 
 function Find-InnoSetupCompiler {
-    # Si se proporcionó una ruta explícita
     if ($InnoSetupPath -and (Test-Path $InnoSetupPath)) {
         return $InnoSetupPath
     }
 
-    # Buscar en rutas comunes
     $searchPaths = @(
         "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
         "${env:ProgramFiles}\Inno Setup 6\ISCC.exe",
@@ -67,16 +65,11 @@ function Find-InnoSetupCompiler {
     )
 
     foreach ($path in $searchPaths) {
-        if (Test-Path $path) {
-            return $path
-        }
+        if (Test-Path $path) { return $path }
     }
 
-    # Buscar en PATH
     $iscc = Get-Command "ISCC.exe" -ErrorAction SilentlyContinue
-    if ($iscc) {
-        return $iscc.Source
-    }
+    if ($iscc) { return $iscc.Source }
 
     return $null
 }
@@ -85,12 +78,12 @@ function Find-InnoSetupCompiler {
 #  MAIN
 # ══════════════════════════════════════════════════════════════════════════════
 
-Write-Header "RAMar — Build del Instalador"
+Write-Header "RAMar - Build del Instalador"
 
-# ── Paso 1: Publicar la aplicación .NET ──────────────────────────────────────
+# ── Paso 1: Publicar la aplicacion .NET ──────────────────────────────────────
 
 if (-not $SkipPublish) {
-    Write-Step "1/3" "Publicando aplicación .NET ($Configuration, win-x64, self-contained)..."
+    Write-Step "1/3" "Publicando aplicacion .NET ($Configuration, win-x64, self-contained)..."
 
     $publishArgs = @(
         "publish",
@@ -104,20 +97,20 @@ if (-not $SkipPublish) {
     & dotnet @publishArgs
 
     if ($LASTEXITCODE -ne 0) {
-        Write-Fail "Error durante dotnet publish. Código: $LASTEXITCODE"
+        Write-Fail "Error durante dotnet publish. Codigo: $LASTEXITCODE"
         exit 1
     }
 
-    Write-Success "Publicación completada en: $PublishDir"
+    Write-Success "Publicacion completada en: $PublishDir"
 } else {
-    Write-Step "1/3" "Publicación omitida (flag -SkipPublish)"
-    
+    Write-Step "1/3" "Publicacion omitida (flag -SkipPublish)"
+
     if (-not (Test-Path (Join-Path $PublishDir "AttendanceSystem.App.exe"))) {
-        Write-Fail "No se encontró la publicación en: $PublishDir"
+        Write-Fail "No se encontro la publicacion en: $PublishDir"
         Write-Fail "Ejecuta sin -SkipPublish o publica manualmente primero."
         exit 1
     }
-    Write-Success "Usando publicación existente en: $PublishDir"
+    Write-Success "Usando publicacion existente en: $PublishDir"
 }
 
 # ── Paso 2: Verificar archivos del FaceService ──────────────────────────────
@@ -125,7 +118,7 @@ if (-not $SkipPublish) {
 Write-Step "2/3" "Verificando archivos del FaceService..."
 
 $faceServiceDir = Join-Path $SolutionDir "src\FaceService"
-$requiredFiles = @("install.py", "run.py", "requirements.txt", "setup_faceservice.bat")
+$requiredFiles  = @("install.py", "run.py", "requirements.txt", "setup_faceservice.bat")
 
 foreach ($file in $requiredFiles) {
     $filePath = Join-Path $faceServiceDir $file
@@ -147,16 +140,12 @@ if (-not $isccPath) {
     Write-Host ""
     Write-Fail "Inno Setup Compiler (ISCC.exe) no encontrado."
     Write-Host ""
-    Write-Host "  Opciones:" -ForegroundColor White
-    Write-Host "    1. Descarga Inno Setup desde: https://jrsoftware.org/isinfo.php" -ForegroundColor Gray
-    Write-Host "    2. O especifica la ruta:" -ForegroundColor Gray
-    Write-Host "       .\build_installer.ps1 -InnoSetupPath 'C:\ruta\a\ISCC.exe'" -ForegroundColor Gray
-    Write-Host "    3. O abre el archivo .iss directamente con Inno Setup Compiler:" -ForegroundColor Gray
-    Write-Host "       $IssFile" -ForegroundColor Gray
+    Write-Host "  Instala Inno Setup con:" -ForegroundColor White
+    Write-Host "    winget install JRSoftware.InnoSetup" -ForegroundColor Gray
+    Write-Host "  O especifica la ruta:" -ForegroundColor White
+    Write-Host "    .\build_installer.ps1 -InnoSetupPath 'C:\ruta\a\ISCC.exe'" -ForegroundColor Gray
     Write-Host ""
-    
-    # Aún así, la publicación fue exitosa
-    Write-Success "La publicación de la app se completó correctamente."
+    Write-Success "La publicacion de la app se completo correctamente."
     Write-Host "  Puedes compilar el instalador manualmente abriendo:" -ForegroundColor Yellow
     Write-Host "  $IssFile" -ForegroundColor White
     exit 0
@@ -165,13 +154,12 @@ if (-not $isccPath) {
 Write-Success "Inno Setup encontrado: $isccPath"
 Write-Host "  Compilando instalador..."
 
-# Crear directorio de salida
 New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 
 & $isccPath $IssFile
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Fail "Error durante la compilación de Inno Setup. Código: $LASTEXITCODE"
+    Write-Fail "Error durante la compilacion de Inno Setup. Codigo: $LASTEXITCODE"
     exit 1
 }
 
@@ -179,13 +167,15 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Header "Build Completado Exitosamente"
 
-$setupExe = Get-ChildItem $OutputDir -Filter "Setup_RAMar_*.exe" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+$setupExe = Get-ChildItem $OutputDir -Filter "Setup_RAMar_*.exe" |
+            Sort-Object LastWriteTime -Descending |
+            Select-Object -First 1
 
 if ($setupExe) {
     $sizeMB = [math]::Round($setupExe.Length / 1MB, 1)
     Write-Host "  Instalador generado:" -ForegroundColor White
     Write-Host "    $($setupExe.FullName)" -ForegroundColor Green
-    Write-Host "    Tamaño: $sizeMB MB" -ForegroundColor Gray
+    Write-Host "    Tamano: $sizeMB MB" -ForegroundColor Gray
     Write-Host ""
     Write-Host "  Para probar:" -ForegroundColor White
     Write-Host "    Start-Process '$($setupExe.FullName)'" -ForegroundColor Gray

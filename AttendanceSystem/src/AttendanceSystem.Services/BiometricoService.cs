@@ -40,7 +40,7 @@ namespace AttendanceSystem.Services
 
         public async Task<bool> VerificarIdentidadAsync(string base64Image, string codigoEmpleado)
         {
-            var empleado = await _empleadoRepository.GetByCodigoAsync(codigoEmpleado);
+            var empleado = await _empleadoRepository.GetByCodigoConEmbeddingAsync(codigoEmpleado);
             if (empleado == null)
                 throw new InvalidOperationException($"Empleado '{codigoEmpleado}' no encontrado.");
             if (!empleado.TieneEmbedding())
@@ -115,7 +115,7 @@ namespace AttendanceSystem.Services
 
         public async Task<bool> RegistrarNuevoRostroAsync(string base64Image, string codigoEmpleado)
         {
-            var empleado = await _empleadoRepository.GetByCodigoAsync(codigoEmpleado);
+            var empleado = await _empleadoRepository.GetByCodigoConEmbeddingAsync(codigoEmpleado);
             if (empleado == null)
                 throw new ArgumentException("Empleado no encontrado.", nameof(codigoEmpleado));
 
@@ -174,15 +174,31 @@ namespace AttendanceSystem.Services
             var vectorJson    = JsonSerializer.Serialize(encodeResult.Embedding);
             var vectorCifrado = Encoding.UTF8.GetBytes(_encryptionService.Encrypt(vectorJson));
 
-            var nuevoEmbedding = new EmbeddingFacial();
-            nuevoEmbedding.SetEmpleadoId(empleado.GetId());
-            nuevoEmbedding.SetVectorCifrado(vectorCifrado);
-            nuevoEmbedding.SetAlgoritmo("AES-256-GCM");
-            nuevoEmbedding.SetUmbral(0.60m);
-            nuevoEmbedding.SetVersionModelo("v1.0");
-            nuevoEmbedding.SetCreadoEn(DateTime.UtcNow);
+            var embeddingExistente = empleado.GetEmbeddingFacial();
 
-            empleado.SetEmbeddingFacial(nuevoEmbedding);
+            if (embeddingExistente != null)
+            {
+                // El empleado ya tiene embedding registrado — actualizar el existente.
+                // Crear uno nuevo causaría una violación de unique constraint en empleadoId.
+                embeddingExistente.SetVectorCifrado(vectorCifrado);
+                embeddingExistente.SetAlgoritmo("AES-256-GCM");
+                embeddingExistente.SetUmbral(0.60m);
+                embeddingExistente.SetVersionModelo("v1.0");
+                embeddingExistente.MarcarActualizado();
+            }
+            else
+            {
+                // Primer registro facial del empleado — crear nuevo embedding.
+                var nuevoEmbedding = new EmbeddingFacial();
+                nuevoEmbedding.SetEmpleadoId(empleado.GetId());
+                nuevoEmbedding.SetVectorCifrado(vectorCifrado);
+                nuevoEmbedding.SetAlgoritmo("AES-256-GCM");
+                nuevoEmbedding.SetUmbral(0.60m);
+                nuevoEmbedding.SetVersionModelo("v1.0");
+                nuevoEmbedding.SetCreadoEn(DateTime.UtcNow);
+                empleado.SetEmbeddingFacial(nuevoEmbedding);
+            }
+
             await _empleadoRepository.UpdateAsync(empleado);
 
             _logger.LogInformation("Embedding registrado para empleado {Codigo}.", codigoEmpleado);
@@ -197,26 +213,25 @@ namespace AttendanceSystem.Services
         private async Task<bool> EnsureFaceServiceAsync()
         {
             if (_faceServiceLifecycle == null)
-            {
-                // Sin lifecycle manager (tests o desarrollo sin Python) → asumir que está corriendo
                 return true;
-            }
 
             _faceServiceLifecycle.Touch();
 
-            if (_faceServiceLifecycle.IsRunning)
-                return true;
-
-            _logger.LogInformation("FaceService no está activo. Iniciando bajo demanda...");
-
+            // Siempre llamar EnsureRunningAsync — nunca cortocircuitar con IsRunning.
+            // IsRunning solo indica que el proceso existe, NO que el modelo esté cargado.
+            // EnsureRunningAsync verifica model_loaded:true antes de retornar.
             bool ready = await _faceServiceLifecycle.EnsureRunningAsync();
             if (!ready)
             {
-                _logger.LogError("No se pudo iniciar el FaceService. Verifique que Python esté instalado.");
-                return false;
+                _logger.LogError("FaceService no esta listo despues de esperar.");
+                throw new InvalidOperationException(
+                    "El motor de reconocimiento facial no pudo inicializarse.\n\n" +
+                    "Posibles causas:\n" +
+                    "  - Las librerias de Python no estan instaladas\n" +
+                    "  - Sin conexion a internet (necesaria para descargar el modelo)\n\n" +
+                    "Ejecute para reparar: FaceService\\setup_faceservice.bat");
             }
 
-            _logger.LogInformation("FaceService iniciado correctamente.");
             return true;
         }
 

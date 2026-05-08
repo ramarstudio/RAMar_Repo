@@ -51,13 +51,17 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self._requests: dict[str, list[float]] = defaultdict(list)
 
     async def dispatch(self, request: Request, call_next):
+        # El health check es consultado cada 1-2s durante el arranque del modelo.
+        # Excluirlo del rate limit evita falsos 429 que el cliente C# interpreta
+        # como caída del servicio, lo que provocaría matar y reiniciar el proceso.
+        if request.url.path.endswith("/health"):
+            return await call_next(request)
+
         client_ip = request.client.host if request.client else "0.0.0.0"
         now = time.monotonic()
 
-        # Limpiar registros fuera de la ventana
         recent = [t for t in self._requests[client_ip] if now - t < self._window]
 
-        # Purgar IPs sin actividad para evitar crecimiento ilimitado del dict
         if not recent:
             del self._requests[client_ip]
             self._requests[client_ip] = []
@@ -65,7 +69,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             self._requests[client_ip] = recent
 
         if len(self._requests[client_ip]) >= self._max:
-            raise HTTPException(429, detail="Demasiadas solicitudes. Intente de nuevo más tarde.")
+            raise HTTPException(429, detail="Demasiadas solicitudes. Intente de nuevo mas tarde.")
 
         self._requests[client_ip].append(now)
         return await call_next(request)

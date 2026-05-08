@@ -216,7 +216,11 @@ namespace AttendanceSystem.App
             var facialVerifyPath = _configuration["FacialService:VerifyPath"] ?? "/api/verify";
             var facialEncodePath = _configuration["FacialService:EncodePath"] ?? "/api/encode";
             services.AddSingleton(new FacialServiceOptions(facialVerifyPath, facialEncodePath));
-            services.AddSingleton(new HttpClient { BaseAddress = new Uri(facialBaseUrl) });
+            services.AddSingleton(new HttpClient
+            {
+                BaseAddress = new Uri(facialBaseUrl),
+                Timeout     = TimeSpan.FromSeconds(30),
+            });
 
             // FaceServiceManager — gestiona ciclo de vida del microservicio Python
             // Costo en RAM ~0 (solo un timer + un HttpClient liviano)

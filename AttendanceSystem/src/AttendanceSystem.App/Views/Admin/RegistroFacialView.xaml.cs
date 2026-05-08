@@ -32,6 +32,10 @@ namespace AttendanceSystem.App.Views.Admin
         // ── Lifecycle ────────────────────────────────────────────────────────
         private async void View_Loaded(object sender, RoutedEventArgs e)
         {
+            // Pre-calentar FaceService en background mientras se carga la lista.
+            // Así el modelo ya está listo cuando el admin quiera registrar un rostro.
+            _ = _controller.PrecalentarAsync();
+
             try { await CargarEmpleadosAsync(); }
             catch (Exception ex) { MostrarMensaje($"Error: {ex.Message}", true); }
         }
@@ -143,6 +147,9 @@ namespace AttendanceSystem.App.Views.Admin
 
             var btn = sender as Button;
             if (btn != null) btn.IsEnabled = false;
+
+            // Mostrar estado inmediatamente — el usuario sabe que algo está pasando
+            MostrarMensaje("Iniciando motor de reconocimiento facial, espere...", false);
 
             try
             {

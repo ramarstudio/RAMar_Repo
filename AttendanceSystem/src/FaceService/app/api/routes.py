@@ -130,11 +130,14 @@ async def verify_face(req: VerifyRequest) -> VerifyResponse:
 
 @router.get("/health", response_model=HealthResponse)
 async def health() -> HealthResponse:
-    engine = _get_engine()
+    # Siempre devuelve 200 — el campo model_loaded indica si el modelo ya cargo.
+    # Esto permite que el cliente C# detecte el arranque del servidor
+    # desde el primer segundo, sin esperar a que el modelo termine de cargarse.
+    ready = _engine is not None and _engine.is_ready()
     settings = get_settings()
     return HealthResponse(
-        status="ok" if engine.is_ready() else "loading",
-        model_loaded=engine.is_ready(),
+        status="ok" if ready else "loading",
+        model_loaded=ready,
         model_name=settings.detection_model,
         embedding_dim=512,
     )

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using AttendanceSystem.App.Controllers;
 using AttendanceSystem.App.Interfaces;
 using AttendanceSystem.Core.DTOs;
@@ -15,6 +16,7 @@ namespace AttendanceSystem.App.Views
         private readonly MarcajeController      _marcajeController;
         private readonly IBiometricoController  _biometricoController;
         private readonly AuthController         _authController;
+        private readonly DispatcherTimer        _keepAliveTimer;
 
         // Brushes estáticos y congelados: creados una sola vez, reutilizados en cada evento.
         // Freeze() permite usarlos desde cualquier hilo sin InvalidOperationException.
@@ -30,21 +32,32 @@ namespace AttendanceSystem.App.Views
             return brush;
         }
 
-        public MarcajeView(MarcajeController marcajeController, 
-                           IBiometricoController biometricoController, 
+        public MarcajeView(MarcajeController marcajeController,
+                           IBiometricoController biometricoController,
                            AuthController authController)
         {
             InitializeComponent();
             _marcajeController    = marcajeController;
             _biometricoController = biometricoController;
             _authController       = authController;
+
+            // Timer que resetea el idle-timeout del FaceService cada 3 minutos
+            // mientras la vista de marcaje está abierta.
+            _keepAliveTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(3) };
+            _keepAliveTimer.Tick += (_, _) => _marcajeController.MantenervVivo();
         }
 
-        // ── Carga: encender cámara ─────────────────────────────────────────────
+        // ── Carga: encender cámara + pre-calentar FaceService ─────────────────
         private async void MarcajeView_Loaded(object sender, RoutedEventArgs e)
         {
             txtFechaHora.Text = DateTime.Now.ToString("dddd, dd 'de' MMMM - HH:mm",
                 new System.Globalization.CultureInfo("es-ES"));
+
+            // Pre-calentar FaceService en background mientras la cámara inicia.
+            // Así el modelo ya está cargado cuando el usuario presione el botón.
+            _ = _marcajeController.PrecalentarAsync();
+            _keepAliveTimer.Start();
+
             try
             {
                 await _biometricoController.IniciarCamaraAsync(OnFrameArrived);
@@ -58,9 +71,10 @@ namespace AttendanceSystem.App.Views
             }
         }
 
-        // ── Descarga: apagar cámara ────────────────────────────────────────────
+        // ── Descarga: apagar cámara + detener keep-alive ───────────────────────
         private void MarcajeView_Unloaded(object sender, RoutedEventArgs e)
         {
+            _keepAliveTimer.Stop();
             _biometricoController.ApagarCamara(OnFrameArrived);
         }
 
@@ -90,13 +104,20 @@ namespace AttendanceSystem.App.Views
         {
             SetBotonesHabilitados(false);
             OcultarResultado();
-            txtEstadoCamara.Text = "Procesando marcaje...";
+
+            // Si FaceService aún está iniciando (primera vez o tras idle-timeout),
+            // avisarle al usuario en lugar de mostrar solo "procesando".
+            txtEstadoCamara.Text = _marcajeController.FaceServiceActivo
+                ? "Procesando marcaje..."
+                : "Iniciando motor de reconocimiento facial, espere...";
 
             MarcajeResponse resultado = await _marcajeController.RegistrarMarcajeAsync(tipo);
             MostrarResultado(resultado);
 
             SetBotonesHabilitados(true);
-            txtEstadoCamara.Text = "Listo. Puede realizar otro marcaje.";
+            txtEstadoCamara.Text = resultado.Exito
+                ? "Listo. Puede realizar otro marcaje."
+                : "Listo.";
         }
 
         private void MostrarResultado(MarcajeResponse resultado)

@@ -12,16 +12,42 @@ namespace AttendanceSystem.App.Controllers
         private readonly IMarcajeService       _marcajeService;
         private readonly IBiometricoController _biometricoController;
         private readonly ISessionManager       _sessionManager;
+        private readonly IFaceServiceLifecycle _faceServiceLifecycle;
 
         public MarcajeController(
             IMarcajeService       marcajeService,
             IBiometricoController biometricoController,
-            ISessionManager       sessionManager)
+            ISessionManager       sessionManager,
+            IFaceServiceLifecycle faceServiceLifecycle = null)
         {
             _marcajeService       = marcajeService;
             _biometricoController = biometricoController;
             _sessionManager       = sessionManager;
+            _faceServiceLifecycle = faceServiceLifecycle;
         }
+
+        /// <summary>
+        /// Pre-calienta el FaceService en background mientras el usuario se posiciona
+        /// frente a la cámara. Así cuando presiona el botón, el modelo ya está cargado.
+        /// </summary>
+        public async Task PrecalentarAsync()
+        {
+            if (_faceServiceLifecycle == null) return;
+            try
+            {
+                await _faceServiceLifecycle.EnsureRunningAsync();
+            }
+            catch { /* best-effort, el error se manejará al hacer el marcaje */ }
+        }
+
+        /// <summary>
+        /// Resetea el timer de inactividad. Llamar periódicamente mientras la vista
+        /// de marcaje está activa para evitar que el idle-timeout apague el servicio.
+        /// </summary>
+        public void MantenervVivo() => _faceServiceLifecycle?.Touch();
+
+        /// <summary>True si el FaceService ya está corriendo y el modelo está listo.</summary>
+        public bool FaceServiceActivo => _faceServiceLifecycle?.IsRunning ?? false;
 
         public async Task<MarcajeResponse> RegistrarMarcajeAsync(TipoMarcaje tipo)
         {
