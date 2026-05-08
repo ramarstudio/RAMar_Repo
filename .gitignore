@@ -32,6 +32,9 @@ artifacts/
 **/publish/
 **/PublishProfiles/
 
+## Installer output
+installer/output/
+
 ## Test results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
