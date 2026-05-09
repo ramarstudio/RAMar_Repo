@@ -246,9 +246,30 @@ namespace AttendanceSystem.App.Helpers
                 var r = await _healthClient.GetAsync($"{_serviceUrl}/api/health", ct);
                 if (!r.IsSuccessStatusCode) return false;
                 var json = await r.Content.ReadAsStringAsync(ct);
+
+                // Si el FaceService reporta un error de carga, fallar inmediatamente
+                if (json.Contains("\"status\":\"error\""))
+                {
+                    var errorMsg = ExtractJsonField(json, "error");
+                    throw new InvalidOperationException(
+                        $"El motor de reconocimiento facial falló al cargar:\n{errorMsg}\n\n" +
+                        "Ejecute para reparar: FaceService\\setup_faceservice.bat");
+                }
+
                 return json.Contains("\"model_loaded\":true");
             }
+            catch (InvalidOperationException) { throw; }
             catch { return false; }
+        }
+
+        private static string ExtractJsonField(string json, string field)
+        {
+            var key = $"\"{field}\":\"";
+            var idx = json.IndexOf(key, StringComparison.OrdinalIgnoreCase);
+            if (idx < 0) return "error desconocido";
+            var start = idx + key.Length;
+            var end   = json.IndexOf('"', start);
+            return end > start ? json.Substring(start, end - start) : "error desconocido";
         }
 
         /// <summary>

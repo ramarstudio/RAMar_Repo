@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.api.routes import router, set_engine
+from app.api.routes import router, set_engine, set_load_error
 from app.adapters.insightface_engine import InsightFaceEngine
 from app.middleware.security import ApiKeyMiddleware, RateLimitMiddleware
 
@@ -60,9 +60,13 @@ async def lifespan(app: FastAPI):
             set_engine(engine)
             logger.info("Modelo cargado. FaceService listo.")
         except asyncio.TimeoutError:
-            logger.error("Timeout cargando el modelo (>5 min). Verifica conexion a internet.")
+            msg = "Timeout cargando el modelo (>5 min)."
+            logger.error(msg)
+            set_load_error(msg)
         except Exception as exc:
-            logger.error("Error cargando modelo: %s", exc)
+            msg = str(exc)
+            logger.error("Error cargando modelo: %s", msg)
+            set_load_error(msg)
 
     # Lanzar carga en background — el servidor ya acepta conexiones
     asyncio.create_task(_load_in_background())

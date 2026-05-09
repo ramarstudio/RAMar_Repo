@@ -21,13 +21,18 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api")
 
-# Inyectado en main.py al levantar la app
 _engine: FaceEngine | None = None
+_load_error: str | None = None
 
 
 def set_engine(engine: FaceEngine) -> None:
     global _engine
     _engine = engine
+
+
+def set_load_error(error: str) -> None:
+    global _load_error
+    _load_error = error
 
 
 def _get_engine() -> FaceEngine:
@@ -130,14 +135,18 @@ async def verify_face(req: VerifyRequest) -> VerifyResponse:
 
 @router.get("/health", response_model=HealthResponse)
 async def health() -> HealthResponse:
-    # Siempre devuelve 200 — el campo model_loaded indica si el modelo ya cargo.
-    # Esto permite que el cliente C# detecte el arranque del servidor
-    # desde el primer segundo, sin esperar a que el modelo termine de cargarse.
     ready = _engine is not None and _engine.is_ready()
     settings = get_settings()
+    if ready:
+        status = "ok"
+    elif _load_error:
+        status = "error"
+    else:
+        status = "loading"
     return HealthResponse(
-        status="ok" if ready else "loading",
+        status=status,
         model_loaded=ready,
         model_name=settings.detection_model,
         embedding_dim=512,
+        error=_load_error,
     )

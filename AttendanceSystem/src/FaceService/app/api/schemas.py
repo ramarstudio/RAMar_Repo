@@ -43,3 +43,4 @@ class HealthResponse(BaseModel):
     model_loaded: bool
     model_name: str
     embedding_dim: int
+    error: str | None = None

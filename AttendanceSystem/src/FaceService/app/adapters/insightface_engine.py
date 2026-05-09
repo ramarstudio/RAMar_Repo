@@ -61,11 +61,12 @@ class InsightFaceEngine(FaceEngine):
             import insightface
             import os
 
-            # Ruta absoluta al directorio FaceService (dos niveles arriba de adapters/)
-            # Esto evita rutas relativas que fallan si el CWD cambia
-            _adapters_dir  = os.path.dirname(os.path.abspath(__file__))
+            # InsightFace agrega "\models\" internamente al root que recibe.
+            # Si pasamos FaceService\models → busca en FaceService\models\models (incorrecto)
+            # Si pasamos FaceService       → busca en FaceService\models (correcto)
+            _adapters_dir    = os.path.dirname(os.path.abspath(__file__))
             _faceservice_dir = os.path.dirname(os.path.dirname(_adapters_dir))
-            model_root = os.path.join(_faceservice_dir, "models")
+            model_root       = _faceservice_dir
             
             logger.info(
                 "Cargando modelo %s (det_size=%s, gpu=%d) desde %s...",

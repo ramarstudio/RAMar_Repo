@@ -81,6 +81,10 @@ Source: "{#FaceServiceDir}\.env.example"; DestDir: "{app}\FaceService"; DestName
 Source: "{#FaceServiceDir}\app\*";        DestDir: "{app}\FaceService\app"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#FaceServiceDir}\tests\*";      DestDir: "{app}\FaceService\tests"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: DirExists(ExpandConstant('{#FaceServiceDir}\tests'))
 
+; Modelo de reconocimiento facial incluido — no requiere internet al instalar
+Source: "{#FaceServiceDir}\models\buffalo_l\det_10g.onnx";   DestDir: "{app}\FaceService\models\buffalo_l"; Flags: ignoreversion
+Source: "{#FaceServiceDir}\models\buffalo_l\w600k_r50.onnx"; DestDir: "{app}\FaceService\models\buffalo_l"; Flags: ignoreversion
+
 [Icons]
 Name: "{group}\{#MyAppName}";             Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
 Name: "{group}\Desinstalar {#MyAppName}"; Filename: "{uninstallexe}"
