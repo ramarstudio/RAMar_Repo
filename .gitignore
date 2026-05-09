@@ -32,8 +32,7 @@ artifacts/
 **/publish/
 **/PublishProfiles/
 
-## Installer output
-installer/output/
+## Installer output — trackeado con Git LFS (no borrar)
 
 ## Test results
 [Tt]est[Rr]esult*/
