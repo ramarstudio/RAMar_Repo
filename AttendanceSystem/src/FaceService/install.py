@@ -221,29 +221,55 @@ def _install_insightface():
 
     if ok:
         try:
-            print("  Instalando desde wheel...")
-            _pip("install", dest)
+            # --no-deps evita que pip resuelva dependencias de insightface
+            # y baje numpy a 1.x. Las deps ya estan instaladas via requirements.txt.
+            print("  Instalando desde wheel (sin resolver dependencias)...")
+            _pip("install", dest, "--no-deps")
             print("  insightface instalado.")
-            return
         except subprocess.CalledProcessError:
             print("  Error instalando desde wheel. Intentando PyPI...")
+            try:
+                _pip("install", f"insightface=={INSIGHTFACE_VERSION}")
+                print("  insightface instalado desde PyPI.")
+            except subprocess.CalledProcessError:
+                print(f"\n  ERROR: No se pudo instalar insightface.")
+                print(f"    venv\\Scripts\\activate.bat")
+                print(f"    pip install insightface=={INSIGHTFACE_VERSION}")
         finally:
             try:
                 os.remove(dest)
                 os.rmdir(tmp)
             except OSError:
                 pass
+    else:
+        print("  Instalando insightface desde PyPI (fallback)...")
+        try:
+            _pip("install", f"insightface=={INSIGHTFACE_VERSION}")
+            print("  insightface instalado desde PyPI.")
+        except subprocess.CalledProcessError:
+            print(f"\n  ERROR: No se pudo instalar insightface.")
 
-    # Fallback: PyPI directo
-    print("  Instalando insightface desde PyPI (fallback)...")
-    try:
-        _pip("install", f"insightface=={INSIGHTFACE_VERSION}")
-        print("  insightface instalado desde PyPI.")
-    except subprocess.CalledProcessError:
-        print(f"\n  ERROR: No se pudo instalar insightface.")
-        print("  Instrucciones manuales:")
-        print(f"    venv\\Scripts\\activate.bat")
-        print(f"    pip install insightface=={INSIGHTFACE_VERSION}")
+    # Forzar numpy 2.x como ultimo paso.
+    # scipy>=1.13, scikit-image>=0.24, matplotlib>=3.9 ya soportan numpy 2.x,
+    # por lo que el resolver de pip no deberia bajar numpy. Aun asi forzamos
+    # para cubrir cualquier dependencia transitiva inesperada.
+    print("\n  Verificando y forzando numpy>=2.1.0...")
+    _pip("install", "numpy>=2.1.0", "--force-reinstall", "--no-deps")
+
+    # Verificar que numpy 2.x quedo instalado
+    result = subprocess.run(
+        [sys.executable, "-c",
+         "import numpy as np; v=np.__version__; "
+         "major=int(v.split('.')[0]); "
+         "print(f'numpy {v}'); "
+         "exit(0 if major >= 2 else 1)"],
+        capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"\n  ERROR CRITICO: numpy sigue siendo 1.x ({result.stdout.strip()}).")
+        print("  Alguna dependencia tiene constraint numpy<2. Instalando numpy 2.2.0 fijo...")
+        _pip("install", "numpy==2.2.0", "--force-reinstall", "--no-deps")
+    else:
+        print(f"  {result.stdout.strip()} OK (ABI 2.x compatible)")
 
 
 def _install_insightface_linux():
@@ -263,15 +289,15 @@ def _predownload_model():
     Sin esto, el modelo se descarga la primera vez que el usuario usa
     reconocimiento facial, causando una espera silenciosa de varios minutos.
     """
-    sep("Pre-descargando modelo de reconocimiento facial")
-    print("  Modelo: buffalo_l (~400 MB)")
-    print("  Esto puede tardar varios minutos segun la velocidad de internet.")
-    print("  Solo se hace una vez.\n")
+    sep("Verificando modelo de reconocimiento facial")
+    print("  Modelo: buffalo_l (det_10g.onnx + w600k_r50.onnx)")
 
-    models_dir = os.path.join(SCRIPT_DIR, "models")
-    os.makedirs(models_dir, exist_ok=True)
+    # InsightFace agrega "\models\" al root internamente.
+    # Pasamos SCRIPT_DIR para que busque en SCRIPT_DIR\models\buffalo_l
+    models_dir  = SCRIPT_DIR
+    buffalo_dir = os.path.join(SCRIPT_DIR, "models", "buffalo_l")
+    os.makedirs(buffalo_dir, exist_ok=True)
 
-    buffalo_dir = os.path.join(models_dir, "buffalo_l")
     if os.path.isdir(buffalo_dir) and any(
         f.endswith(".onnx") for f in os.listdir(buffalo_dir)
     ):
@@ -323,24 +349,13 @@ def main():
             log.close()
             sys.exit(1)
 
-        venv_py = os.path.join(VENV_DIR, "Scripts", "python.exe")
-
-        if os.path.exists(venv_py):
-            try:
-                ev = _ver(venv_py)
-                if ev in SUPPORTED_VERSIONS:
-                    print(f"\n  Venv existente con Python {ev} — reutilizando.")
-                else:
-                    print(f"\n  Venv con Python {ev} es incompatible. Recreando...")
-                    import shutil
-                    shutil.rmtree(VENV_DIR, ignore_errors=True)
-                    _create_venv(py)
-            except Exception:
-                import shutil
-                shutil.rmtree(VENV_DIR, ignore_errors=True)
-                _create_venv(py)
-        else:
-            _create_venv(py)
+        # Siempre recrear el venv para garantizar un estado limpio.
+        # Evita que instalaciones anteriores con numpy incorrecto persistan.
+        import shutil
+        if os.path.exists(VENV_DIR):
+            print("\n  Eliminando entorno virtual anterior para instalacion limpia...")
+            shutil.rmtree(VENV_DIR, ignore_errors=True)
+        _create_venv(py)
 
         _relaunch(log)
         return

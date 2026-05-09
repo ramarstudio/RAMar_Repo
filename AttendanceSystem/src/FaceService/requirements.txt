@@ -4,33 +4,38 @@
 #  IMPORTANTE — Windows:
 #    NO uses "pip install -r requirements.txt" directamente.
 #    Usa el script de instalacion:  python install.py
-#    (resuelve el wheel de insightface para Windows automaticamente)
-#
-#  Linux/Mac:
-#    pip install -r requirements.txt   funciona directo.
+#    (instala insightface con --no-deps para proteger numpy 2.x)
 #
 #  Versiones de Python soportadas: 3.10, 3.11, 3.12
-#  Python 3.13 NO esta soportado aun (onnxruntime no tiene wheel estable).
 # ─────────────────────────────────────────────────────────────
 
 # --- Web framework ---
 fastapi>=0.115.0,<1.0
 uvicorn[standard]>=0.30.0,<1.0
 
-# --- Reconocimiento Facial ---
-# Windows: instalado via install.py con wheel comunitario
-# Linux/Mac: pip install directo funciona
-insightface==0.7.3
-
-# --- ONNX Runtime (motor de inferencia) ---
-# Usar CPU. Para GPU: reemplazar por onnxruntime-gpu
-# 1.19+ soporta numpy 2.x
+# --- ONNX Runtime ---
 onnxruntime>=1.19.0,<1.21.0
 
+# --- numpy: 2.1+ requerido por el wheel de insightface ---
+# El wheel fue compilado con numpy 2.x (ABI 96 bytes).
+# insightface se instala con --no-deps para que pip NO baje numpy a 1.x.
+numpy>=2.1.0
+
 # --- Procesamiento de imagen ---
-# Sin limite superior para compatibilidad con tifffile moderno
-numpy>=1.26.0
 opencv-python-headless>=4.8.0,<5.0.0
+
+# --- Dependencias de insightface (gestionadas manualmente) ---
+# Se instalan ANTES del wheel para evitar que pip las resuelva y baje numpy.
+onnx>=1.14.0
+scipy>=1.13.0
+scikit-image>=0.24.0
+Pillow>=10.0.0
+tqdm>=4.0.0
+requests>=2.28.0
+prettytable>=3.0.0
+albumentations>=1.4.0
+easydict>=1.9
+matplotlib>=3.9.0
 
 # --- Configuracion y entorno ---
 pydantic>=2.0,<3.0
