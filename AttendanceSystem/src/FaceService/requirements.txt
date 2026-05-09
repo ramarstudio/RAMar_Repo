@@ -16,10 +16,10 @@ uvicorn[standard]>=0.30.0,<1.0
 # --- ONNX Runtime ---
 onnxruntime>=1.19.0,<1.21.0
 
-# --- numpy: 2.1+ requerido por el wheel de insightface ---
-# El wheel fue compilado con numpy 2.x (ABI 96 bytes).
-# insightface se instala con --no-deps para que pip NO baje numpy a 1.x.
-numpy>=2.1.0
+# --- numpy: compatible con el wheel de insightface de PyPI (ABI 1.x, 88 bytes) ---
+# El wheel oficial de insightface en PyPI fue compilado con numpy 1.x.
+# Si se usa el wheel de Gourieff (numpy 2.x), reinstalar con numpy>=2.1.0 manualmente.
+numpy>=1.24.0,<2.0
 
 # --- Procesamiento de imagen ---
 opencv-python-headless>=4.8.0,<5.0.0

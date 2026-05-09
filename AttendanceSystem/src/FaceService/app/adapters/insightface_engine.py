@@ -159,8 +159,8 @@ class InsightFaceEngine(FaceEngine):
             results.append(FaceData(
                 bbox=bbox,
                 embedding=embedding,
-                age=int(face.age) if hasattr(face, "age") else None,
-                gender=("M" if face.gender == 1 else "F") if hasattr(face, "gender") else None,
+                age=int(face.age) if face.age is not None else None,
+                gender=("M" if face.gender == 1 else "F") if face.gender is not None else None,
             ))
 
         return results

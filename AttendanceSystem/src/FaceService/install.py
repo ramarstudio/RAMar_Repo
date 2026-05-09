@@ -249,27 +249,11 @@ def _install_insightface():
         except subprocess.CalledProcessError:
             print(f"\n  ERROR: No se pudo instalar insightface.")
 
-    # Forzar numpy 2.x como ultimo paso.
-    # scipy>=1.13, scikit-image>=0.24, matplotlib>=3.9 ya soportan numpy 2.x,
-    # por lo que el resolver de pip no deberia bajar numpy. Aun asi forzamos
-    # para cubrir cualquier dependencia transitiva inesperada.
-    print("\n  Verificando y forzando numpy>=2.1.0...")
-    _pip("install", "numpy>=2.1.0", "--force-reinstall", "--no-deps")
-
-    # Verificar que numpy 2.x quedo instalado
+    # Verificar la version de numpy instalada (informativo)
     result = subprocess.run(
-        [sys.executable, "-c",
-         "import numpy as np; v=np.__version__; "
-         "major=int(v.split('.')[0]); "
-         "print(f'numpy {v}'); "
-         "exit(0 if major >= 2 else 1)"],
+        [sys.executable, "-c", "import numpy as np; print(f'numpy {np.__version__}')"],
         capture_output=True, text=True)
-    if result.returncode != 0:
-        print(f"\n  ERROR CRITICO: numpy sigue siendo 1.x ({result.stdout.strip()}).")
-        print("  Alguna dependencia tiene constraint numpy<2. Instalando numpy 2.2.0 fijo...")
-        _pip("install", "numpy==2.2.0", "--force-reinstall", "--no-deps")
-    else:
-        print(f"  {result.stdout.strip()} OK (ABI 2.x compatible)")
+    print(f"\n  {result.stdout.strip()}")
 
 
 def _install_insightface_linux():
